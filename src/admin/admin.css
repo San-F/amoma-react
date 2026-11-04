@@ -504,3 +504,32 @@
   font-size: 0.9rem;
   color: var(--cacao-suave);
 }
+
+/* ---------- galería ---------- */
+
+.adm-fila--galeria {
+  align-items: flex-start;
+}
+
+.adm-mini--cuadrada {
+  width: 5rem;
+  height: 5rem;
+  border-radius: 0.75rem;
+}
+
+.adm-fila__botones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.adm-fila__botones .adm-x:disabled {
+  opacity: 0.3;
+  cursor: default;
+}
+
+.adm-peligro-texto {
+  color: #a32020;
+}

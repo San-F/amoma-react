@@ -3,7 +3,6 @@ import CakeIllustration from "./CakeIllustration";
 import Picture from "../components/Picture";
 import Reveal from "../components/Reveal";
 import Icon from "../components/Icon";
-import { fotos } from "../data/images";
 import { opcionesTorta } from "../data/catalog";
 import { fechaLegible, fechaMinima, linkWhatsApp } from "../lib/whatsapp";
 import { useSitio } from "../lib/sitio";
@@ -37,10 +36,8 @@ const CAPAS = ["bizcochuelo", "relleno", "cobertura", "decoracion"];
 // cuánto dura cada momento (ms): vacío, +bizcochuelo, +relleno, +cobertura, +decoración (pausa)
 const TIEMPOS = [700, 1300, 1100, 1400, 2800];
 
-const TEMATICAS = [fotos.arcoiris, fotos.surf, fotos.calabaza];
-
 function CustomCake() {
-  const { negocio } = useSitio();
+  const { negocio, tematicas } = useSitio();
   const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   const uid = useId();
   const escenaRef = useRef(null);
@@ -179,8 +176,8 @@ function CustomCake() {
         <Reveal className="tematicas">
           <p className="tematicas__titulo">Algunas que ya hicimos</p>
           <ul>
-            {TEMATICAS.map((f) => (
-              <li key={f.alt}>
+            {tematicas.map((f) => (
+              <li key={f.src || f.alt}>
                 <Picture foto={f} sizes="(min-width: 64rem) 22rem, 30vw" />
               </li>
             ))}

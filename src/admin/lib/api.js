@@ -270,3 +270,62 @@ export async function resumen() {
     consultasNuevas: c.count ?? 0,
   };
 }
+
+// ---------- galería ----------
+
+export async function listarGaleria() {
+  const { data, error } = await supabase
+    .from("gallery_items")
+    .select("*")
+    .order("sort_order")
+    .order("created_at");
+  if (error) fallar(error, "No se pudo cargar la galería.");
+  return data.map((g) => ({ ...g, url: urlPublica(g.storage_path) }));
+}
+
+export async function agregarFotoGaleria(file, alt, orden) {
+  const { path, width, height } = await subirFoto(file, "galeria");
+  const { error } = await supabase.from("gallery_items").insert({
+    storage_path: path,
+    alt_text: alt.slice(0, 200),
+    width,
+    height,
+    sort_order: orden,
+    is_published: true,
+  });
+  if (error) {
+    await supabase.storage.from(BUCKET).remove([path]);
+    fallar(error, `No se pudo guardar "${file.name}".`);
+  }
+}
+
+export async function cambiarFotoGaleria(id, campos) {
+  const { error } = await supabase
+    .from("gallery_items")
+    .update(campos)
+    .eq("id", id);
+  if (error) fallar(error, "No se pudo actualizar la foto.");
+}
+
+// guarda el orden según la posición en la lista (solo actualiza lo que cambió)
+export async function reordenarGaleria(lista) {
+  const cambios = lista
+    .map((g, i) => ({ id: g.id, antes: g.sort_order, ahora: i }))
+    .filter((c) => c.antes !== c.ahora);
+  for (const c of cambios) {
+    const { error } = await supabase
+      .from("gallery_items")
+      .update({ sort_order: c.ahora })
+      .eq("id", c.id);
+    if (error) fallar(error, "No se pudo cambiar el orden.");
+  }
+}
+
+export async function borrarFotoGaleria(item) {
+  const { error } = await supabase
+    .from("gallery_items")
+    .delete()
+    .eq("id", item.id);
+  if (error) fallar(error, "No se pudo borrar la foto.");
+  await supabase.storage.from(BUCKET).remove([item.storage_path]);
+}

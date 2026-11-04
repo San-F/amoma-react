@@ -2,10 +2,11 @@ import { useEffect, useRef, useState } from "react";
 import Picture from "./Picture";
 import Reveal from "./Reveal";
 import Icon from "./Icon";
-import { galeria } from "../data/catalog";
+import { useSitio } from "../lib/sitio";
 import "../styles/Gallery.css";
 
 function Gallery() {
+  const { galeria } = useSitio();
   // índice de la foto abierta (null = ninguna)
   const [abierta, setAbierta] = useState(null);
   const dialogRef = useRef(null);
@@ -53,7 +54,7 @@ function Gallery() {
 
         <ul className="galeria__grid">
           {galeria.map((f, i) => (
-            <Reveal as="li" key={f.alt} delay={(i % 3) * 80}>
+            <Reveal as="li" key={f.src || f.alt} delay={(i % 3) * 80}>
               <button
                 type="button"
                 className="galeria__foto"

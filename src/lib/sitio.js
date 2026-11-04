@@ -3,13 +3,21 @@
 // Si la base falla o está vacía, la página sigue mostrando el contenido fijo.
 import { useSyncExternalStore } from "react";
 import {
+  galeria as galeriaBase,
   negocio as negocioBase,
   productos as productosBase,
 } from "../data/catalog";
+import { fotos } from "../data/images";
+
+// temáticas de ejemplo para "Tortas personalizadas" (se reemplazan por las
+// 3 primeras fotos de la galería cuando la dueña las sube)
+const tematicasBase = [fotos.arcoiris, fotos.surf, fotos.calabaza];
 
 let estado = {
   negocio: negocioBase,
   productos: productosBase,
+  galeria: galeriaBase,
+  tematicas: tematicasBase,
   desdeBase: false,
 };
 const suscriptos = new Set();
@@ -35,13 +43,17 @@ async function iniciar() {
   if (!import.meta.env.VITE_SUPABASE_URL) return;
   try {
     const { supabase, urlPublica } = await import("./supabase");
-    const [ajustes, productos] = await Promise.all([
+    const [ajustes, productos, galeria] = await Promise.all([
       supabase.from("site_settings").select("*").eq("id", 1).maybeSingle(),
       supabase
         .from("products")
         .select(
           "slug, name, short_description, description, sort_order, category:categories(slug), variants:product_variants(label, servings, price_cents, is_available, sort_order), images:product_images(storage_path, alt_text, width, height, is_cover, sort_order)",
         )
+        .order("sort_order"),
+      supabase
+        .from("gallery_items")
+        .select("storage_path, alt_text, width, height, sort_order")
         .order("sort_order"),
     ]);
 
@@ -97,8 +109,18 @@ async function iniciar() {
       cambios.productos = conFoto;
       cambios.desdeBase = true;
     }
-    if (ajustes.error || productos.error)
-      console.warn("Supabase:", ajustes.error ?? productos.error);
+    if (galeria.data?.length) {
+      cambios.galeria = galeria.data.map((g) => ({
+        src: urlPublica(g.storage_path),
+        alt: g.alt_text || "Torta de Amoma",
+        width: g.width,
+        height: g.height,
+      }));
+      if (cambios.galeria.length >= 3)
+        cambios.tematicas = cambios.galeria.slice(0, 3);
+    }
+    const problema = ajustes.error ?? productos.error ?? galeria.error;
+    if (problema) console.warn("Supabase:", problema);
     emitir(cambios);
   } catch (err) {
     console.warn(

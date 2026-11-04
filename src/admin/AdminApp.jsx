@@ -18,6 +18,7 @@ import Productos from "./pages/Productos";
 import ProductoEditar from "./pages/ProductoEditar";
 import Importar from "./pages/Importar";
 import Categorias from "./pages/Categorias";
+import Galeria from "./pages/Galeria";
 import Consultas from "./pages/Consultas";
 import Ajustes from "./pages/Ajustes";
 import "./admin.css";
@@ -63,6 +64,7 @@ const MENU = [
   { to: "/admin/productos", texto: "Productos" },
   { to: "/admin/importar", texto: "Excel" },
   { to: "/admin/categorias", texto: "Categorías" },
+  { to: "/admin/galeria", texto: "Galería" },
   { to: "/admin/consultas", texto: "Consultas" },
   { to: "/admin/ajustes", texto: "Ajustes" },
 ];
@@ -111,6 +113,7 @@ function AdminApp() {
           <Route path="productos/:id" element={<ProductoEditar />} />
           <Route path="importar" element={<Importar />} />
           <Route path="categorias" element={<Categorias />} />
+          <Route path="galeria" element={<Galeria />} />
           <Route path="consultas" element={<Consultas />} />
           <Route path="ajustes" element={<Ajustes />} />
         </Route>
