@@ -34,7 +34,8 @@ function Footer() {
         </ul>
       </div>
       <p className="footer__legal contenedor">
-        © {new Date().getFullYear()} Amoma · Pastelería casera
+        © {new Date().getFullYear()} Amoma · Pastelería casera ·{" "}
+        <Link to="/privacidad">Privacidad</Link>
       </p>
     </footer>
   );

@@ -7,9 +7,8 @@ on conflict (id) do nothing;
 
 insert into public.categories (slug, name, description, sort_order, is_published)
 values
-  ('tortas', 'Tortas', 'Hechas con ingredientes de primera calidad.', 1, true),
-  ('postres-individuales', 'Postres individuales',
-   'Cupcakes, cheesecake, volcán y porciones listas para disfrutar.', 2, true),
-  ('tortas-personalizadas', 'Tortas personalizadas',
-   'Las diseñamos a tu gusto para cumpleaños, casamientos y eventos especiales.', 3, true)
+  ('tortas', 'Tortas', 'Clásicas y caseras, con ingredientes de primera.', 1, true),
+  ('postres', 'Tartas y postres', 'Tartas, porciones y cajitas para regalar.', 2, true),
+  ('personalizadas', 'Tortas personalizadas',
+   'Para cumpleaños, casamientos y eventos.', 3, true)
 on conflict (slug) do nothing;

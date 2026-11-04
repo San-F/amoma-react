@@ -212,6 +212,63 @@ select tests.expect_error('anon no puede consultar admin_status', 'select * from
 rollback;
 
 -- ---------------------------------------------------------------------
+-- IMPORTACIÓN DESDE EXCEL
+-- ---------------------------------------------------------------------
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated","aal":"aal2"}', true);
+
+select tests.expect_count('import: admin crea 1 y actualiza 1',
+  $q$ select count(*) from (select public.admin_import_catalog('{"products":[
+        {"slug":"nueva-torta","name":"Nueva torta","category_slug":"visible","is_published":true,
+         "cover_path":"productos/nueva/a.webp",
+         "variants":[{"label":"Chica","servings":8,"price_cents":1800000},{"label":"Grande","servings":20,"price_cents":3500000}]},
+        {"slug":"publicado","name":"Publicado (renombrado)","category_slug":"visible","is_published":true,
+         "variants":[{"label":"Única","price_cents":2000000}]}
+      ]}'::jsonb) r) t
+      where true $q$, 1);
+select tests.expect_count('import: variantes nuevas creadas',
+  $q$ select count(*) from public.product_variants v join public.products p on p.id = v.product_id where p.slug = 'nueva-torta' $q$, 2);
+select tests.expect_count('import: precios del existente reemplazados (no duplica)',
+  $q$ select count(*) from public.product_variants v join public.products p on p.id = v.product_id
+      where p.slug = 'publicado' and v.price_cents = 2000000 $q$, 1);
+select tests.expect_count('import: el existente quedó con una sola variante',
+  $q$ select count(*) from public.product_variants v join public.products p on p.id = v.product_id where p.slug = 'publicado' $q$, 1);
+select tests.expect_count('import: foto de portada asociada',
+  $q$ select count(*) from public.product_images i join public.products p on p.id = i.product_id
+      where p.slug = 'nueva-torta' and i.is_cover $q$, 1);
+-- reimportar lo mismo no duplica productos
+select public.admin_import_catalog('{"products":[{"slug":"nueva-torta","name":"Nueva torta","category_slug":"visible","is_published":true,"cover_path":"productos/nueva/a.webp","variants":[{"label":"Chica","price_cents":1900000}]}]}'::jsonb);
+select tests.expect_count('import: reimportar no duplica el producto', $q$ select count(*) from public.products where slug = 'nueva-torta' $q$, 1);
+select tests.expect_count('import: reimportar no duplica la portada', $q$ select count(*) from public.product_images i join public.products p on p.id=i.product_id where p.slug='nueva-torta' $q$, 1);
+select tests.expect_error('import: categoría inexistente cancela todo',
+  $q$ select public.admin_import_catalog('{"products":[{"slug":"x-1","name":"X","category_slug":"no-existe","variants":[]}]}'::jsonb) $q$, '22023');
+select tests.expect_error('import: precio negativo cancela todo',
+  $q$ select public.admin_import_catalog('{"products":[{"slug":"x-2","name":"X","variants":[{"label":"a","price_cents":-5}]}]}'::jsonb) $q$, '23514');
+select tests.expect_count('import: lo que falló no dejó nada a medias', $q$ select count(*) from public.products where slug in ('x-1','x-2') $q$, 0);
+rollback;
+
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated","aal":"aal1"}', true);
+select tests.expect_error('import: admin sin MFA no puede importar',
+  $q$ select public.admin_import_catalog('{"products":[]}'::jsonb) $q$);
+rollback;
+
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000b","role":"authenticated","aal":"aal2"}', true);
+select tests.expect_error('import: no-admin no puede importar',
+  $q$ select public.admin_import_catalog('{"products":[]}'::jsonb) $q$);
+rollback;
+
+begin;
+set local role anon;
+select tests.expect_error('import: anon no puede ni llamar la función',
+  $q$ select public.admin_import_catalog('{"products":[]}'::jsonb) $q$);
+rollback;
+
+-- ---------------------------------------------------------------------
 -- Validaciones de datos (aplican a cualquiera, incluso al servidor)
 -- ---------------------------------------------------------------------
 begin;

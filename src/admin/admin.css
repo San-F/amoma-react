@@ -1,0 +1,506 @@
+/* Panel de administración: simple, claro y cómodo en celular */
+
+.adm {
+  min-height: 100dvh;
+  display: grid;
+  grid-template-rows: 1fr auto;
+  background: var(--crema);
+}
+
+.adm__contenido {
+  padding: 1.5rem var(--gutter) 6rem;
+  max-width: 60rem;
+  width: 100%;
+}
+
+/* celular: menú fijo abajo, al alcance del pulgar */
+.adm__lateral {
+  position: fixed;
+  inset: auto 0 0;
+  z-index: 20;
+  background: var(--cacao);
+  color: var(--crema);
+}
+
+.adm__marca,
+.adm__usuario {
+  display: none;
+}
+
+.adm__lateral nav {
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.adm__lateral nav a {
+  flex: 1 0 auto;
+  padding: 1rem 0.9rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-align: center;
+  text-decoration: none;
+  opacity: 0.7;
+}
+
+.adm__lateral nav a.active {
+  opacity: 1;
+  box-shadow: inset 0 3px 0 var(--rosa);
+}
+
+@media (min-width: 56rem) {
+  .adm {
+    grid-template-columns: 15rem 1fr;
+    grid-template-rows: none;
+  }
+
+  .adm__lateral {
+    position: sticky;
+    top: 0;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    padding: 1.5rem 1rem;
+  }
+
+  .adm__marca {
+    display: block;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    margin: 0 0.75rem 1.5rem;
+  }
+
+  .adm__lateral nav {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .adm__lateral nav a {
+    flex: none;
+    text-align: left;
+    font-size: 1rem;
+    padding: 0.7rem 0.75rem;
+    border-radius: 0.6rem;
+  }
+
+  .adm__lateral nav a.active {
+    background: rgb(251 245 238 / 12%);
+    box-shadow: none;
+  }
+
+  .adm__usuario {
+    display: grid;
+    gap: 0.4rem;
+    margin-top: auto;
+    padding: 0 0.75rem;
+    font-size: 0.85rem;
+    word-break: break-all;
+  }
+
+  .adm__usuario a,
+  .adm__usuario .adm-link {
+    color: var(--rosa-claro);
+    text-align: left;
+  }
+
+  .adm__contenido {
+    padding: 2.5rem 3rem;
+  }
+}
+
+/* ---------- pantallas de acceso ---------- */
+
+.adm-auth {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--gutter);
+  background:
+    radial-gradient(circle at 20% 10%, var(--rosa-claro), transparent 50%),
+    var(--crema);
+}
+
+.adm-auth__caja {
+  display: grid;
+  gap: 1rem;
+  width: min(100%, 26rem);
+  padding: 2rem;
+  border-radius: var(--radio-grande);
+  background: var(--blanco);
+  box-shadow: var(--sombra);
+}
+
+.adm-auth__form {
+  display: grid;
+  gap: 1rem;
+}
+
+.adm-auth__marca {
+  font-family: var(--font-display);
+  font-style: italic;
+  color: var(--rosa-oscuro);
+}
+
+.adm-auth h1 {
+  font-size: 1.9rem;
+}
+
+.adm-qr {
+  justify-self: center;
+  width: 12rem;
+  height: 12rem;
+  background: var(--blanco);
+}
+
+.turnstile {
+  min-height: 65px;
+}
+
+/* ---------- piezas comunes ---------- */
+
+.adm-titulo {
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
+  margin-bottom: 1.25rem;
+}
+
+.adm-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.adm-volver {
+  display: inline-block;
+  margin-bottom: 0.75rem;
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--cacao-suave);
+}
+
+.adm-bloque {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+  margin-bottom: 1.25rem;
+  border-radius: var(--radio);
+  background: var(--blanco);
+  box-shadow: 0 1px 2px rgb(59 36 32 / 6%);
+}
+
+.adm-bloque h2 {
+  font-size: 1.3rem;
+}
+
+.adm-bloque--fila {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+}
+
+.adm-form {
+  display: grid;
+  gap: 0;
+}
+
+.adm-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-block: 1rem;
+}
+
+.adm-acciones .btn:disabled,
+.adm-auth .btn:disabled,
+.adm-bloque .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.adm-link {
+  border: 0;
+  background: none;
+  padding: 0.4rem 0;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  justify-self: start;
+}
+
+.adm-error,
+.adm-ok,
+.adm-aviso {
+  padding: 0.75rem 1rem;
+  border-radius: 0.75rem;
+  font-weight: 600;
+}
+
+.adm-error {
+  background: #fde8e8;
+  color: #8a1c1c;
+}
+
+.adm-error ul {
+  margin: 0.5rem 0 0 1.2rem;
+  font-weight: 500;
+}
+
+.adm-ok {
+  background: #e6f2df;
+  color: #2f5a1f;
+}
+
+.adm-aviso {
+  background: #fff4d6;
+  color: #6b4e00;
+}
+
+.adm-ayuda {
+  font-size: 0.9rem;
+  color: var(--cacao-suave);
+}
+
+.adm-cargando,
+.adm-vacio {
+  padding: 2rem 0;
+  color: var(--cacao-suave);
+}
+
+.adm-pasos {
+  display: grid;
+  gap: 0.4rem;
+  padding-left: 1.2rem;
+}
+
+.adm-pasos--grandes {
+  gap: 1.25rem;
+  margin-bottom: 1.5rem;
+}
+
+.adm-pasos--grandes .btn {
+  margin-top: 0.6rem;
+}
+
+.adm-subir {
+  cursor: pointer;
+}
+
+.adm-peligro {
+  color: #a32020;
+  border-color: #e7b4b4;
+}
+
+.adm-peligro:hover {
+  background: #a32020;
+  border-color: #a32020;
+  color: var(--blanco);
+}
+
+/* ---------- resumen ---------- */
+
+.adm-tarjetas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: 1rem;
+}
+
+.adm-tarjeta {
+  padding: 1.25rem;
+  border-radius: var(--radio);
+  background: var(--blanco);
+  text-decoration: none;
+  box-shadow: 0 1px 2px rgb(59 36 32 / 6%);
+}
+
+.adm-tarjeta strong {
+  display: block;
+  font-family: var(--font-display);
+  font-size: 2.4rem;
+  line-height: 1;
+}
+
+/* ---------- listas ---------- */
+
+.adm-buscar,
+.adm-inline {
+  width: 100%;
+  min-height: 2.9rem;
+  padding: 0.6rem 1rem;
+  border: 1.5px solid rgb(59 36 32 / 14%);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  margin-bottom: 1rem;
+}
+
+.adm-inline {
+  margin: 0;
+}
+
+.adm-lista {
+  display: grid;
+  gap: 0.6rem;
+  list-style: none;
+}
+
+.adm-fila {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem;
+  border-radius: var(--radio);
+  background: var(--blanco);
+}
+
+.adm-fila__info {
+  flex: 1;
+  display: grid;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.adm-fila__info span {
+  font-size: 0.85rem;
+  color: var(--cacao-suave);
+}
+
+.adm-fila__nombre {
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.adm-mini {
+  width: 3.5rem;
+  height: 3.5rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.adm-mini--vacia {
+  display: block;
+  background: var(--crema-2);
+}
+
+.adm-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.adm-switch input {
+  width: 1.25rem;
+  height: 1.25rem;
+  accent-color: var(--cacao);
+}
+
+/* ---------- precios ---------- */
+
+.adm-variantes {
+  display: grid;
+  grid-template-columns: 1.4fr 0.8fr 1fr auto;
+  gap: 0.5rem;
+  align-items: center;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.adm-variante {
+  display: contents;
+}
+
+.adm-variante input {
+  width: 100%;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.7rem;
+  border: 1.5px solid rgb(59 36 32 / 14%);
+  border-radius: 0.6rem;
+  font-weight: 500;
+}
+
+.adm-x,
+.adm-estrella {
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: var(--crema-2);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.adm-estrella {
+  color: rgb(59 36 32 / 30%);
+}
+
+.adm-estrella.is-on {
+  background: var(--cacao);
+  color: #f5c84c;
+}
+
+/* ---------- fotos ---------- */
+
+.adm-fotos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
+  gap: 0.75rem;
+  list-style: none;
+}
+
+.adm-fotos li {
+  position: relative;
+}
+
+.adm-fotos img {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: cover;
+  border-radius: var(--radio);
+}
+
+.adm-fotos li > div {
+  position: absolute;
+  inset: 0.4rem 0.4rem auto;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* ---------- importar ---------- */
+
+.adm-tabla-scroll {
+  overflow-x: auto;
+}
+
+.adm-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.adm-tabla th,
+.adm-tabla td {
+  padding: 0.6rem;
+  border-bottom: 1px solid rgb(59 36 32 / 10%);
+  text-align: left;
+  vertical-align: top;
+}
+
+/* ---------- consultas ---------- */
+
+.adm-consultas {
+  list-style: none;
+  margin-top: 1rem;
+}
+
+.adm-consulta__msg {
+  white-space: pre-wrap;
+}
+
+.adm-consulta__datos {
+  font-size: 0.9rem;
+  color: var(--cacao-suave);
+}

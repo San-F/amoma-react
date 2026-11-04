@@ -1,0 +1,17 @@
+.privacidad {
+  max-width: 44rem;
+}
+
+.privacidad h1 {
+  font-size: var(--fs-h2);
+  margin-bottom: 1rem;
+}
+
+.privacidad h2 {
+  font-size: 1.4rem;
+  margin: 2.25rem 0 0.5rem;
+}
+
+.privacidad p {
+  color: var(--cacao-suave);
+}
