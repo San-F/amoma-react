@@ -1,66 +1,178 @@
-/* header fijo arriba al hacer scroll */
-header {
+.nav {
   position: sticky;
   top: 0;
-  background-color: var(--blanco);
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-}
-
-nav {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 40px;
-}
-
-nav img {
-  height: 55px;
-}
-
-nav ul {
-  display: flex;
-  list-style: none;
-  gap: 25px;
-}
-
-nav ul li a {
-  text-decoration: none;
-  color: var(--texto);
-  font-weight: 600;
-  padding: 5px 10px;
-  border-radius: 20px;
+  z-index: 50;
   transition:
-    background-color 0.3s,
-    color 0.3s;
+    background-color 0.3s var(--ease),
+    box-shadow 0.3s var(--ease);
 }
 
-/* respuesta visual al pasar el mouse o llegar con Tab */
-nav ul li a:hover,
-nav ul li a:focus {
-  background-color: var(--rosa-claro);
-  color: var(--rosa-oscuro);
+.nav--fondo {
+  background: rgb(251 245 238 / 92%);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 1px 0 rgb(59 36 32 / 8%);
 }
 
-/* en pantallas chicas los links bajan a varias filas */
-@media (max-width: 768px) {
-  nav {
+.nav__barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-height: 4.5rem;
+}
+
+.nav__logo {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  text-decoration: none;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+.nav__logo img {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  background: var(--blanco);
+}
+
+.nav__links {
+  display: flex;
+  gap: 2rem;
+  list-style: none;
+}
+
+.nav__links a {
+  position: relative;
+  text-decoration: none;
+  font-weight: 600;
+  padding-block: 0.4rem;
+}
+
+/* subrayado que crece */
+.nav__links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--rosa);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.35s var(--ease);
+}
+
+.nav__links a:hover::after,
+.nav__links a.active::after {
+  transform: scaleX(1);
+}
+
+.nav__acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nav__cta {
+  min-height: 2.75rem;
+  padding: 0.5rem 1.3rem;
+}
+
+.nav__toggle {
+  display: none;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  cursor: pointer;
+}
+
+.nav__hamburguesa,
+.nav__hamburguesa::before,
+.nav__hamburguesa::after {
+  display: block;
+  width: 1.3rem;
+  height: 2px;
+  margin-inline: auto;
+  background: var(--cacao);
+  border-radius: 2px;
+  transition: transform 0.3s var(--ease);
+}
+
+.nav__hamburguesa {
+  position: relative;
+}
+
+.nav__hamburguesa::before,
+.nav__hamburguesa::after {
+  content: "";
+  position: absolute;
+}
+
+.nav__hamburguesa::before {
+  transform: translateY(-6px);
+}
+
+.nav__hamburguesa::after {
+  transform: translateY(6px);
+}
+
+.nav__toggle[aria-expanded="true"] .nav__hamburguesa {
+  background: transparent;
+}
+
+.nav__toggle[aria-expanded="true"] .nav__hamburguesa::before {
+  transform: rotate(45deg);
+}
+
+.nav__toggle[aria-expanded="true"] .nav__hamburguesa::after {
+  transform: rotate(-45deg);
+}
+
+@media (max-width: 47.99rem) {
+  .nav__toggle {
+    display: block;
+  }
+
+  .nav__links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
     flex-direction: column;
-    gap: 10px;
-    padding: 10px 15px;
+    gap: 0;
+    padding: 0.5rem var(--gutter) 1.5rem;
+    background: var(--crema);
+    box-shadow: 0 16px 24px -16px rgb(59 36 32 / 25%);
+    visibility: hidden;
+    opacity: 0;
+    transform: translateY(-8px);
+    transition:
+      opacity 0.25s var(--ease),
+      transform 0.25s var(--ease),
+      visibility 0s 0.25s;
   }
 
-  nav img {
-    height: 45px;
+  .nav__links.is-open {
+    visibility: visible;
+    opacity: 1;
+    transform: none;
+    transition-delay: 0s;
   }
 
-  nav ul {
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 5px 10px;
+  .nav__links a {
+    display: block;
+    padding-block: 0.9rem;
+    font-family: var(--font-display);
+    font-size: 1.6rem;
+    font-weight: 500;
   }
 
-  nav ul li a {
-    font-size: 14px;
+  .nav__links a::after {
+    display: none;
   }
 }

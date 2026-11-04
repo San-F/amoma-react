@@ -1,87 +1,182 @@
 .galeria {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 15px;
-  padding: 0 20px 50px 20px;
+  padding-top: clamp(2rem, 6vw, 4rem);
 }
 
-/* cada foto es un botón para poder abrirla con mouse o con teclado */
-.galeria-foto {
-  border: none;
-  background: none;
-  padding: 0;
-  cursor: pointer;
-  border-radius: 10px;
+.galeria__cabecera {
+  margin-bottom: 2.5rem;
 }
 
-.galeria-foto img {
-  width: 250px;
-  height: 250px;
-  object-fit: cover;
-  border-radius: 10px;
+.galeria__cabecera h1 {
+  font-size: var(--fs-hero);
+  margin-bottom: 1rem;
+}
+
+.galeria__grid {
+  columns: 1;
+  column-gap: 1rem;
+  list-style: none;
+}
+
+.galeria__grid li {
+  break-inside: avoid;
+  margin-bottom: 1rem;
+}
+
+.galeria__foto {
   display: block;
-  transition:
-    transform 0.3s,
-    opacity 0.3s;
-}
-
-.galeria-foto:hover img,
-.galeria-foto:focus img {
-  transform: scale(1.03);
-  opacity: 0.85;
-}
-
-/* foto en grande: fondo oscuro que tapa toda la pantalla */
-.foto-ampliada {
-  position: fixed;
-  top: 0;
-  left: 0;
   width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.8);
+  padding: 0;
+  border: 0;
+  border-radius: var(--radio);
+  overflow: hidden;
+  background: var(--crema-2);
+  cursor: zoom-in;
+}
+
+.galeria__foto img {
+  width: 100%;
+  transition: transform 0.8s var(--ease);
+}
+
+.galeria__foto:hover img {
+  transform: scale(1.04);
+}
+
+@media (min-width: 40rem) {
+  .galeria__grid {
+    columns: 2;
+  }
+}
+
+@media (min-width: 64rem) {
+  .galeria__grid {
+    columns: 3;
+    column-gap: 1.25rem;
+  }
+}
+
+/* ---------- visor ---------- */
+
+.visor {
+  width: 100vw;
+  max-width: 100vw;
+  height: 100dvh;
+  max-height: 100dvh;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  background: rgb(30 18 16 / 94%);
+  color: var(--crema);
+}
+
+.visor::backdrop {
+  background: transparent;
+}
+
+.visor[open] {
+  display: grid;
+  place-items: center;
+  animation: visor-in 0.35s var(--ease);
+}
+
+.visor__figura {
+  display: grid;
+  gap: 0.75rem;
+  justify-items: center;
+  padding: 4.5rem 1rem 2rem;
+  animation: visor-foto 0.45s var(--ease);
+}
+
+.visor__figura img {
+  max-height: 78dvh;
+  width: auto;
+  border-radius: var(--radio);
+}
+
+.visor__figura figcaption {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 15px;
-  padding: 20px;
-  z-index: 200;
+  gap: 1rem;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.1rem;
+}
+
+.visor__contador {
+  font-family: var(--font-texto);
+  font-style: normal;
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+.visor__btn {
+  position: fixed;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(251 245 238 / 14%);
+  color: var(--crema);
+  font-size: 1.4rem;
   cursor: pointer;
+  transition: background-color 0.2s var(--ease);
 }
 
-.foto-ampliada img {
-  max-width: 90%;
-  max-height: 75vh;
-  border-radius: 10px;
+.visor__btn:hover {
+  background: rgb(251 245 238 / 26%);
 }
 
-.foto-ampliada p {
-  color: var(--blanco);
-  font-weight: 600;
+.visor__cerrar {
+  top: 1rem;
+  right: 1rem;
 }
 
-.foto-ampliada button {
-  background-color: var(--rosa);
-  color: var(--blanco);
-  border: none;
-  padding: 8px 25px;
-  border-radius: 20px;
-  font-weight: 600;
-  cursor: pointer;
+.visor__prev,
+.visor__next {
+  top: 50%;
+  margin-top: -1.5rem;
 }
 
-.foto-ampliada button:hover {
-  background-color: var(--rosa-oscuro);
+.visor__prev {
+  left: 1rem;
 }
 
-@media (max-width: 768px) {
-  .galeria-foto {
-    width: 100%;
+.visor__next {
+  right: 1rem;
+}
+
+/* en celular se navega deslizando: flechas abajo, al alcance del pulgar */
+@media (max-width: 40rem) {
+  .visor__prev,
+  .visor__next {
+    top: auto;
+    bottom: 1.25rem;
+    margin-top: 0;
   }
 
-  .galeria-foto img {
-    width: 100%;
-    height: 300px;
+  .visor__prev {
+    left: calc(50% - 3.5rem);
+  }
+
+  .visor__next {
+    right: calc(50% - 3.5rem);
+  }
+
+  .visor__figura {
+    padding-bottom: 5rem;
+  }
+}
+
+@keyframes visor-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes visor-foto {
+  from {
+    opacity: 0;
+    transform: scale(0.96);
   }
 }

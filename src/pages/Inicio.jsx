@@ -1,11 +1,18 @@
-import Hero from "../components/Hero";
-import Cards from "../components/Cards";
+import Hero from "../sections/Hero";
+import CakeBuilder from "../sections/CakeBuilder";
+import Featured from "../sections/Featured";
+import GalleryStrip from "../sections/GalleryStrip";
+import Closing from "../sections/Closing";
 
+// 5 secciones, cada una con un propósito (ver docs/DESIGN.md)
 function Inicio() {
   return (
     <>
       <Hero />
-      <Cards />
+      <CakeBuilder />
+      <Featured />
+      <GalleryStrip />
+      <Closing />
     </>
   );
 }

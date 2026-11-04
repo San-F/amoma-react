@@ -1,0 +1,30 @@
+.cierre {
+  padding-top: 0;
+}
+
+.cierre__caja {
+  text-align: center;
+  padding: clamp(3rem, 9vw, 6rem) clamp(1.25rem, 5vw, 4rem);
+  border-radius: var(--radio-grande);
+  background:
+    radial-gradient(circle at 15% 20%, rgb(231 111 146 / 22%), transparent 45%),
+    radial-gradient(circle at 85% 90%, rgb(168 198 134 / 25%), transparent 45%),
+    var(--rosa-claro);
+}
+
+.cierre__caja .lead {
+  margin: 1rem auto 0;
+}
+
+.cierre__ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 2rem;
+}
+
+.cierre__ig {
+  background: var(--blanco);
+  border-color: transparent;
+}

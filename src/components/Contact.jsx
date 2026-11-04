@@ -1,150 +1,134 @@
-import { useState } from "react";
+import { useId, useState } from "react";
 import Icon from "./Icon";
+import Reveal from "./Reveal";
+import { negocio } from "../data/catalog";
+import { linkWhatsApp } from "../lib/whatsapp";
 import "../styles/Contact.css";
 
-const FORMULARIO_VACIO = {
-  nombre: "",
-  email: "",
-  telefono: "",
-  comentarios: "",
-  motivo: "torta",
-  preferencia: "WhatsApp",
+const MOTIVOS = {
+  torta: "Encargar una torta",
+  evento: "Pedido para evento",
+  consulta: "Consulta general",
 };
 
+const VACIO = { nombre: "", motivo: "torta", mensaje: "" };
+
+// Mientras no exista el envío por servidor (Etapa 3), el formulario arma
+// el mensaje y abre WhatsApp: el pedido llega SÍ o SÍ, nunca se pierde.
 function Contact() {
-  // un solo objeto de estado para todos los campos
-  const [form, setForm] = useState(FORMULARIO_VACIO);
-  // datos del último envío, para el mensaje de gracias
-  const [enviado, setEnviado] = useState(null);
+  const uid = useId();
+  const [form, setForm] = useState(VACIO);
 
-  // nombre y email obligatorios para habilitar el envío
-  const formularioCompleto =
-    form.nombre.trim() !== "" && form.email.trim() !== "";
+  const cambiar = (e) => setForm({ ...form, [e.target.name]: e.target.value });
+  const completo = form.nombre.trim() !== "";
 
-  // el name de cada input coincide con su clave en el estado
-  const manejarCambios = (e) => {
-    const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
-  };
+  const mensaje = [
+    `¡Hola Amoma! Soy ${form.nombre.trim()}.`,
+    `Motivo: ${MOTIVOS[form.motivo]}.`,
+    form.mensaje.trim(),
+  ]
+    .filter(Boolean)
+    .join("\n");
 
-  const enviarFormulario = (e) => {
-    // evita que la página se recargue
+  const enviar = (e) => {
     e.preventDefault();
-    setEnviado(form);
-    setForm(FORMULARIO_VACIO);
-  };
-
-  const limpiarFormulario = () => {
-    setForm(FORMULARIO_VACIO);
-    setEnviado(null);
+    if (!completo) return;
+    window.open(linkWhatsApp(mensaje), "_blank", "noopener,noreferrer");
   };
 
   return (
-    <section>
-      <h2>Contacto</h2>
+    <section className="contacto seccion">
+      <div className="contacto__grid contenedor">
+        <Reveal>
+          <p className="eyebrow">Contacto</p>
+          <h1>
+            Hablemos de <em>tu torta</em>
+          </h1>
+          <p className="lead">
+            Contanos qué necesitás y te respondemos por WhatsApp con precio y
+            disponibilidad.
+          </p>
 
-      <div className="contacto-datos">
-        <p>
-          <Icon name="phone" /> Teléfono: 11 3636 2466
-        </p>
-        <p>
-          <Icon name="instagram" /> Instagram: @amoma.cakeshop
-        </p>
-        <p>
-          <Icon name="location" /> Villa Pueyrredón, CABA
-        </p>
+          <ul className="contacto__datos">
+            <li>
+              <Icon name="phone" />
+              <a href={`tel:+${negocio.whatsapp}`}>{negocio.telefonoVisible}</a>
+            </li>
+            <li>
+              <Icon name="instagram" />
+              <a
+                href={`https://www.instagram.com/${negocio.instagram}/`}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                @{negocio.instagram}
+              </a>
+            </li>
+            <li>
+              <Icon name="location" />
+              {negocio.zona}
+            </li>
+          </ul>
+        </Reveal>
+
+        <Reveal delay={120}>
+          <form className="contacto__form" onSubmit={enviar}>
+            <div className="campo">
+              <label htmlFor={`${uid}-nombre`}>Tu nombre</label>
+              <input
+                id={`${uid}-nombre`}
+                name="nombre"
+                autoComplete="given-name"
+                maxLength={100}
+                value={form.nombre}
+                onChange={cambiar}
+                required
+              />
+            </div>
+
+            <div className="campo">
+              <label htmlFor={`${uid}-motivo`}>Motivo</label>
+              <select
+                id={`${uid}-motivo`}
+                name="motivo"
+                value={form.motivo}
+                onChange={cambiar}
+              >
+                {Object.entries(MOTIVOS).map(([valor, texto]) => (
+                  <option key={valor} value={valor}>
+                    {texto}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="campo">
+              <label htmlFor={`${uid}-mensaje`}>
+                Contanos más <small>(fecha, cantidad de personas, idea…)</small>
+              </label>
+              <textarea
+                id={`${uid}-mensaje`}
+                name="mensaje"
+                rows="4"
+                maxLength={1000}
+                value={form.mensaje}
+                onChange={cambiar}
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="btn btn--rosa"
+              disabled={!completo}
+            >
+              <Icon name="whatsapp" /> Enviar por WhatsApp
+            </button>
+            <p className="contacto__nota">
+              Se abre WhatsApp con tu mensaje listo para enviar.
+            </p>
+          </form>
+        </Reveal>
       </div>
-
-      {enviado && (
-        <p className="mensaje-gracias">
-          ¡Gracias, {enviado.nombre}! Te vamos a escribir por{" "}
-          {enviado.preferencia} muy pronto 🍰
-        </p>
-      )}
-
-      <form onSubmit={enviarFormulario}>
-        <label htmlFor="nombre">Nombre</label>
-        <input
-          type="text"
-          id="nombre"
-          name="nombre"
-          value={form.nombre}
-          onChange={manejarCambios}
-          required
-        />
-
-        <label htmlFor="email">Email</label>
-        <input
-          type="email"
-          id="email"
-          name="email"
-          value={form.email}
-          onChange={manejarCambios}
-          required
-        />
-
-        <label htmlFor="telefono">Teléfono</label>
-        <input
-          type="tel"
-          id="telefono"
-          name="telefono"
-          value={form.telefono}
-          onChange={manejarCambios}
-        />
-
-        <label htmlFor="comentarios">Comentarios</label>
-        <textarea
-          id="comentarios"
-          name="comentarios"
-          value={form.comentarios}
-          onChange={manejarCambios}
-        ></textarea>
-
-        <label htmlFor="motivo">Motivo de contacto</label>
-        <select
-          id="motivo"
-          name="motivo"
-          value={form.motivo}
-          onChange={manejarCambios}
-        >
-          <option value="torta">Encargar una torta</option>
-          <option value="evento">Pedido para evento</option>
-          <option value="consulta">Consulta general</option>
-        </select>
-
-        <fieldset>
-          <legend>¿Cómo preferís que te contactemos?</legend>
-          <input
-            type="radio"
-            id="pref-wpp"
-            name="preferencia"
-            value="WhatsApp"
-            checked={form.preferencia === "WhatsApp"}
-            onChange={manejarCambios}
-          />
-          <label htmlFor="pref-wpp">WhatsApp</label>
-          <input
-            type="radio"
-            id="pref-ig"
-            name="preferencia"
-            value="Instagram"
-            checked={form.preferencia === "Instagram"}
-            onChange={manejarCambios}
-          />
-          <label htmlFor="pref-ig">Instagram</label>
-        </fieldset>
-
-        <button type="submit" disabled={!formularioCompleto}>
-          {formularioCompleto ? "Enviar" : "Completá nombre y email"}
-        </button>
-        <button
-          type="button"
-          className="boton-limpiar"
-          onClick={limpiarFormulario}
-        >
-          Limpiar
-        </button>
-      </form>
     </section>
   );
 }

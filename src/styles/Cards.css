@@ -1,8 +1,0 @@
-/* contenedor: las cards bajan de fila cuando no entran */
-.cards {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 25px;
-  padding: 0 20px 50px 20px;
-}

@@ -1,29 +1,65 @@
-/* reset de márgenes y box-sizing */
-* {
+/* =====================================================================
+   Amoma — sistema visual (ver docs/DESIGN.md)
+   ===================================================================== */
+
+:root {
+  /* color */
+  --crema: #fbf5ee;
+  --crema-2: #f4eadf;
+  --cacao: #3b2420;
+  --cacao-suave: #6d5650;
+  --rosa: #e76f92;
+  --rosa-oscuro: #b8476a; /* contraste AA sobre crema para texto */
+  --rosa-claro: #fbe3ea;
+  --pistacho: #a8c686;
+  --dulce: #c98a4b;
+  --blanco: #ffffff;
+
+  /* tipografía */
+  --font-display: "Fraunces Variable", Georgia, serif;
+  --font-texto: "Manrope Variable", system-ui, sans-serif;
+  --fs-hero: clamp(2.6rem, 8vw, 5.4rem);
+  --fs-h2: clamp(2rem, 5vw, 3.4rem);
+  --fs-h3: 1.35rem;
+
+  /* espacio y forma */
+  --gutter: clamp(1rem, 4vw, 2.5rem);
+  --seccion: clamp(4.5rem, 12vw, 9rem);
+  --ancho: 72rem;
+  --radio: 1.25rem;
+  --radio-grande: 2rem;
+  --sombra: 0 1px 2px rgb(59 36 32 / 6%), 0 12px 32px -12px rgb(59 36 32 / 22%);
+
+  /* movimiento */
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --rebote: cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+*,
+*::before,
+*::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
-/* paleta de Amoma */
-:root {
-  --rosa: #e76f92;
-  --rosa-oscuro: #c9506f;
-  --rosa-claro: #fce7ee;
-  --texto: #444444;
-  --blanco: #ffffff;
+html {
+  scroll-behavior: smooth;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
-  font-family: "Poppins", sans-serif;
-  background-color: var(--blanco);
-  color: var(--texto);
+  font-family: var(--font-texto);
+  font-size: 1.0625rem;
   line-height: 1.6;
+  color: var(--cacao);
+  background: var(--crema);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
 }
 
-/* footer siempre abajo aunque la página tenga poco contenido */
 #root {
-  min-height: 100vh;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
 }
@@ -32,23 +68,205 @@ main {
   flex: 1;
 }
 
-/* títulos de sección */
-h2 {
-  text-align: center;
-  color: var(--rosa);
-  font-size: 36px;
-  margin: 50px 0 30px 0;
+img,
+picture,
+svg {
+  display: block;
+  max-width: 100%;
 }
 
-/* foco visible al navegar con teclado (Tab) en links y botones */
-a:focus,
-button:focus {
-  outline: 3px solid var(--rosa-oscuro);
+img {
+  height: auto;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-display);
+  font-weight: 500;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  font-variation-settings: "SOFT" 100;
+}
+
+h2 {
+  font-size: var(--fs-h2);
+}
+
+h3 {
+  font-size: var(--fs-h3);
+}
+
+em {
+  font-style: italic;
+  color: var(--rosa-oscuro);
+}
+
+::selection {
+  background: var(--rosa-claro);
+}
+
+:focus-visible {
+  outline: 3px solid var(--rosa);
   outline-offset: 3px;
+  border-radius: 6px;
+}
+
+/* ---------- utilidades ---------- */
+
+.contenedor {
+  width: min(100% - 2 * var(--gutter), var(--ancho));
+  margin-inline: auto;
+}
+
+.seccion {
+  padding-block: var(--seccion);
+}
+
+.eyebrow {
+  display: inline-block;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--rosa-oscuro);
+  margin-bottom: 1rem;
+}
+
+.lead {
+  font-size: clamp(1.05rem, 2.2vw, 1.2rem);
+  color: var(--cacao-suave);
+  max-width: 34rem;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------- botones ---------- */
+
+.btn {
+  --btn-bg: var(--cacao);
+  --btn-fg: var(--crema);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  min-height: 3.25rem;
+  padding: 0.85rem 1.6rem;
+  border: 1.5px solid var(--btn-bg);
+  border-radius: 999px;
+  background: var(--btn-bg);
+  color: var(--btn-fg);
+  font-weight: 700;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    transform 0.25s var(--ease),
+    background-color 0.25s var(--ease),
+    color 0.25s var(--ease);
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+}
+
+.btn:active {
+  transform: scale(0.97);
+}
+
+.btn--rosa {
+  --btn-bg: var(--rosa);
+  --btn-fg: var(--blanco);
+}
+
+.btn--borde {
+  background: transparent;
+  color: var(--cacao);
+}
+
+.btn--borde:hover {
+  background: var(--cacao);
+  color: var(--crema);
+}
+
+.btn .icon {
+  font-size: 1.15em;
+}
+
+/* ---------- aparición al hacer scroll ---------- */
+
+.reveal {
+  opacity: 0;
+  transform: translateY(28px);
+  transition:
+    opacity 0.9s var(--ease),
+    transform 0.9s var(--ease);
+  transition-delay: var(--reveal-delay, 0ms);
+}
+
+.reveal.is-visible {
+  opacity: 1;
+  transform: none;
 }
 
 /* íconos SVG inline (componente Icon) */
 .icon {
   display: inline-block;
   vertical-align: -0.125em;
+  flex-shrink: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .reveal {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* link "saltar al contenido" (visible solo con teclado) */
+.saltar {
+  position: absolute;
+  left: 1rem;
+  top: -4rem;
+  z-index: 100;
+  padding: 0.75rem 1.25rem;
+  border-radius: 999px;
+  background: var(--cacao);
+  color: var(--crema);
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.saltar:focus {
+  top: 1rem;
 }

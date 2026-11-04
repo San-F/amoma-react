@@ -11,6 +11,24 @@ const PATHS = {
       <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
     </>
   ),
+  // burbuja de chat (genérica, sin logo de marca)
+  whatsapp: (
+    <path d="M21 11.5a8.4 8.4 0 0 1-12.4 7.4L3 21l2.1-5.6A8.4 8.4 0 1 1 21 11.5z" />
+  ),
+  arrow: (
+    <>
+      <line x1="5" y1="12" x2="19" y2="12" />
+      <polyline points="12 5 19 12 12 19" />
+    </>
+  ),
+  close: (
+    <>
+      <line x1="18" y1="6" x2="6" y2="18" />
+      <line x1="6" y1="6" x2="18" y2="18" />
+    </>
+  ),
+  chevronLeft: <polyline points="15 18 9 12 15 6" />,
+  chevronRight: <polyline points="9 18 15 12 9 6" />,
   location: (
     <>
       <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0z" />

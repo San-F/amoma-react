@@ -1,10 +1,8 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-// fuentes auto-alojadas (sin pedidos a Google Fonts): solo los pesos que se usan
-import "@fontsource/pacifico/latin-400.css";
-import "@fontsource/poppins/latin-400.css";
-import "@fontsource/poppins/latin-600.css";
-import "@fontsource/poppins/latin-700.css";
+// fuentes auto-alojadas (sin pedidos a Google Fonts)
+import "@fontsource-variable/fraunces/soft.css";
+import "@fontsource-variable/manrope";
 import "./index.css";
 import App from "./App.jsx";
 

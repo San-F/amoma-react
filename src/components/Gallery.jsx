@@ -1,67 +1,122 @@
-import { useState } from "react";
-import torta1 from "../assets/img/torta-1.jpeg";
-import torta2 from "../assets/img/torta-2.jpeg";
-import torta3 from "../assets/img/torta-3.jpeg";
-import torta4 from "../assets/img/torta-4.jpeg";
-import torta5 from "../assets/img/torta-5.jpeg";
-import torta6 from "../assets/img/torta-6.jpeg";
-import torta7 from "../assets/img/torta-7.jpeg";
-import torta8 from "../assets/img/torta-8.jpeg";
-import torta9 from "../assets/img/torta-9.jpeg";
-import torta10 from "../assets/img/torta-10.jpeg";
+import { useEffect, useRef, useState } from "react";
+import Picture from "./Picture";
+import Reveal from "./Reveal";
+import Icon from "./Icon";
+import { galeria } from "../data/catalog";
 import "../styles/Gallery.css";
 
-const fotos = [
-  {
-    id: 1,
-    imagen: torta1,
-    descripcion: "Torta de chocolate con rosetas de crema",
-  },
-  { id: 2, imagen: torta2, descripcion: "Tarta de dulce de leche con crumble" },
-  { id: 3, imagen: torta3, descripcion: "Tortas con crema y frutos rojos" },
-  {
-    id: 4,
-    imagen: torta4,
-    descripcion: "Charlotte de vainillas con moño azul",
-  },
-  { id: 5, imagen: torta5, descripcion: "Torta con crema y arándanos" },
-  { id: 6, imagen: torta6, descripcion: "Torta arcoíris con flores" },
-  { id: 7, imagen: torta7, descripcion: "Torta temática de surf" },
-  { id: 8, imagen: torta8, descripcion: "Torta calabaza de Halloween" },
-  { id: 9, imagen: torta9, descripcion: "Caja de tartitas de Halloween" },
-  { id: 10, imagen: torta10, descripcion: "Lemon pie con merengue" },
-];
-
 function Gallery() {
-  // foto que se muestra en grande (null = ninguna)
-  const [fotoGrande, setFotoGrande] = useState(null);
+  // índice de la foto abierta (null = ninguna)
+  const [abierta, setAbierta] = useState(null);
+  const dialogRef = useRef(null);
+  const toqueX = useRef(null);
+
+  const total = galeria.length;
+  const mover = (paso) => setAbierta((i) => (i + paso + total) % total);
+
+  // <dialog> nativo: atrapa el foco, cierra con Escape y es accesible
+  useEffect(() => {
+    const d = dialogRef.current;
+    if (!d) return;
+    if (abierta !== null && !d.open) d.showModal();
+    if (abierta === null && d.open) d.close();
+  }, [abierta]);
+
+  const onKeyDown = (e) => {
+    if (e.key === "ArrowRight") mover(1);
+    if (e.key === "ArrowLeft") mover(-1);
+  };
+
+  // deslizar con el dedo
+  const onTouchStart = (e) => (toqueX.current = e.touches[0].clientX);
+  const onTouchEnd = (e) => {
+    if (toqueX.current === null) return;
+    const dx = e.changedTouches[0].clientX - toqueX.current;
+    if (Math.abs(dx) > 50) mover(dx < 0 ? 1 : -1);
+    toqueX.current = null;
+  };
+
+  const foto = abierta !== null ? galeria[abierta] : null;
 
   return (
-    <section>
-      <h2>Galería</h2>
-      <div className="galeria">
-        {fotos.map((foto) => (
-          // el id sirve de key para identificar cada foto
-          <button
-            key={foto.id}
-            type="button"
-            className="galeria-foto"
-            onClick={() => setFotoGrande(foto)}
-          >
-            <img src={foto.imagen} alt={foto.descripcion} />
-          </button>
-        ))}
+    <section className="galeria seccion">
+      <div className="contenedor">
+        <Reveal className="galeria__cabecera">
+          <p className="eyebrow">Galería</p>
+          <h1>
+            Hechas con <em>amor</em>
+          </h1>
+          <p className="lead">
+            Algunos de los trabajos que salieron de nuestra cocina.
+          </p>
+        </Reveal>
+
+        <ul className="galeria__grid">
+          {galeria.map((f, i) => (
+            <Reveal as="li" key={f.alt} delay={(i % 3) * 80}>
+              <button
+                type="button"
+                className="galeria__foto"
+                onClick={() => setAbierta(i)}
+              >
+                <Picture
+                  foto={f}
+                  sizes="(min-width: 64rem) 22rem, (min-width: 40rem) 45vw, 92vw"
+                />
+                <span className="sr-only">Ampliar: {f.alt}</span>
+              </button>
+            </Reveal>
+          ))}
+        </ul>
       </div>
 
-      {fotoGrande && (
-        <div className="foto-ampliada" onClick={() => setFotoGrande(null)}>
-          <img src={fotoGrande.imagen} alt={fotoGrande.descripcion} />
-          <p>{fotoGrande.descripcion}</p>
-          <button type="button" autoFocus>
-            Cerrar
-          </button>
-        </div>
-      )}
+      <dialog
+        ref={dialogRef}
+        className="visor"
+        aria-label="Foto ampliada"
+        onClose={() => setAbierta(null)}
+        onKeyDown={onKeyDown}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+        onClick={(e) => e.target === e.currentTarget && setAbierta(null)}
+      >
+        {foto && (
+          <figure className="visor__figura" key={abierta}>
+            <Picture foto={foto} sizes="92vw" loading="eager" />
+            <figcaption>
+              {foto.alt}
+              <span className="visor__contador">
+                {abierta + 1} / {total}
+              </span>
+            </figcaption>
+          </figure>
+        )}
+        <button
+          type="button"
+          className="visor__btn visor__cerrar"
+          onClick={() => setAbierta(null)}
+          autoFocus
+        >
+          <Icon name="close" />
+          <span className="sr-only">Cerrar</span>
+        </button>
+        <button
+          type="button"
+          className="visor__btn visor__prev"
+          onClick={() => mover(-1)}
+        >
+          <Icon name="chevronLeft" />
+          <span className="sr-only">Anterior</span>
+        </button>
+        <button
+          type="button"
+          className="visor__btn visor__next"
+          onClick={() => mover(1)}
+        >
+          <Icon name="chevronRight" />
+          <span className="sr-only">Siguiente</span>
+        </button>
+      </dialog>
     </section>
   );
 }

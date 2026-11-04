@@ -1,36 +1,18 @@
 .error-404 {
-  min-height: 60vh;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
+  display: grid;
+  justify-items: center;
+  gap: 1.25rem;
   text-align: center;
-  padding: 40px 20px;
 }
 
-.error-numero {
-  font-family: "Pacifico", cursive;
-  font-size: 100px;
-  color: var(--rosa-claro);
-  line-height: 1;
+.error-404__numero {
+  font-family: var(--font-display);
+  font-size: clamp(6rem, 25vw, 12rem);
+  line-height: 0.9;
+  color: var(--rosa);
+  font-variation-settings: "SOFT" 100;
 }
 
-.error-404 h2 {
-  margin: 10px 0;
-}
-
-.error-404 a {
-  margin-top: 25px;
-  background-color: var(--rosa);
-  color: var(--blanco);
-  text-decoration: none;
-  padding: 12px 30px;
-  border-radius: 30px;
-  font-weight: 600;
-  transition: background-color 0.3s;
-}
-
-.error-404 a:hover,
-.error-404 a:focus {
-  background-color: var(--rosa-oscuro);
+.error-404 h1 {
+  font-size: var(--fs-h2);
 }

@@ -1,25 +1,51 @@
-footer {
-  background-color: var(--rosa);
-  color: var(--blanco);
-  text-align: center;
-  padding: 30px 20px;
+.footer {
+  background: var(--cacao);
+  color: var(--crema);
+  padding-block: 4rem 2rem;
 }
 
-footer img {
-  height: 50px;
-  margin-bottom: 10px;
+.footer__inner {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 2.5rem;
 }
 
-footer a {
-  color: var(--blanco);
-  font-weight: 600;
+.footer__marca {
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 8vw, 4rem);
+  line-height: 1;
+  font-variation-settings: "SOFT" 100;
 }
 
-footer a:hover {
+.footer__lema {
+  margin-top: 0.5rem;
+  color: rgb(251 245 238 / 70%);
+}
+
+.footer__datos {
+  display: grid;
+  gap: 0.75rem;
+  list-style: none;
+}
+
+.footer__datos a {
+  text-decoration: none;
+}
+
+.footer__datos a:hover {
   color: var(--rosa-claro);
 }
 
-/* foco en blanco, el rosa no se ve sobre el footer */
-footer a:focus {
-  outline-color: var(--blanco);
+.footer__datos .icon {
+  margin-right: 0.4rem;
+  color: var(--rosa);
+}
+
+.footer__legal {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgb(251 245 238 / 15%);
+  font-size: 0.85rem;
+  color: rgb(251 245 238 / 60%);
 }

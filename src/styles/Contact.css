@@ -1,104 +1,73 @@
-.contacto-datos p {
-  text-align: center;
-  margin-bottom: 5px;
+.contacto {
+  padding-top: clamp(2rem, 6vw, 4rem);
 }
 
-.contacto-datos .icon {
-  color: var(--rosa);
+.contacto__grid {
+  display: grid;
+  gap: 2.5rem;
 }
 
-.mensaje-gracias {
-  max-width: 500px;
-  margin: 25px auto 0 auto;
-  padding: 15px 20px;
-  background-color: var(--rosa-claro);
-  color: var(--rosa-oscuro);
-  border-radius: 10px;
-  text-align: center;
+.contacto h1 {
+  font-size: var(--fs-hero);
+  margin-bottom: 1rem;
+}
+
+.contacto__datos {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 2rem;
+  list-style: none;
   font-weight: 600;
 }
 
-form {
-  max-width: 500px;
-  margin: 30px auto 50px auto;
+.contacto__datos li {
   display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 0 20px;
+  align-items: center;
+  gap: 0.75rem;
 }
 
-form input,
-form textarea,
-form select {
-  padding: 10px;
-  border: 1px solid #cccccc;
-  border-radius: 8px;
-  font-family: "Poppins", sans-serif;
+.contacto__datos .icon {
+  width: 2.5rem;
+  height: 2.5rem;
+  padding: 0.6rem;
+  border-radius: 50%;
+  background: var(--rosa-claro);
+  color: var(--rosa-oscuro);
 }
 
-/* campo activo resaltado en rosa */
-form input:focus,
-form textarea:focus,
-form select:focus {
-  outline: none;
-  border-color: var(--rosa);
-  box-shadow: 0 0 0 3px var(--rosa-claro);
+.contacto__datos a {
+  text-decoration: none;
 }
 
-form label {
-  font-weight: 600;
+.contacto__datos a:hover {
+  text-decoration: underline;
 }
 
-fieldset {
-  border: 1px solid #cccccc;
-  border-radius: 8px;
-  padding: 15px;
+.contacto__form {
+  display: grid;
+  gap: 1.25rem;
+  padding: clamp(1.25rem, 4vw, 2.25rem);
+  border-radius: var(--radio-grande);
+  background: var(--blanco);
+  box-shadow: var(--sombra);
 }
 
-legend {
-  padding: 0 10px;
-  font-weight: 600;
-}
-
-/* separa cada opción de radio de la siguiente */
-fieldset label {
-  margin: 0 20px 0 5px;
-}
-
-form button {
-  background-color: var(--rosa);
-  color: var(--blanco);
-  border: 2px solid var(--rosa);
-  padding: 12px;
-  border-radius: 8px;
-  font-weight: 600;
-  font-family: "Poppins", sans-serif;
-  cursor: pointer;
-  margin-top: 10px;
-  transition: background-color 0.3s;
-}
-
-form button:hover,
-form button:focus {
-  background-color: var(--rosa-oscuro);
-  border-color: var(--rosa-oscuro);
-}
-
-/* botón deshabilitado hasta completar nombre y email */
-form button:disabled {
-  background-color: #dddddd;
-  border-color: #dddddd;
-  color: #888888;
+.contacto__form .btn:disabled {
+  opacity: 0.45;
   cursor: not-allowed;
+  transform: none;
 }
 
-.boton-limpiar {
-  background-color: var(--blanco);
-  color: var(--rosa);
-  margin-top: 0;
+.contacto__nota {
+  font-size: 0.85rem;
+  color: var(--cacao-suave);
+  text-align: center;
 }
 
-.boton-limpiar:hover,
-.boton-limpiar:focus {
-  color: var(--blanco);
+@media (min-width: 56rem) {
+  .contacto__grid {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+    gap: 4rem;
+  }
 }

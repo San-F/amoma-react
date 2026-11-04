@@ -1,21 +1,40 @@
-import logo from "../assets/img/logo.png";
+import { Link } from "react-router-dom";
+import { negocio } from "../data/catalog";
 import Icon from "./Icon";
 import "../styles/Footer.css";
 
 function Footer() {
   return (
-    <footer>
-      <img src={logo} alt="Logo Amoma" />
-      <p>Amoma - Casero y hecho con amor</p>
-      <p>
-        {/* noopener noreferrer evita que la pestaña nueva acceda a esta página */}
-        <a
-          href="https://www.instagram.com/amoma.cakeshop/"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Icon name="instagram" /> @amoma.cakeshop
-        </a>
+    <footer className="footer">
+      <div className="footer__inner contenedor">
+        <div>
+          <p className="footer__marca">Amoma</p>
+          <p className="footer__lema">{negocio.lema}</p>
+        </div>
+
+        <ul className="footer__datos">
+          <li>
+            <Icon name="location" /> {negocio.zona}
+          </li>
+          <li>
+            {/* noopener noreferrer: la pestaña nueva no puede acceder a esta página */}
+            <a
+              href={`https://www.instagram.com/${negocio.instagram}/`}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icon name="instagram" /> @{negocio.instagram}
+            </a>
+          </li>
+          <li>
+            <Link to="/contacto">
+              <Icon name="phone" /> {negocio.telefonoVisible}
+            </Link>
+          </li>
+        </ul>
+      </div>
+      <p className="footer__legal contenedor">
+        © {new Date().getFullYear()} Amoma · Pastelería casera
       </p>
     </footer>
   );
