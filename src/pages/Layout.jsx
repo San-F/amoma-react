@@ -5,14 +5,14 @@ import Footer from "../components/Footer";
 
 // estructura que comparten todas las páginas
 function Layout() {
-  const { hash, pathname } = useLocation();
+  const { hash, pathname, key } = useLocation();
 
-  // links con ancla (/#arma-tu-torta) desde otra página: bajar a la sección
+  // links con ancla (/#tortas) desde otra página: bajar a la sección
   useEffect(() => {
     if (!hash) return;
     const el = document.getElementById(decodeURIComponent(hash.slice(1)));
     el?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, [hash, pathname]);
+  }, [hash, pathname, key]);
 
   return (
     <>

@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import logo from "../assets/img/logo.png?w=96&format=webp";
+import { linkWhatsApp } from "../lib/whatsapp";
 import "../styles/Navbar.css";
 
 const LINKS = [
-  { to: "/", texto: "Inicio", end: true },
+  { to: "/#tortas", texto: "Tortas", ancla: true },
+  { to: "/#personalizada", texto: "Personalizadas", ancla: true },
   { to: "/galeria", texto: "Galería" },
   { to: "/contacto", texto: "Contacto" },
 ];
@@ -47,17 +49,24 @@ function Navbar() {
         >
           {LINKS.map((l) => (
             <li key={l.to}>
-              <NavLink to={l.to} end={l.end}>
-                {l.texto}
-              </NavLink>
+              {l.ancla ? (
+                <Link to={l.to}>{l.texto}</Link>
+              ) : (
+                <NavLink to={l.to}>{l.texto}</NavLink>
+              )}
             </li>
           ))}
         </ul>
 
         <div className="nav__acciones">
-          <Link to="/#arma-tu-torta" className="btn btn--rosa nav__cta">
+          <a
+            className="btn btn--rosa nav__cta"
+            href={linkWhatsApp("¡Hola Amoma! Quería hacer un pedido.")}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
             Pedir
-          </Link>
+          </a>
           <button
             type="button"
             className="nav__toggle"

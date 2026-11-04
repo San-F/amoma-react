@@ -4,36 +4,61 @@ import { negocio } from "../data/catalog";
 import { linkWhatsApp } from "../lib/whatsapp";
 import "../styles/Closing.css";
 
+const PASOS = [
+  {
+    titulo: "Elegí",
+    texto: "Una torta del catálogo o contanos tu idea para una personalizada.",
+  },
+  {
+    titulo: "Escribinos",
+    texto: "Por WhatsApp te pasamos el precio y las fechas disponibles.",
+  },
+  {
+    titulo: "Coordinamos",
+    texto: `Confirmás, y acordamos el retiro en ${negocio.zona.split(",")[0]} o el envío.`,
+  },
+];
+
 function Closing() {
   return (
-    <section className="cierre seccion" aria-labelledby="cierre-titulo">
-      <Reveal className="cierre__caja contenedor">
-        <p className="eyebrow">Cumpleaños, casamientos, eventos</p>
-        <h2 id="cierre-titulo">
-          ¿Tenés algo para <em>festejar?</em>
-        </h2>
-        <p className="lead">
-          Escribinos y la pensamos juntos. Respondemos por WhatsApp o Instagram.
-        </p>
-        <div className="cierre__ctas">
+    <section className="cierre" aria-labelledby="cierre-titulo">
+      <div className="contenedor">
+        <Reveal className="cierre__cabecera">
+          <p className="eyebrow">Cómo pedir</p>
+          <h2 id="cierre-titulo">
+            Simple, como <em>tiene que ser</em>
+          </h2>
+        </Reveal>
+
+        <ol className="cierre__pasos">
+          {PASOS.map((p, i) => (
+            <Reveal as="li" key={p.titulo} delay={i * 120}>
+              <span className="cierre__num">0{i + 1}</span>
+              <h3>{p.titulo}</h3>
+              <p>{p.texto}</p>
+            </Reveal>
+          ))}
+        </ol>
+
+        <Reveal className="cierre__ctas">
           <a
             className="btn btn--rosa"
-            href={linkWhatsApp("¡Hola Amoma! Quería hacer una consulta.")}
+            href={linkWhatsApp("¡Hola Amoma! Quería hacer un pedido.")}
             target="_blank"
             rel="noopener noreferrer"
           >
-            <Icon name="whatsapp" /> Escribinos
+            <Icon name="whatsapp" /> Escribinos por WhatsApp
           </a>
           <a
-            className="btn btn--borde cierre__ig"
+            className="btn btn--claro"
             href={`https://www.instagram.com/${negocio.instagram}/`}
             target="_blank"
             rel="noopener noreferrer"
           >
             <Icon name="instagram" /> @{negocio.instagram}
           </a>
-        </div>
-      </Reveal>
+        </Reveal>
+      </div>
     </section>
   );
 }

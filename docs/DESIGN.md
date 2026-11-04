@@ -30,25 +30,24 @@ Lo premium sale de la **coherencia** (lo que hace bien Lucciano's) + **un moment
 - **Logo:** se mantiene _Pacifico_ solo en el logotipo.
 - Todas auto-alojadas (sin pedidos a Google).
 
-## Home: pocas secciones, cada una con impacto
+## Home (v2, después del feedback)
 
-Pedido explícito: **poco ruido visual, intuitivo, pensado primero para celular.**
-La home tiene **5 secciones**, no más:
+Recorrido pensado para quien llega desde Instagram con el celular:
 
-1. **Hero** — foto/torta protagonista + frase + un solo botón ("Armá tu torta").
-2. **Armá tu torta** ⭐ (el momento interactivo, inspirado en cómo Lucciano's muestra las bochas):
-   - Elegís con chips grandes: **bizcochuelo → relleno → cobertura → decoración**.
-   - Cada elección hace **caer una capa** sobre la torta con una animación suave (rebote leve),
-     como cuando se apila una bocha. La torta es 3D estilizada en desktop y una ilustración
-     animada (SVG/capas) en celular: se ve igual de bien y carga instantáneo.
-   - Al terminar: tamaño + fecha → **"Pedir por WhatsApp"** con todo el detalle escrito.
-   - Los sabores y precios salen de la base (los carga la dueña).
-3. **Destacados** — 3 o 4 productos con foto recortada; deslizar con el dedo en celular.
-4. **Galería** — trabajos reales; en celular, carrusel a pantalla completa.
-5. **Contacto/cierre** — datos, horarios y aviso de agenda.
+1. **Portada** — fondo crema, foto real de las dos tortas en arco + sello "hecho con amor"
+   (la elegida por la clienta). Botones: "Ver tortas" y "Pedir por WhatsApp".
+2. **Cinta editorial** — franja oscura con palabras que pasan lento (separador, da ritmo).
+3. **Elegí por dónde empezar** — las 3 fotos de calidad (Tortas, Postres individuales,
+   Personalizadas) con numeración 01/02/03 y parallax sutil; cada una lleva a su parte.
+4. **Nuestras tortas** (estilo Lucciano's) — tarjetas de color con la torta sola en un círculo.
+   Al tocar, la foto "viaja" y se agranda (View Transitions) y se abre el detalle con tamaños
+   y "Pedir por WhatsApp" con el producto y el tamaño ya escritos. Filtros por tipo.
+5. **Tu torta, a tu manera** — animación que arma tortas sola (capa por capa, en loop, solo
+   cuando está en pantalla) + campo para escribir la idea → WhatsApp + 3 temáticas reales.
+6. **Cómo pedir** — 3 pasos (Elegí · Escribinos · Coordinamos) en franja oscura + CTAs.
 
-Microinteracciones solo donde ayudan a entender (botón que responde al tocarlo, capa que cae,
-transición al abrir una foto). Nada decorativo que distraiga.
+Descartado: el armador interactivo paso a paso (más fricción que valor; lo personalizado
+se resuelve mejor conversando por WhatsApp).
 
 ## Celular primero
 

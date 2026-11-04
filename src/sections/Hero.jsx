@@ -1,7 +1,8 @@
-import { Link } from "react-router-dom";
 import Picture from "../components/Picture";
 import { fotos } from "../data/images";
+import Icon from "../components/Icon";
 import { negocio } from "../data/catalog";
+import { linkWhatsApp } from "../lib/whatsapp";
 import "../styles/Hero.css";
 
 function Hero() {
@@ -16,16 +17,21 @@ function Hero() {
             Tortas hechas a mano, <em>como en casa.</em>
           </h1>
           <p className="lead hero__anim" style={{ "--d": "180ms" }}>
-            Elegí cada capa, contanos la fecha y la hacemos para vos.{" "}
+            Tortas, tartas y postres para cumpleaños, eventos y antojos.{" "}
             {negocio.lema}.
           </p>
           <div className="hero__ctas hero__anim" style={{ "--d": "280ms" }}>
-            <a href="#arma-tu-torta" className="btn btn--rosa">
-              Armá tu torta
+            <a href="#tortas" className="btn btn--rosa">
+              Ver tortas <Icon name="arrow" />
             </a>
-            <Link to="/galeria" className="btn btn--borde">
-              Ver trabajos
-            </Link>
+            <a
+              className="btn btn--borde"
+              href={linkWhatsApp("¡Hola Amoma! Quería hacer un pedido.")}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              <Icon name="whatsapp" /> Pedir por WhatsApp
+            </a>
           </div>
         </div>
 

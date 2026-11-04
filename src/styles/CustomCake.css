@@ -1,0 +1,200 @@
+.personalizada__grid {
+  display: grid;
+  gap: 1.5rem;
+  grid-template-areas:
+    "cabecera"
+    "escena"
+    "form";
+}
+
+.personalizada__cabecera {
+  grid-area: cabecera;
+}
+
+.personalizada__escena {
+  grid-area: escena;
+}
+
+.personalizada__formbox {
+  grid-area: form;
+}
+
+.personalizada__escena {
+  position: relative;
+  width: min(100%, 28rem);
+  justify-self: center;
+}
+
+.personalizada__escena::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 10%;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, var(--rosa-claro), transparent);
+}
+
+.personalizada__capas {
+  position: relative;
+  min-height: 1.6em;
+  margin-top: 0.5rem;
+  text-align: center;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--cacao-suave);
+}
+
+.personalizada__cabecera .lead {
+  margin-top: 1rem;
+}
+
+.personalizada__form {
+  display: grid;
+  gap: 1rem;
+}
+
+.personalizada__fila {
+  display: grid;
+  gap: 1rem;
+}
+
+.personalizada__form .btn {
+  justify-self: start;
+}
+
+.personalizada__form .btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.campo textarea::placeholder {
+  color: rgb(109 86 80 / 60%);
+}
+
+/* ---------- torta ilustrada ---------- */
+
+.torta-svg {
+  position: relative;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.torta-fantasma {
+  fill: none;
+  stroke: var(--cacao-suave);
+  stroke-opacity: 0.3;
+  stroke-width: 2;
+  stroke-dasharray: 6 7;
+}
+
+.capa,
+.deco {
+  transform-box: fill-box;
+}
+
+.capa--cae {
+  animation: caer 0.75s var(--rebote) both;
+  animation-delay: calc(var(--i, 0) * 90ms);
+}
+
+.capa--relleno {
+  transform-origin: center;
+  animation: aplastar 0.6s var(--rebote) both;
+}
+
+.capa--cobertura {
+  animation: caer 0.8s var(--rebote) both;
+}
+
+.deco {
+  transform-origin: bottom center;
+  animation: caer-deco 0.6s var(--rebote) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 100ms);
+}
+
+@keyframes caer {
+  from {
+    opacity: 0;
+    transform: translateY(-140px);
+  }
+  40% {
+    opacity: 1;
+  }
+}
+
+@keyframes caer-deco {
+  from {
+    opacity: 0;
+    transform: translateY(-70px) scale(0.6);
+  }
+}
+
+@keyframes aplastar {
+  from {
+    transform: scaleY(2.2);
+  }
+}
+
+/* ---------- temáticas ---------- */
+
+.tematicas {
+  margin-top: clamp(3rem, 8vw, 5rem);
+  padding-top: 2rem;
+  border-top: 1px solid rgb(59 36 32 / 12%);
+}
+
+.tematicas__titulo {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+}
+
+.tematicas ul {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: clamp(0.5rem, 2vw, 1.25rem);
+  list-style: none;
+}
+
+.tematicas li {
+  aspect-ratio: 4 / 5;
+  border-radius: var(--radio);
+  overflow: hidden;
+}
+
+.tematicas picture,
+.tematicas img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.8s var(--ease);
+}
+
+.tematicas li:hover img {
+  transform: scale(1.05);
+}
+
+@media (min-width: 40rem) {
+  .personalizada__fila {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (min-width: 56rem) {
+  .personalizada__grid {
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "escena cabecera"
+      "escena form";
+    column-gap: 4rem;
+    row-gap: 2rem;
+    align-items: start;
+  }
+
+  .personalizada__escena {
+    align-self: center;
+  }
+}

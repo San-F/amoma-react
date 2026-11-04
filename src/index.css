@@ -270,3 +270,45 @@ em {
 .saltar:focus {
   top: 1rem;
 }
+
+/* ---------- campos de formulario ---------- */
+
+.campo {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.campo label {
+  font-weight: 700;
+}
+
+.campo small {
+  font-weight: 500;
+  color: var(--cacao-suave);
+}
+
+.campo input,
+.campo textarea,
+.campo select {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.75rem 1rem;
+  border: 1.5px solid rgb(59 36 32 / 14%);
+  border-radius: var(--radio);
+  background: var(--blanco);
+  transition:
+    border-color 0.2s var(--ease),
+    box-shadow 0.2s var(--ease);
+}
+
+.campo textarea {
+  resize: vertical;
+}
+
+.campo input:focus,
+.campo textarea:focus,
+.campo select:focus {
+  border-color: var(--cacao);
+  box-shadow: 0 0 0 4px var(--rosa-claro);
+  outline: none;
+}

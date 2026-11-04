@@ -1,6 +1,6 @@
 // Contenido de la página. Hoy es fijo; en la Etapa 3 sale de Supabase
 // (lo carga la dueña desde el panel) con esta misma forma.
-import { fotos } from "./images";
+import { fotos, portada } from "./images";
 
 export const negocio = {
   nombre: "Amoma",
@@ -11,34 +11,89 @@ export const negocio = {
   zona: "Villa Pueyrredón, CABA",
 };
 
-export const destacados = [
+// Las 3 puertas de entrada de la home
+export const categorias = [
+  {
+    id: "tortas",
+    nombre: "Tortas",
+    descripcion: "Clásicas y caseras, con ingredientes de primera.",
+    foto: portada.tortas,
+    destino: "/?categoria=tortas#tortas",
+  },
+  {
+    id: "postres",
+    nombre: "Postres individuales",
+    descripcion: "Tartas, porciones y cajitas para regalar.",
+    foto: portada.postres,
+    destino: "/?categoria=postres#tortas",
+  },
+  {
+    id: "personalizadas",
+    nombre: "Tortas personalizadas",
+    descripcion: "Para cumpleaños, casamientos y eventos. Vos imaginás.",
+    foto: portada.personalizadas,
+    destino: "/#personalizada",
+  },
+];
+
+export const filtros = [
+  { id: "todas", nombre: "Todas" },
+  { id: "tortas", nombre: "Tortas" },
+  { id: "postres", nombre: "Tartas y postres" },
+];
+
+// ⚠️ Descripciones de ejemplo: confirmar con la dueña (ver docs/PENDIENTES.md).
+export const productos = [
   {
     id: "frutos-rojos",
-    categoria: "Tortas",
+    categoria: "tortas",
     nombre: "Torta de frutos rojos",
-    descripcion: "Chocolate, dulce de leche, crema y frutillas frescas.",
+    descripcion:
+      "Bizcochuelo de chocolate, dulce de leche, crema y frutillas frescas.",
     foto: fotos.frutosRojos,
   },
   {
+    id: "chocolate-rosetas",
+    categoria: "tortas",
+    nombre: "Chocolate y rosetas",
+    descripcion:
+      "Chocolate intenso, borde de dulce de leche y rosetas de crema.",
+    foto: fotos.chocolateRosetas,
+  },
+  {
     id: "lemon-pie",
-    categoria: "Tartas",
+    categoria: "postres",
     nombre: "Lemon pie",
     descripcion: "Masa sablé, crema de limón y merengue.",
     foto: fotos.lemonPie,
   },
   {
     id: "charlotte",
-    categoria: "Tortas",
+    categoria: "tortas",
     nombre: "Charlotte",
     descripcion: "Vainillas, mousse y un moño para regalar.",
     foto: fotos.charlotte,
   },
   {
-    id: "personalizada",
-    categoria: "Personalizadas",
-    nombre: "Torta temática",
-    descripcion: "La diseñamos con vos para cumpleaños y eventos.",
-    foto: fotos.arcoiris,
+    id: "crumble",
+    categoria: "postres",
+    nombre: "Tarta de dulce de leche",
+    descripcion: "Base crocante, mucho dulce de leche y crumble.",
+    foto: fotos.dulceDeLecheCrumble,
+  },
+  {
+    id: "arandanos",
+    categoria: "tortas",
+    nombre: "Torta de arándanos",
+    descripcion: "Crema, dulce de leche y arándanos.",
+    foto: fotos.arandanos,
+  },
+  {
+    id: "tartitas",
+    categoria: "postres",
+    nombre: "Cajita de tartitas",
+    descripcion: "Seis tartitas decoradas. Ideales para regalar.",
+    foto: fotos.tartitasHalloween,
   },
 ];
 

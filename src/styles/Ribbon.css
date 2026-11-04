@@ -1,0 +1,43 @@
+.cinta {
+  overflow: hidden;
+  padding-block: 1.1rem;
+  background: var(--cacao);
+  color: var(--crema);
+  font-family: var(--font-display);
+  font-style: italic;
+  font-size: clamp(1.1rem, 2.5vw, 1.5rem);
+  font-variation-settings: "SOFT" 100;
+}
+
+.cinta__pista {
+  display: flex;
+  width: max-content;
+  animation: cinta 45s linear infinite;
+}
+
+.cinta__grupo,
+.cinta__grupo span {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding-right: 2rem;
+  white-space: nowrap;
+}
+
+.cinta i {
+  font-style: normal;
+  font-size: 0.8em;
+  color: var(--rosa);
+}
+
+@keyframes cinta {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cinta__pista {
+    animation: none;
+  }
+}
