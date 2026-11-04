@@ -16,7 +16,8 @@ function Seguridad() {
   const [enviando, setEnviando] = useState(false);
 
   useEffect(() => {
-    if (!session) return;
+    // solo una cuenta de la lista de admins configura el doble factor
+    if (!session || !estado?.is_member) return;
     (async () => {
       const { data, error } = await supabase.auth.mfa.listFactors();
       if (error) return setError(mensajeError(error));
@@ -35,7 +36,7 @@ function Seguridad() {
       setQr(res.data.totp.qr_code);
       setSecreto(res.data.totp.secret);
     })();
-  }, [session]);
+  }, [session, estado?.is_member]);
 
   if (!session) return <Navigate to="/admin/ingresar" replace />;
   if (estado?.has_mfa) return <Navigate to="/admin" replace />;
