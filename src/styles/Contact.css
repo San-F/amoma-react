@@ -71,3 +71,96 @@
     gap: 4rem;
   }
 }
+
+.contacto__fila {
+  display: grid;
+  gap: 1.25rem;
+}
+
+@media (min-width: 40rem) {
+  .contacto__fila {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.contacto__pref {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.5rem;
+  border: 0;
+}
+
+.contacto__pref legend {
+  font-weight: 700;
+  margin-bottom: 0.4rem;
+}
+
+/* reutiliza el estilo de chip de tamaños del catálogo */
+.contacto__pref .tamano {
+  position: relative;
+  padding: 0.7rem 0.75rem;
+  border: 1.5px solid rgb(59 36 32 / 15%);
+  border-radius: var(--radio);
+  font-weight: 700;
+  text-align: center;
+  cursor: pointer;
+}
+
+.contacto__pref .tamano input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.contacto__pref .tamano:has(input:checked) {
+  background: var(--cacao);
+  border-color: var(--cacao);
+  color: var(--crema);
+}
+
+.contacto__pref .tamano:has(input:focus-visible) {
+  outline: 3px solid var(--rosa);
+  outline-offset: 2px;
+}
+
+.contacto__trampa {
+  position: absolute;
+  left: -10000px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
+.contacto__error {
+  display: grid;
+  gap: 0.75rem;
+  padding: 1rem;
+  border-radius: var(--radio);
+  background: #fde8e8;
+  color: #8a1c1c;
+  font-weight: 600;
+}
+
+.contacto__error .btn {
+  justify-self: start;
+  background: var(--blanco);
+}
+
+.contacto__gracias {
+  text-align: center;
+  justify-items: center;
+}
+
+.contacto__gracias-titulo {
+  font-family: var(--font-display);
+  font-size: 2rem;
+}
+
+.contacto__horarios {
+  margin-top: 1rem;
+  color: var(--cacao-suave);
+}
+
+.contacto__nota a {
+  font-weight: 700;
+}

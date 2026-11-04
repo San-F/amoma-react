@@ -30,7 +30,7 @@ Lista viva. ✅ = hecho · ⏳ = en curso · 🔲 = falta
 ## Para mí (Claude)
 
 - ✅ Etapa 0 — Fundaciones y seguridad base
-- ✅ Etapa 1 — Base de datos, permisos (73 tests), importación desde Excel en la base
+- ✅ Etapa 1 — Base de datos, permisos (88 tests), importación desde Excel en la base
 - ✅ Etapa 2 — Panel de admin: login, doble factor, invitación/recuperación, productos, precios,
   fotos, Excel, categorías, consultas, ajustes (probado con Supabase simulado)
 - ✅ Etapa 3 — El sitio lee productos, precios y ajustes de la base (con respaldo fijo) + aviso destacado
@@ -39,9 +39,11 @@ Lista viva. ✅ = hecho · ⏳ = en curso · 🔲 = falta
 - ✅ Etapa 5 — Google y compartir (OG, schema.org, sitemap), accesibilidad (axe sin errores), privacidad
 - ✅ Playbook reutilizable + `CLAUDE.md`
 - 🔲 Conectar con Supabase real y probar de punta a punta (necesita las claves)
-- 🔲 Formulario de contacto guardado en la base (Edge Function + Turnstile + límite de envíos);
-  hoy abre WhatsApp, que funciona bien
-- 🔲 Galería administrable desde el panel (hoy usa las fotos fijas)
+- ✅ Formulario de contacto guarda las consultas en el panel (límite de envíos + trampa para robots,
+  sin guardar IPs); si falla, ofrece WhatsApp. Sin base conectada sigue abriendo WhatsApp
+- ✅ Galería administrable desde el panel (subir, describir, ordenar, ocultar, borrar)
+- 🔲 Aviso por email a la dueña cuando entra una consulta (necesita configurar un servicio de mails;
+  hoy las ve en el panel → Resumen)
 - 🔲 Mudanza a Cloudflare Pages (archivos ya listos: `public/_headers`, `public/_redirects`)
 - 🔲 Medir con Lighthouse en el sitio publicado
 - 🔲 Etapa 6 — Auditoría de seguridad final y guía de uso para la dueña

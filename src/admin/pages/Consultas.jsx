@@ -2,6 +2,7 @@ import { useState } from "react";
 import { cambiarEstadoConsulta, listarConsultas } from "../lib/api";
 import { useCarga } from "../lib/useCarga";
 import { Estado } from "../Estado";
+import { aWhatsApp } from "../../lib/telefono";
 
 const ESTADOS = {
   new: "Nuevas",
@@ -68,12 +69,12 @@ function Consultas() {
               </p>
               {c.message && <p className="adm-consulta__msg">{c.message}</p>}
               <p className="adm-consulta__datos">
-                <a href={`mailto:${c.email}`}>{c.email}</a>
+                {c.email && <a href={`mailto:${c.email}`}>{c.email}</a>}
                 {c.phone && (
                   <>
-                    {" · "}
+                    {c.email && " · "}
                     <a
-                      href={`https://wa.me/${c.phone.replace(/\D/g, "")}`}
+                      href={`https://wa.me/${aWhatsApp(c.phone)}`}
                       target="_blank"
                       rel="noopener noreferrer"
                     >

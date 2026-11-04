@@ -29,7 +29,7 @@ copiar `.env.example` a `.env.local` y completar las dos claves públicas (ver `
 | ------------------- | --------------------------------------------------------------------------- |
 | `npm run check`     | lint + formato + tests unitarios + build (lo mismo que el CI)               |
 | `npm run test:unit` | tests de precios, slugs y lectura de Excel                                  |
-| `npm run test:db`   | migraciones + 73 tests que intentan romper los permisos (necesita Postgres) |
+| `npm run test:db`   | migraciones + 88 tests que intentan romper los permisos (necesita Postgres) |
 
 ## Documentación
 

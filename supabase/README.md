@@ -9,8 +9,10 @@
 | `migrations/..._storage.sql`        | Carpeta de fotos: pública para ver, solo admin para subir; máx. 8 MB, solo imágenes           |
 | `migrations/..._admin_mfa.sql`      | Ser admin exige lista blanca **y** doble factor (aal2)                                        |
 | `migrations/..._import_catalog.sql` | Importación desde Excel en una sola transacción (todo o nada)                                 |
+| `migrations/..._submit_inquiry.sql` | Formulario de contacto: el público solo puede enviar; límite de envíos y trampa para robots   |
+| `migrations/..._submit_inquiry.sql` | Formulario de contacto: el público solo puede enviar; límite de envíos y trampa para robots   |
 | `seed.sql`                          | Datos iniciales (categorías y datos del negocio). Sin precios inventados.                     |
-| `tests/rls.test.sql`                | 73 tests que intentan romper los permisos como visitante, usuario común y admin               |
+| `tests/rls.test.sql`                | 88 tests que intentan romper los permisos como visitante, usuario común y admin               |
 
 ## Correr los tests (local / CI)
 

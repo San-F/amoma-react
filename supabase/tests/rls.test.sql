@@ -269,6 +269,46 @@ select tests.expect_error('import: anon no puede ni llamar la función',
 rollback;
 
 -- ---------------------------------------------------------------------
+-- FORMULARIO DE CONTACTO (público)
+-- ---------------------------------------------------------------------
+begin;
+set local role anon;
+select set_config('request.jwt.claims', '', true);
+select set_config('request.headers', '{"cf-connecting-ip":"203.0.113.10"}', true);
+
+select tests.expect_count('contacto: anon envía una consulta',
+  $q$ select count(*) from (select public.submit_inquiry('Ana','ana@test.com','','torta','Para el sábado','WhatsApp')) t $q$, 1);
+select tests.expect_count('contacto: alcanza con teléfono',
+  $q$ select count(*) from (select public.submit_inquiry('Beto','','11 5555-1234','evento','','WhatsApp')) t $q$, 1);
+select tests.expect_count('contacto: tercer envío permitido',
+  $q$ select count(*) from (select public.submit_inquiry('Caro','caro@test.com','','consulta','','Email')) t $q$, 1);
+select tests.expect_error('contacto: el cuarto envío en 10 min se frena',
+  $q$ select public.submit_inquiry('Dani','dani@test.com','','torta','','WhatsApp') $q$, 'P0001');
+select set_config('request.headers', '{"cf-connecting-ip":"198.51.100.7"}', true);
+select tests.expect_count('contacto: otra persona (otra IP) puede enviar',
+  $q$ select count(*) from (select public.submit_inquiry('Eva','eva@test.com','','torta','','WhatsApp')) t $q$, 1);
+select tests.expect_error('contacto: sin email ni teléfono se rechaza',
+  $q$ select public.submit_inquiry('Fede','','','torta','','WhatsApp') $q$, '22023');
+select tests.expect_error('contacto: email inválido se rechaza',
+  $q$ select public.submit_inquiry('Gabi','no-es-email','','torta','','WhatsApp') $q$, '23514');
+select tests.expect_error('contacto: motivo inventado se rechaza',
+  $q$ select public.submit_inquiry('Hugo','h@test.com','','hackear','','WhatsApp') $q$, '23514');
+select tests.expect_count('contacto: el robot (campo trampa) "pasa" pero no guarda',
+  $q$ select count(*) from (select public.submit_inquiry('Bot','bot@spam.com','','torta','compre ya','WhatsApp','http://spam')) t $q$, 1);
+select tests.expect_error('contacto: anon sigue sin poder leer consultas', 'select * from public.inquiries');
+select tests.expect_error('contacto: anon no ve los intentos', 'select * from private.inquiry_attempts');
+reset role;
+select tests.expect_count('contacto: se guardaron 4 consultas reales (sin el robot)',
+  $q$ select count(*) from public.inquiries where name in ('Ana','Beto','Caro','Eva') $q$, 4);
+select tests.expect_count('contacto: el robot no quedó guardado',
+  $q$ select count(*) from public.inquiries where name = 'Bot' $q$, 0);
+select tests.expect_count('contacto: todas entran como "nuevas"',
+  $q$ select count(*) from public.inquiries where name in ('Ana','Beto','Caro','Eva') and status = 'new' $q$, 4);
+select tests.expect_count('contacto: la IP no se guarda en claro',
+  $q$ select count(*) from private.inquiry_attempts where ip_hash like '%203.0.113%' $q$, 0);
+rollback;
+
+-- ---------------------------------------------------------------------
 -- Validaciones de datos (aplican a cualquiera, incluso al servidor)
 -- ---------------------------------------------------------------------
 begin;
