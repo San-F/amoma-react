@@ -137,13 +137,11 @@ export async function borrarProducto(id) {
 export async function subirFoto(file, carpeta) {
   const { blob, width, height } = await comprimirImagen(file);
   const path = rutaNueva(carpeta);
-  const { error } = await supabase.storage
-    .from(BUCKET)
-    .upload(path, blob, {
-      contentType: "image/webp",
-      cacheControl: "31536000",
-      upsert: false,
-    });
+  const { error } = await supabase.storage.from(BUCKET).upload(path, blob, {
+    contentType: "image/webp",
+    cacheControl: "31536000",
+    upsert: false,
+  });
   if (error) fallar(error, `No se pudo subir "${file.name}".`);
   return { path, width, height };
 }
