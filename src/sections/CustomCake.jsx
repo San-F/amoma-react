@@ -33,8 +33,10 @@ const COMBINACIONES = [
   ],
 ];
 const CAPAS = ["bizcochuelo", "relleno", "cobertura", "decoracion"];
-// cuánto dura cada momento (ms): vacío, +bizcochuelo, +relleno, +cobertura, +decoración (pausa)
-const TIEMPOS = [700, 1300, 1100, 1400, 2800];
+// cuánto dura cada momento (ms):
+// vacío, +bizcochuelo, +relleno, +cobertura, +decoración (se luce), sale
+const TIEMPOS = [600, 1500, 1100, 1700, 3400, 650];
+const SALE = 5;
 
 function CustomCake() {
   const { negocio, tematicas } = useSitio();
@@ -64,7 +66,7 @@ function CustomCake() {
   useEffect(() => {
     if (!visible) return;
     const t = setTimeout(() => {
-      if (paso < 4) setPaso(paso + 1);
+      if (paso < SALE) setPaso(paso + 1);
       else {
         setCombo((c) => (c + 1) % COMBINACIONES.length);
         setPaso(0);
@@ -77,7 +79,7 @@ function CustomCake() {
   const eleccion = Object.fromEntries(
     CAPAS.map((c, i) => [c, i < paso ? capas[i] : null]),
   );
-  const etiqueta = capas.slice(0, paso).map((c) => c.nombre);
+  const hechas = capas.slice(0, Math.min(paso, CAPAS.length));
 
   const cambiar = (e) => setForm({ ...form, [e.target.name]: e.target.value });
   const completo = form.idea.trim() !== "";
@@ -104,11 +106,21 @@ function CustomCake() {
         <div className="personalizada__escena" ref={escenaRef}>
           <CakeIllustration
             eleccion={eleccion}
+            saliendo={paso === SALE}
             descripcion="Animación: una torta que se arma capa por capa"
           />
-          <p className="personalizada__capas" aria-hidden="true">
-            {etiqueta.length ? etiqueta.join(" · ") : " "}
-          </p>
+          <ul
+            className={`capas-chips ${paso === SALE ? "capas-chips--sale" : ""}`}
+            aria-hidden="true"
+            key={combo}
+          >
+            {hechas.map((c, i) => (
+              <li key={`${i}-${c.id}`}>
+                <span style={{ "--c": c.color ?? "var(--rosa)" }} />
+                {c.nombre}
+              </li>
+            ))}
+          </ul>
         </div>
 
         <Reveal className="personalizada__cabecera">
