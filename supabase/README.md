@@ -8,7 +8,7 @@
 | `migrations/..._rls_and_grants.sql` | Permisos: quién puede leer/escribir cada cosa (RLS)                                           |
 | `migrations/..._storage.sql`        | Carpeta de fotos: pública para ver, solo admin para subir; máx. 8 MB, solo imágenes           |
 | `seed.sql`                          | Datos iniciales (categorías y datos del negocio). Sin precios inventados.                     |
-| `tests/rls.test.sql`                | 52 tests que intentan romper los permisos como visitante, usuario común y admin               |
+| `tests/rls.test.sql`                | 60 tests que intentan romper los permisos como visitante, usuario común y admin               |
 
 ## Correr los tests (local / CI)
 

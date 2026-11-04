@@ -165,7 +165,7 @@ rollback;
 -- ---------------------------------------------------------------------
 begin;
 set local role authenticated;
-select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated"}', true);
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated","aal":"aal2"}', true);
 
 select tests.expect_count('admin: is_admin() es verdadero', 'select count(*) from (select 1 where private.is_admin()) t', 1);
 select tests.expect_count('admin ve todas las categorías', 'select count(*) from public.categories', 2);
@@ -180,6 +180,35 @@ select tests.expect_rows('admin sube imagen', $q$ insert into storage.objects (b
 select tests.expect_error('admin tampoco se gestiona admins por la API', $q$ insert into public.admins values ('00000000-0000-0000-0000-00000000000b') $q$);
 select tests.expect_count('auditoría registra los cambios del admin con su id',
   $q$ select count(*) from public.audit_log where actor = '00000000-0000-0000-0000-00000000000a' $q$, 7);
+rollback;
+
+-- ---------------------------------------------------------------------
+-- ADMIN SIN SEGUNDO FACTOR (robaron su contraseña, pero no su celular)
+-- ---------------------------------------------------------------------
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated","aal":"aal1"}', true);
+
+select tests.expect_count('admin sin MFA: admin_status dice miembro sin MFA',
+  'select count(*) from public.admin_status() where is_member and not has_mfa', 1);
+select tests.expect_count('admin sin MFA no ve borradores', 'select count(*) from public.products', 1);
+select tests.expect_count('admin sin MFA no ve consultas', 'select count(*) from public.inquiries', 0);
+select tests.expect_rows('admin sin MFA no cambia precios', 'update public.product_variants set price_cents = 1', 0);
+select tests.expect_error('admin sin MFA no crea categorías', $q$ insert into public.categories (slug,name) values ('x','X') $q$);
+select tests.expect_error('admin sin MFA no sube imágenes', $q$ insert into storage.objects (bucket_id,name) values ('public-images','x.jpg') $q$);
+rollback;
+
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000b","role":"authenticated","aal":"aal2"}', true);
+select tests.expect_count('no-admin con MFA sigue sin ser admin',
+  'select count(*) from public.admin_status() where is_member', 0);
+select tests.expect_rows('no-admin con MFA no cambia precios', 'update public.product_variants set price_cents = 1', 0);
+rollback;
+
+begin;
+set local role anon;
+select tests.expect_error('anon no puede consultar admin_status', 'select * from public.admin_status()');
 rollback;
 
 -- ---------------------------------------------------------------------
