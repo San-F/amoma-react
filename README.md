@@ -1,43 +1,41 @@
-# Amoma - Repostería casera
+# Amoma · Pastelería casera
 
-Trabajo Práctico Final del Curso Inicial Front-End de la UTN (Opción A).
+Página web y panel de administración de **Amoma**, pastelería casera en Villa Pueyrredón (CABA).
 
-Pasé a React la página de Amoma que había hecho con HTML y CSS en el TP Intermedio. El diseño es el mismo, pero ahora está armada con componentes, el formulario de contacto funciona con estados y tiene navegación entre páginas con React Router.
+- **Sitio público**: portada, categorías, catálogo con detalle y precios, tortas personalizadas,
+  cómo pedir, galería, contacto y privacidad. Los pedidos salen por WhatsApp con el mensaje armado.
+- **Panel `/admin`**: la dueña carga productos, precios por tamaño y fotos (o todo desde un **Excel**),
+  categorías, datos del negocio y un aviso destacado. Login con **doble factor obligatorio**.
 
 ## Tecnologías
 
-- React
-- Vite
-- React Router
-- CSS
+React 19 · Vite · React Router 7 · Supabase (Postgres + Auth + Storage) · Cloudflare Pages / Vercel ·
+GitHub Actions. Todo funciona con planes **gratis**.
 
-## Cómo ejecutarlo
+## Desarrollo
 
-1. Clonar el repositorio:
-
-```
-git clone https://github.com/sansobrinofrancisco-ui/amoma-react.git
-```
-
-2. Entrar a la carpeta e instalar las dependencias:
-
-```
-cd amoma-react
+```bash
 npm install
 ```
 
-3. Levantar el proyecto:
-
-```
+```bash
 npm run dev
 ```
 
-4. Abrir http://localhost:5173 en el navegador.
+Sin configurar Supabase, el sitio usa el contenido fijo de `src/data/catalog.js`. Para conectarlo,
+copiar `.env.example` a `.env.local` y completar las dos claves públicas (ver `supabase/README.md`).
 
-## Páginas
+| Comando             | Qué hace                                                                    |
+| ------------------- | --------------------------------------------------------------------------- |
+| `npm run check`     | lint + formato + tests unitarios + build (lo mismo que el CI)               |
+| `npm run test:unit` | tests de precios, slugs y lectura de Excel                                  |
+| `npm run test:db`   | migraciones + 73 tests que intentan romper los permisos (necesita Postgres) |
 
-- Inicio
-- Galería
-- Contacto
+## Documentación
 
-También hay una página 404 para las rutas que no existen.
+- [`docs/PLAN.md`](docs/PLAN.md) — plan por etapas
+- [`docs/PENDIENTES.md`](docs/PENDIENTES.md) — qué falta (del cliente y del código)
+- [`docs/DESIGN.md`](docs/DESIGN.md) — dirección de diseño
+- [`docs/playbook/`](docs/playbook/README.md) — guía reutilizable para futuros proyectos
+- [`supabase/README.md`](supabase/README.md) — base de datos, configuración y backups
+- [`CLAUDE.md`](CLAUDE.md) — reglas de trabajo que Claude lee al empezar

@@ -4,51 +4,45 @@ Lista viva. ✅ = hecho · ⏳ = en curso · 🔲 = falta
 
 ## Para vos (Francisco)
 
-### Cuando estés en casa (la red del trabajo bloquea Supabase)
+### Cuando estés en casa
 
 - 🔲 Pasarme la **Project URL** y la **publishable key** de Supabase (son públicas).
   ❌ Nunca la secret key ni la contraseña de la base.
-- 🔲 Confirmar que la contraseña de la base es la **nueva** y está guardada en un gestor de contraseñas.
-- 🔲 Crear cuenta gratis en **Cloudflare** y conectar el repo `amoma-react` en Pages
-  (build: `npm run build`, salida: `dist`). No hacer deploy hasta que te avise.
-
-### Configurar Supabase (te guío paso a paso cuando llegue el momento)
-
-- 🔲 Pegar las migraciones y el seed en el **SQL Editor** (ver `supabase/README.md`).
-- 🔲 **Desactivar el registro público** (Authentication → Sign In / Providers → Email).
-- 🔲 Cambiar los **mails de invitación y de recuperar contraseña** (te paso el texto).
-- 🔲 Invitar a la dueña y hacerla admin.
-- 🔲 Revisar el **Security Advisor** (sin alertas críticas).
-
-### GitHub (mantenimiento automático)
-
-- 🔲 Cargar Variables: `SUPABASE_URL`, `SUPABASE_PUBLISHABLE_KEY`, `BACKUPS_ENABLED=true`.
-- 🔲 Cargar Secrets: `SUPABASE_DB_URL` (Session pooler), `BACKUP_PASSPHRASE`.
+- 🔲 Seguir la **puesta en marcha** de [`supabase/README.md`](../supabase/README.md) (te guío paso a paso):
+  migraciones, registro apagado, mails de invitación, invitar a la dueña.
+- 🔲 Cargar las variables `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY` en Vercel (o Cloudflare) y redeploy.
+- 🔲 Crear cuenta gratis en **Cloudflare**: Pages (mudanza) + Turnstile (anti-robots del login).
+- 🔲 GitHub → Variables y Secrets para keepalive y backups (ver `supabase/README.md`).
 
 ### Con la clienta (dueña de Amoma)
 
-- 🔲 Que instale una app de códigos (Google Authenticator, Microsoft Authenticator o similar) para el doble factor.
-- 🔲 Lista de productos con **tamaños y precios** reales.
-- 🔲 Sabores para **"Armá tu torta"**: bizcochuelos, rellenos, coberturas, decoraciones (y si alguno suma precio).
-- 🔲 Fotos: idealmente una sesión con **misma luz y mismo fondo**. Guardar siempre los originales.
-- 🔲 Horarios, zona de entrega y anticipación mínima para pedidos.
+- 🔲 Instalar **Google Authenticator** o **Microsoft Authenticator** (doble factor del panel).
+- 🔲 Lista de productos con **tamaños, porciones y precios** → la cargamos con la **planilla Excel** del panel.
+- 🔲 Confirmar descripciones de las tortas (las actuales son de ejemplo).
+- 🔲 ¿Hace **envíos** o solo retiro? (se menciona en "Cómo pedir").
+- 🔲 Horarios y anticipación mínima para pedidos (hoy el formulario pide 3 días para personalizadas).
+- 🔲 Fotos nuevas con **misma luz y mismo fondo**. Guardar siempre los originales.
+- 🔲 Revisar el texto de **Privacidad**.
 - 🔲 Testimonios **reales** (con permiso) si quiere mostrarlos.
-- 🔲 Decidir si quiere dominio propio (`amoma.com.ar`, se paga por año en NIC Argentina) o usar el gratis de Cloudflare.
+- 🔲 ¿Dominio propio (`amoma.com.ar`, pago anual en NIC Argentina) o el gratis?
+- 🔲 Leer juntos [`docs/playbook/06-fraudes.md`](playbook/06-fraudes.md) (comprobantes falsos, phishing).
 
 ## Para mí (Claude)
 
 - ✅ Etapa 0 — Fundaciones y seguridad base
-- ✅ Etapa 1 — Base de datos, permisos y 60 tests
-- ⏳ Etapa 2 — Panel de admin (base con doble factor lista; falta la interfaz, se prueba con las claves)
-- 🔲 Etapa 2 — Categorías, galería, ajustes y consultas en el panel
+- ✅ Etapa 1 — Base de datos, permisos (73 tests), importación desde Excel en la base
+- ✅ Etapa 2 — Panel de admin: login, doble factor, invitación/recuperación, productos, precios,
+  fotos, Excel, categorías, consultas, ajustes (probado con Supabase simulado)
+- ✅ Etapa 3 — El sitio lee productos, precios y ajustes de la base (con respaldo fijo) + aviso destacado
+- ✅ Etapa 4 — Front premium v2 (portada elegida por la clienta, categorías, catálogo estilo Lucciano's,
+  personalizada animada, cómo pedir)
+- ✅ Etapa 5 — Google y compartir (OG, schema.org, sitemap), accesibilidad (axe sin errores), privacidad
+- ✅ Playbook reutilizable + `CLAUDE.md`
 - 🔲 Conectar con Supabase real y probar de punta a punta (necesita las claves)
+- 🔲 Formulario de contacto guardado en la base (Edge Function + Turnstile + límite de envíos);
+  hoy abre WhatsApp, que funciona bien
+- 🔲 Galería administrable desde el panel (hoy usa las fotos fijas)
 - 🔲 Mudanza a Cloudflare Pages (archivos ya listos: `public/_headers`, `public/_redirects`)
-- 🔲 Etapa 3 — Sitio público conectado + formulario real con anti-spam
-- 🔲 Etapa 3 — Página de **Privacidad** (link en el pie). Sin aviso de cookies: la página no usa cookies ni rastreo.
-  Si algún día se agrega algo que requiera consentimiento, aviso chico y poco invasivo estilo luccianos.net
-  (esquina inferior, "Aceptar" y "Rechazar" del mismo tamaño, sin bloquear la página).
-- ✅ Etapa 4 (primera versión) — Front premium: 5 secciones, "Armá tu torta", galería con visor, contacto por WhatsApp
-- 🔲 Etapa 4 — Versión 3D de la torta para compu (opcional) y ajustes según tu feedback
-- 🔲 Etapa 5 — Velocidad, Google y accesibilidad
-- 🔲 Etapa 6 — Auditoría final, publicación y guía de uso para la dueña
-- 🔲 Al final: extraer la **plantilla reutilizable** (login, permisos, panel, seguridad) para el próximo proyecto (gimnasio)
+- 🔲 Medir con Lighthouse en el sitio publicado
+- 🔲 Etapa 6 — Auditoría de seguridad final y guía de uso para la dueña
+- 🔲 Al final: extraer la **plantilla** a un repo propio para el próximo proyecto (gimnasio)

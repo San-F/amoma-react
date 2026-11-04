@@ -215,7 +215,7 @@ Datos de contexto: el informe de Veracode 2025 encontró que ~45 % de muestras d
 - [x] Cabeceras de seguridad en `vercel.json` (CSP estricta, HSTS, anti-framing, etc.), probadas en navegador sin violaciones.
 - [x] Prettier + script `npm run check` (lint + formato + build).
 - [x] CI en GitHub Actions (lint, formato, build, `npm audit`) + Dependabot.
-- [x] Guía de seguridad reutilizable: [`docs/security/SECURITY-BASELINE.md`](security/SECURITY-BASELINE.md).
+- [x] Guía de seguridad reutilizable: [`docs/playbook/03-seguridad.md`](playbook/03-seguridad.md).
 - Movido a la Etapa 2: reorganizar carpetas (`features/`, `lib/`) cuando existan esas piezas; TypeScript se decide ahí.
 - **Listo cuando:** el sitio se ve igual que hoy, sin scripts externos, CI verde.
 
