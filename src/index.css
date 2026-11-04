@@ -9,7 +9,8 @@
   --cacao: #3b2420;
   --cacao-suave: #6d5650;
   --rosa: #e76f92;
-  --rosa-oscuro: #b8476a; /* contraste AA sobre crema para texto */
+  --rosa-oscuro: #a83e5f; /* texto rosa: contraste AA (≥4.5) sobre crema y beige */
+  --rosa-boton: #c4466f; /* fondo de botones con texto blanco: contraste 4.7 */
   --rosa-claro: #fbe3ea;
   --pistacho: #a8c686;
   --dulce: #c98a4b;
@@ -193,7 +194,7 @@ em {
 }
 
 .btn--rosa {
-  --btn-bg: var(--rosa);
+  --btn-bg: var(--rosa-boton);
   --btn-fg: var(--blanco);
 }
 

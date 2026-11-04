@@ -1,14 +1,69 @@
 <!doctype html>
-<html lang="es">
+<html lang="es-AR">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/logo.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Amoma - Repostería Casera</title>
+    <title>Amoma · Tortas caseras en Villa Pueyrredón, CABA</title>
+    <meta
+      name="description"
+      content="Pastelería casera en Villa Pueyrredón, CABA. Tortas, tartas, postres y tortas personalizadas para cumpleaños y eventos. Encargos por WhatsApp."
+    />
+    <meta name="theme-color" content="#fbf5ee" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="apple-touch-icon" href="/logo.png" />
+    <!-- ⚠️ cambiar por el dominio definitivo (ver docs/PENDIENTES.md) -->
+    <link rel="canonical" href="https://amoma-react.vercel.app/" />
+
+    <!-- vista previa al compartir (WhatsApp, Instagram, Facebook) -->
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_AR" />
+    <meta property="og:site_name" content="Amoma" />
+    <meta
+      property="og:title"
+      content="Amoma · Tortas hechas a mano, como en casa"
+    />
+    <meta
+      property="og:description"
+      content="Tortas, tartas y postres caseros en Villa Pueyrredón, CABA. Encargos por WhatsApp."
+    />
+    <meta property="og:url" content="https://amoma-react.vercel.app/" />
+    <meta property="og:image" content="https://amoma-react.vercel.app/og.jpg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta
+      property="og:image:alt"
+      content="Dos tortas de chocolate con crema y frutos rojos de Amoma"
+    />
+    <meta name="twitter:card" content="summary_large_image" />
+
+    <!-- ficha de negocio para Google (datos, no se ejecuta) -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@type": "Bakery",
+        "name": "Amoma",
+        "description": "Pastelería casera: tortas, tartas, postres y tortas personalizadas.",
+        "url": "https://amoma-react.vercel.app/",
+        "image": "https://amoma-react.vercel.app/og.jpg",
+        "logo": "https://amoma-react.vercel.app/logo.png",
+        "telephone": "+5491136362466",
+        "areaServed": "Ciudad Autónoma de Buenos Aires",
+        "address": {
+          "@type": "PostalAddress",
+          "addressLocality": "Villa Pueyrredón",
+          "addressRegion": "CABA",
+          "addressCountry": "AR"
+        },
+        "sameAs": ["https://www.instagram.com/amoma.cakeshop/"]
+      }
+    </script>
   </head>
   <body>
-    <!-- contenedor donde se monta la app -->
     <div id="root"></div>
+    <noscript
+      >Amoma · Tortas caseras. Escribinos por WhatsApp al 11 3636
+      2466.</noscript
+    >
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>

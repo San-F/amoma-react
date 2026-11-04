@@ -46,7 +46,7 @@ function Login() {
   };
 
   return (
-    <div className="adm-auth">
+    <main className="adm-auth">
       <form className="adm-auth__caja" onSubmit={enviar}>
         <p className="adm-auth__marca">Amoma · Panel</p>
         {modo === "enviado" ? (
@@ -121,7 +121,7 @@ function Login() {
           </>
         )}
       </form>
-    </div>
+    </main>
   );
 }
 

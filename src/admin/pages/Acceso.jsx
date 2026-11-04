@@ -55,7 +55,7 @@ function Acceso() {
   };
 
   return (
-    <div className="adm-auth">
+    <main className="adm-auth">
       <div className="adm-auth__caja">
         <p className="adm-auth__marca">Amoma · Panel</p>
         {fase === "verificando" && <p>Verificando el link…</p>}
@@ -103,7 +103,7 @@ function Acceso() {
           </form>
         )}
       </div>
-    </div>
+    </main>
   );
 }
 

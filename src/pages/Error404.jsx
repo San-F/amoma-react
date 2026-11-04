@@ -1,8 +1,10 @@
+import { useTitulo } from "../lib/useTitulo";
 import { Link } from "react-router-dom";
 import "../styles/Error404.css";
 
 // se muestra con cualquier dirección que no exista (ruta "*")
 function Error404() {
+  useTitulo("Página no encontrada");
   return (
     <section className="error-404 seccion contenedor">
       <p className="error-404__numero" aria-hidden="true">

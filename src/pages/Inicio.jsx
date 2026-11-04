@@ -1,3 +1,4 @@
+import { useTitulo } from "../lib/useTitulo";
 import Hero from "../sections/Hero";
 import Ribbon from "../sections/Ribbon";
 import Categories from "../sections/Categories";
@@ -8,6 +9,7 @@ import Closing from "../sections/Closing";
 // Recorrido pensado para quien llega desde Instagram con el celular:
 // impacto → qué hacen → elegir una torta → o pedir una a medida → cómo pedir
 function Inicio() {
+  useTitulo();
   return (
     <>
       <Hero />

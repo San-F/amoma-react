@@ -61,7 +61,7 @@ function Seguridad() {
   };
 
   return (
-    <div className="adm-auth">
+    <main className="adm-auth">
       <form className="adm-auth__caja" onSubmit={verificar}>
         <p className="adm-auth__marca">Amoma · Panel</p>
         {estado && !estado.is_member ? (
@@ -132,7 +132,7 @@ function Seguridad() {
           </>
         )}
       </form>
-    </div>
+    </main>
   );
 }
 

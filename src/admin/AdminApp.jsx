@@ -24,7 +24,7 @@ import "./admin.css";
 
 function SinConfigurar() {
   return (
-    <div className="adm-auth">
+    <main className="adm-auth">
       <div className="adm-auth__caja">
         <p className="adm-auth__marca">Amoma · Panel</p>
         <h1>Falta conectar la base de datos</h1>
@@ -34,7 +34,7 @@ function SinConfigurar() {
           <code>supabase/README.md</code>).
         </p>
       </div>
-    </div>
+    </main>
   );
 }
 
