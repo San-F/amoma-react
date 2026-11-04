@@ -1,8 +1,9 @@
 import { useId, useState } from "react";
 import Icon from "./Icon";
 import Reveal from "./Reveal";
-import { negocio } from "../data/catalog";
+
 import { linkWhatsApp } from "../lib/whatsapp";
+import { useSitio } from "../lib/sitio";
 import "../styles/Contact.css";
 
 const MOTIVOS = {
@@ -16,6 +17,8 @@ const VACIO = { nombre: "", motivo: "torta", mensaje: "" };
 // Mientras no exista el envío por servidor (Etapa 3), el formulario arma
 // el mensaje y abre WhatsApp: el pedido llega SÍ o SÍ, nunca se pierde.
 function Contact() {
+  const { negocio } = useSitio();
+  const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   const uid = useId();
   const [form, setForm] = useState(VACIO);
 
@@ -33,7 +36,7 @@ function Contact() {
   const enviar = (e) => {
     e.preventDefault();
     if (!completo) return;
-    window.open(linkWhatsApp(mensaje), "_blank", "noopener,noreferrer");
+    window.open(wa(mensaje), "_blank", "noopener,noreferrer");
   };
 
   return (

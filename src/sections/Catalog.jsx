@@ -4,8 +4,10 @@ import { useSearchParams } from "react-router-dom";
 import Picture from "../components/Picture";
 import Reveal from "../components/Reveal";
 import Icon from "../components/Icon";
-import { filtros, productos, tamanos } from "../data/catalog";
+import { filtros, tamanos } from "../data/catalog";
 import { linkWhatsApp } from "../lib/whatsapp";
+import { formatearPrecio } from "../lib/money";
+import { useSitio } from "../lib/sitio";
 import "../styles/Catalog.css";
 
 const NOMBRE_FILTRO = Object.fromEntries(filtros.map((f) => [f.id, f.nombre]));
@@ -24,6 +26,8 @@ function conTransicion(cambio) {
 }
 
 function Catalog() {
+  const { negocio, productos } = useSitio();
+  const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   const [params, setParams] = useSearchParams();
   const pedido = params.get("categoria");
   const filtro = NOMBRE_FILTRO[pedido] ? pedido : "todas";
@@ -43,7 +47,7 @@ function Catalog() {
     conTransicion(() => {
       if (foto) foto.style.viewTransitionName = "";
       setAbierto(p);
-      setTamano("mediana");
+      setTamano(p.variantes?.[0]?.id ?? "mediana");
       dialogRef.current?.showModal();
     });
   };
@@ -66,7 +70,21 @@ function Catalog() {
       preventScrollReset: true,
     });
 
-  const tamanoElegido = tamanos.find((t) => t.id === tamano);
+  // tamaños reales (cargados por la dueña) o los genéricos de ejemplo
+  const opciones = abierto?.variantes?.length
+    ? abierto.variantes.map((v) => ({
+        id: v.id,
+        nombre: v.nombre,
+        detalle: [
+          v.porciones && `${v.porciones} porciones`,
+          formatearPrecio(v.precio),
+        ]
+          .filter(Boolean)
+          .join(" · "),
+        precio: v.precio,
+      }))
+    : tamanos;
+  const tamanoElegido = opciones.find((t) => t.id === tamano) ?? opciones[0];
 
   return (
     <section
@@ -150,13 +168,13 @@ function Catalog() {
 
               <fieldset className="detalle__tamanos">
                 <legend>Tamaño</legend>
-                {tamanos.map((t) => (
+                {opciones.map((t) => (
                   <label key={t.id} className="tamano">
                     <input
                       type="radio"
                       name="tamano"
                       value={t.id}
-                      checked={tamano === t.id}
+                      checked={tamanoElegido?.id === t.id}
                       onChange={() => setTamano(t.id)}
                     />
                     <span>{t.nombre}</span>
@@ -167,8 +185,8 @@ function Catalog() {
 
               <a
                 className="btn btn--rosa detalle__cta"
-                href={linkWhatsApp(
-                  `¡Hola Amoma! Quiero encargar: ${abierto.nombre}, tamaño ${tamanoElegido.nombre.toLowerCase()} (${tamanoElegido.detalle}). ¿Me pasan precio y disponibilidad?`,
+                href={wa(
+                  `¡Hola Amoma! Quiero encargar: ${abierto.nombre}, tamaño ${tamanoElegido.nombre.toLowerCase()} (${tamanoElegido.detalle}). ¿Me confirman disponibilidad?`,
                 )}
                 target="_blank"
                 rel="noopener noreferrer"

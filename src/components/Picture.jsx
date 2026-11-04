@@ -7,6 +7,22 @@ function Picture({
   loading = "lazy",
   fetchPriority,
 }) {
+  // foto subida por la dueña (URL de Supabase): una sola imagen ya optimizada
+  if (!foto.picture) {
+    return (
+      <picture className={className}>
+        <img
+          src={foto.src}
+          width={foto.width}
+          height={foto.height}
+          alt={foto.alt}
+          loading={loading}
+          decoding="async"
+          fetchPriority={fetchPriority}
+        />
+      </picture>
+    );
+  }
   const { sources, img } = foto.picture;
   return (
     <picture className={className}>

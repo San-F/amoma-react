@@ -1,11 +1,14 @@
 import Picture from "../components/Picture";
 import { fotos } from "../data/images";
 import Icon from "../components/Icon";
-import { negocio } from "../data/catalog";
+
 import { linkWhatsApp } from "../lib/whatsapp";
+import { useSitio } from "../lib/sitio";
 import "../styles/Hero.css";
 
 function Hero() {
+  const { negocio } = useSitio();
+  const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   return (
     <section className="hero">
       <div className="hero__inner contenedor">
@@ -26,7 +29,7 @@ function Hero() {
             </a>
             <a
               className="btn btn--borde"
-              href={linkWhatsApp("¡Hola Amoma! Quería hacer un pedido.")}
+              href={wa("¡Hola Amoma! Quería hacer un pedido.")}
               target="_blank"
               rel="noopener noreferrer"
             >

@@ -1,9 +1,10 @@
 import { negocio } from "../data/catalog";
 
 // Arma un link de WhatsApp con el mensaje ya escrito.
-export function linkWhatsApp(mensaje) {
+// `numero` viene de los ajustes cargados por la dueña (useSitio); si no, el fijo.
+export function linkWhatsApp(mensaje, numero = negocio.whatsapp) {
   const texto = encodeURIComponent(mensaje.trim());
-  return `https://wa.me/${negocio.whatsapp}?text=${texto}`;
+  return `https://wa.me/${numero}?text=${texto}`;
 }
 
 // "2026-11-20" → "viernes 20 de noviembre"

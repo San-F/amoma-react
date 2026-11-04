@@ -1,9 +1,11 @@
 import { Link } from "react-router-dom";
-import { negocio } from "../data/catalog";
+
 import Icon from "./Icon";
+import { useSitio } from "../lib/sitio";
 import "../styles/Footer.css";
 
 function Footer() {
+  const { negocio } = useSitio();
   return (
     <footer className="footer">
       <div className="footer__inner contenedor">

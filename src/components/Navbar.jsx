@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, NavLink, useLocation } from "react-router-dom";
 import logo from "../assets/img/logo.png?w=96&format=webp";
 import { linkWhatsApp } from "../lib/whatsapp";
+import { useSitio } from "../lib/sitio";
 import "../styles/Navbar.css";
 
 const LINKS = [
@@ -12,6 +13,8 @@ const LINKS = [
 ];
 
 function Navbar() {
+  const { negocio } = useSitio();
+  const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   const [abierto, setAbierto] = useState(false);
   const [conFondo, setConFondo] = useState(false);
   const { pathname } = useLocation();
@@ -61,7 +64,7 @@ function Navbar() {
         <div className="nav__acciones">
           <a
             className="btn btn--rosa nav__cta"
-            href={linkWhatsApp("¡Hola Amoma! Quería hacer un pedido.")}
+            href={wa("¡Hola Amoma! Quería hacer un pedido.")}
             target="_blank"
             rel="noopener noreferrer"
           >

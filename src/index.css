@@ -312,3 +312,13 @@ em {
   box-shadow: 0 0 0 4px var(--rosa-claro);
   outline: none;
 }
+
+/* aviso destacado (lo escribe la dueña en Ajustes) */
+.aviso {
+  padding: 0.6rem var(--gutter);
+  background: var(--rosa);
+  color: var(--blanco);
+  font-weight: 700;
+  font-size: 0.9rem;
+  text-align: center;
+}

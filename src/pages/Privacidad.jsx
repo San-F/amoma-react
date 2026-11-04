@@ -1,9 +1,10 @@
-import { negocio } from "../data/catalog";
+import { useSitio } from "../lib/sitio";
 import "../styles/Privacidad.css";
 
 // Texto base según la Ley 25.326 de Protección de Datos Personales (Argentina).
 // ⚠️ Revisar con la dueña antes de publicar (ver docs/PENDIENTES.md).
 function Privacidad() {
+  const { negocio } = useSitio();
   return (
     <article className="privacidad seccion contenedor">
       <p className="eyebrow">Legal</p>

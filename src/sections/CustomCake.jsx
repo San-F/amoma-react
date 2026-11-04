@@ -6,6 +6,7 @@ import Icon from "../components/Icon";
 import { fotos } from "../data/images";
 import { opcionesTorta } from "../data/catalog";
 import { fechaLegible, fechaMinima, linkWhatsApp } from "../lib/whatsapp";
+import { useSitio } from "../lib/sitio";
 import "../styles/CustomCake.css";
 
 const op = (grupo, id) =>
@@ -39,6 +40,8 @@ const TIEMPOS = [700, 1300, 1100, 1400, 2800];
 const TEMATICAS = [fotos.arcoiris, fotos.surf, fotos.calabaza];
 
 function CustomCake() {
+  const { negocio } = useSitio();
+  const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   const uid = useId();
   const escenaRef = useRef(null);
   const [combo, setCombo] = useState(0);
@@ -91,8 +94,7 @@ function CustomCake() {
 
   const enviar = (e) => {
     e.preventDefault();
-    if (completo)
-      window.open(linkWhatsApp(mensaje), "_blank", "noopener,noreferrer");
+    if (completo) window.open(wa(mensaje), "_blank", "noopener,noreferrer");
   };
 
   return (

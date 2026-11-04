@@ -1,10 +1,11 @@
 import Reveal from "../components/Reveal";
 import Icon from "../components/Icon";
-import { negocio } from "../data/catalog";
+
 import { linkWhatsApp } from "../lib/whatsapp";
+import { useSitio } from "../lib/sitio";
 import "../styles/Closing.css";
 
-const PASOS = [
+const pasos = (zona) => [
   {
     titulo: "Elegí",
     texto: "Una torta del catálogo o contanos tu idea para una personalizada.",
@@ -15,11 +16,13 @@ const PASOS = [
   },
   {
     titulo: "Coordinamos",
-    texto: `Confirmás, y acordamos el retiro en ${negocio.zona.split(",")[0]} o el envío.`,
+    texto: `Confirmás, y acordamos el retiro en ${zona.split(",")[0]} o el envío.`,
   },
 ];
 
 function Closing() {
+  const { negocio } = useSitio();
+  const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   return (
     <section className="cierre" aria-labelledby="cierre-titulo">
       <div className="contenedor">
@@ -31,7 +34,7 @@ function Closing() {
         </Reveal>
 
         <ol className="cierre__pasos">
-          {PASOS.map((p, i) => (
+          {pasos(negocio.zona).map((p, i) => (
             <Reveal as="li" key={p.titulo} delay={i * 120}>
               <span className="cierre__num">0{i + 1}</span>
               <h3>{p.titulo}</h3>
@@ -43,7 +46,7 @@ function Closing() {
         <Reveal className="cierre__ctas">
           <a
             className="btn btn--rosa"
-            href={linkWhatsApp("¡Hola Amoma! Quería hacer un pedido.")}
+            href={wa("¡Hola Amoma! Quería hacer un pedido.")}
             target="_blank"
             rel="noopener noreferrer"
           >
