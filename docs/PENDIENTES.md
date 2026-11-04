@@ -39,12 +39,13 @@ Lista viva. ✅ = hecho · ⏳ = en curso · 🔲 = falta
 
 - ✅ Etapa 0 — Fundaciones y seguridad base
 - ✅ Etapa 1 — Base de datos, permisos y 60 tests
-- ⏳ Etapa 2 — Panel de admin (login + doble factor + productos/precios/fotos)
+- ⏳ Etapa 2 — Panel de admin (base con doble factor lista; falta la interfaz, se prueba con las claves)
 - 🔲 Etapa 2 — Categorías, galería, ajustes y consultas en el panel
 - 🔲 Conectar con Supabase real y probar de punta a punta (necesita las claves)
 - 🔲 Mudanza a Cloudflare Pages (archivos ya listos: `public/_headers`, `public/_redirects`)
 - 🔲 Etapa 3 — Sitio público conectado + formulario real con anti-spam
-- 🔲 Etapa 4 — Diseño premium ("Armá tu torta", 5 secciones, celular primero)
+- ✅ Etapa 4 (primera versión) — Front premium: 5 secciones, "Armá tu torta", galería con visor, contacto por WhatsApp
+- 🔲 Etapa 4 — Versión 3D de la torta para compu (opcional) y ajustes según tu feedback
 - 🔲 Etapa 5 — Velocidad, Google y accesibilidad
 - 🔲 Etapa 6 — Auditoría final, publicación y guía de uso para la dueña
 - 🔲 Al final: extraer la **plantilla reutilizable** (login, permisos, panel, seguridad) para el próximo proyecto (gimnasio)
