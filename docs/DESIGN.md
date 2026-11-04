@@ -30,20 +30,32 @@ Lo premium sale de la **coherencia** (lo que hace bien Lucciano's) + **un moment
 - **Logo:** se mantiene _Pacifico_ solo en el logotipo.
 - Todas auto-alojadas (sin pedidos a Google).
 
-## Momentos clave
+## Home: pocas secciones, cada una con impacto
 
-1. **Hero: la torta se arma.** Torta 3D estilizada hecha en código (Three.js / React Three Fiber), sin
-   necesidad de un modelo comprado: al scrollear bajan las capas (bizcochuelo → dulce de leche → crema →
-   frutos rojos) y se cuenta "cómo la hacemos". Gira suave con el mouse. Gratis y propia.
-   Respaldo: imagen estática en celulares de gama baja y con "reducir movimiento".
-2. **Productos que flotan.** Fotos reales recortadas sin fondo (con herramienta libre, p. ej. `rembg`) sobre
-   tarjetas de color por categoría; inclinación 3D sutil al pasar el mouse; entrada escalonada con el scroll.
-3. **Pedido como experiencia** (la "tienda que no parece tienda"): elegís producto → tamaño → sabor → fecha,
-   se arma "Tu pedido" en un panel animado y sale por WhatsApp con el mensaje listo.
-4. **Cinta de sabores** en movimiento continuo entre secciones.
-5. **Galería** con scroll horizontal y transición fluida al abrir una foto (View Transitions).
-6. **Microinteracciones:** botones magnéticos, cursor personalizado (solo desktop), subrayados animados,
-   transiciones entre páginas.
+Pedido explícito: **poco ruido visual, intuitivo, pensado primero para celular.**
+La home tiene **5 secciones**, no más:
+
+1. **Hero** — foto/torta protagonista + frase + un solo botón ("Armá tu torta").
+2. **Armá tu torta** ⭐ (el momento interactivo, inspirado en cómo Lucciano's muestra las bochas):
+   - Elegís con chips grandes: **bizcochuelo → relleno → cobertura → decoración**.
+   - Cada elección hace **caer una capa** sobre la torta con una animación suave (rebote leve),
+     como cuando se apila una bocha. La torta es 3D estilizada en desktop y una ilustración
+     animada (SVG/capas) en celular: se ve igual de bien y carga instantáneo.
+   - Al terminar: tamaño + fecha → **"Pedir por WhatsApp"** con todo el detalle escrito.
+   - Los sabores y precios salen de la base (los carga la dueña).
+3. **Destacados** — 3 o 4 productos con foto recortada; deslizar con el dedo en celular.
+4. **Galería** — trabajos reales; en celular, carrusel a pantalla completa.
+5. **Contacto/cierre** — datos, horarios y aviso de agenda.
+
+Microinteracciones solo donde ayudan a entender (botón que responde al tocarlo, capa que cae,
+transición al abrir una foto). Nada decorativo que distraiga.
+
+## Celular primero
+
+- Se diseña primero a 375 px de ancho y después se agranda.
+- Zonas táctiles de 44 px mínimo; el botón principal al alcance del pulgar.
+- Gestos naturales (deslizar), sin depender de "hover".
+- El 3D solo se carga en dispositivos que lo soportan bien; si no, la versión ilustrada.
 
 ## Reglas (qué NO hacer)
 
