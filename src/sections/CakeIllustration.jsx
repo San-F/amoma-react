@@ -77,11 +77,11 @@ const ANILLO = Array.from({ length: 8 }, (_, i) => {
 
 // destellos alrededor de la torta terminada
 const DESTELLOS = [
-  [62, 96, 1],
-  [300, 84, 0.8],
-  [44, 196, 0.7],
-  [318, 170, 1.1],
-  [250, 40, 0.6],
+  [84, 112, 1],
+  [286, 100, 0.8],
+  [62, 200, 0.7],
+  [300, 186, 1.1],
+  [232, 62, 0.6],
 ];
 
 function Destello({ x, y, s, i }) {

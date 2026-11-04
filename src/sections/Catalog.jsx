@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import Palabras from "../components/Palabras";
 import { flushSync } from "react-dom";
 import { useSearchParams } from "react-router-dom";
 import Picture from "../components/Picture";
@@ -68,6 +69,7 @@ function Catalog() {
     setParams(id === "todas" ? {} : { categoria: id }, {
       replace: true,
       preventScrollReset: true,
+      viewTransition: true,
     });
 
   // tamaños reales (cargados por la dueña) o los genéricos de ejemplo
@@ -97,7 +99,9 @@ function Catalog() {
           <div>
             <p className="eyebrow">Nuestras tortas</p>
             <h2 id="catalogo-titulo">
-              Tocá una y <em>conocela</em>
+              <Palabras>
+                Tocá una y <em>conocela</em>
+              </Palabras>
             </h2>
           </div>
           <div className="filtros" role="group" aria-label="Filtrar">
@@ -115,9 +119,13 @@ function Catalog() {
           </div>
         </Reveal>
 
-        <ul className="catalogo__grid" key={filtro}>
+        <ul className="catalogo__grid">
           {lista.map((p, i) => (
-            <li key={p.id} className="sabor" style={{ "--i": i }}>
+            <li
+              key={p.id}
+              className="sabor"
+              style={{ "--i": i, viewTransitionName: `sabor-${p.id}` }}
+            >
               <button
                 type="button"
                 className="sabor__btn"

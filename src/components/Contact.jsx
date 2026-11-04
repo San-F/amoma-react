@@ -1,4 +1,5 @@
 import { useId, useState } from "react";
+import Palabras from "./Palabras";
 import Icon from "./Icon";
 import Reveal from "./Reveal";
 import { linkWhatsApp } from "../lib/whatsapp";
@@ -72,7 +73,9 @@ function Contact() {
         <Reveal>
           <p className="eyebrow">Contacto</p>
           <h1>
-            Hablemos de <em>tu torta</em>
+            <Palabras>
+              Hablemos de <em>tu torta</em>
+            </Palabras>
           </h1>
           <p className="lead">
             Contanos qué necesitás y te respondemos con precio y disponibilidad.

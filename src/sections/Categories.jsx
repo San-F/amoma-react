@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import Palabras from "../components/Palabras";
 import Picture from "../components/Picture";
 import Reveal from "../components/Reveal";
 import Icon from "../components/Icon";
@@ -12,7 +13,9 @@ function Categories() {
         <Reveal className="cabecera">
           <p className="eyebrow">Lo que hacemos</p>
           <h2 id="cat-titulo">
-            Elegí por dónde <em>empezar</em>
+            <Palabras>
+              Elegí por dónde <em>empezar</em>
+            </Palabras>
           </h2>
         </Reveal>
       </div>
@@ -20,7 +23,11 @@ function Categories() {
       <ul className="categorias__lista">
         {categorias.map((c, i) => (
           <Reveal as="li" key={c.id} delay={i * 110} className="categoria">
-            <Link to={c.destino} className="categoria__link">
+            <Link
+              to={c.destino}
+              className="categoria__link descubrir"
+              viewTransition
+            >
               <div className="categoria__foto">
                 <Picture foto={c.foto} sizes="(min-width: 64rem) 24rem, 80vw" />
               </div>

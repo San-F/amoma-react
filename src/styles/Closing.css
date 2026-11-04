@@ -24,8 +24,24 @@
 }
 
 .cierre__pasos li {
+  position: relative;
   padding-top: 1.5rem;
-  border-top: 1px solid rgb(251 245 238 / 18%);
+}
+
+/* la línea de arriba se dibuja de izquierda a derecha */
+.cierre__pasos li::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1px;
+  background: rgb(251 245 238 / 22%);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 1.3s var(--ease) calc(var(--reveal-delay, 0ms) + 150ms);
+}
+
+.cierre__pasos li.is-visible::before {
+  transform: none;
 }
 
 .cierre__num {

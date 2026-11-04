@@ -17,6 +17,7 @@ function Navbar() {
   const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   const [abierto, setAbierto] = useState(false);
   const [conFondo, setConFondo] = useState(false);
+  const [oculta, setOculta] = useState(false);
   const { pathname } = useLocation();
 
   // cerrar el menú al navegar
@@ -24,7 +25,16 @@ function Navbar() {
 
   // la barra toma fondo al bajar un poco
   useEffect(() => {
-    const onScroll = () => setConFondo(window.scrollY > 12);
+    let ultimo = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      setConFondo(y > 12);
+      // se esconde al bajar (más pantalla para el contenido) y vuelve al subir
+      if (Math.abs(y - ultimo) > 6) {
+        setOculta(y > ultimo && y > 160);
+        ultimo = y;
+      }
+    };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
@@ -39,9 +49,16 @@ function Navbar() {
   }, [abierto]);
 
   return (
-    <header className={`nav ${conFondo || abierto ? "nav--fondo" : ""}`}>
+    <header
+      className={`nav ${conFondo || abierto ? "nav--fondo" : ""} ${oculta && !abierto ? "nav--oculta" : ""}`}
+    >
       <nav className="nav__barra contenedor" aria-label="Principal">
-        <Link to="/" className="nav__logo" aria-label="Amoma, ir al inicio">
+        <Link
+          to="/"
+          className="nav__logo"
+          aria-label="Amoma, ir al inicio"
+          viewTransition
+        >
           <img src={logo} alt="" width="48" height="48" />
           <span>Amoma</span>
         </Link>
@@ -53,9 +70,13 @@ function Navbar() {
           {LINKS.map((l) => (
             <li key={l.to}>
               {l.ancla ? (
-                <Link to={l.to}>{l.texto}</Link>
+                <Link to={l.to} viewTransition>
+                  {l.texto}
+                </Link>
               ) : (
-                <NavLink to={l.to}>{l.texto}</NavLink>
+                <NavLink to={l.to} viewTransition>
+                  {l.texto}
+                </NavLink>
               )}
             </li>
           ))}

@@ -29,7 +29,7 @@ function Footer() {
             </a>
           </li>
           <li>
-            <Link to="/contacto">
+            <Link to="/contacto" viewTransition>
               <Icon name="phone" /> {negocio.telefonoVisible}
             </Link>
           </li>
@@ -37,7 +37,9 @@ function Footer() {
       </div>
       <p className="footer__legal contenedor">
         © {new Date().getFullYear()} Amoma · Pastelería casera ·{" "}
-        <Link to="/privacidad">Privacidad</Link>
+        <Link to="/privacidad" viewTransition>
+          Privacidad
+        </Link>
       </p>
     </footer>
   );

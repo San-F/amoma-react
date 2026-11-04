@@ -1,4 +1,5 @@
 import { useEffect, useId, useRef, useState } from "react";
+import Palabras from "../components/Palabras";
 import CakeIllustration from "./CakeIllustration";
 import Picture from "../components/Picture";
 import Reveal from "../components/Reveal";
@@ -126,7 +127,9 @@ function CustomCake() {
         <Reveal className="personalizada__cabecera">
           <p className="eyebrow">Tortas personalizadas</p>
           <h2 id={`${uid}-t`}>
-            Tu torta, <em>a tu manera</em>
+            <Palabras>
+              Tu torta, <em>a tu manera</em>
+            </Palabras>
           </h2>
           <p className="lead">
             Sabores, colores, temática, cantidad de personas. Contanos tu idea y
@@ -188,8 +191,12 @@ function CustomCake() {
         <Reveal className="tematicas">
           <p className="tematicas__titulo">Algunas que ya hicimos</p>
           <ul>
-            {tematicas.map((f) => (
-              <li key={f.src || f.alt}>
+            {tematicas.map((f, i) => (
+              <li
+                key={f.src || f.alt}
+                className="descubrir"
+                style={{ "--reveal-delay": `${i * 120}ms` }}
+              >
                 <Picture foto={f} sizes="(min-width: 64rem) 22rem, 30vw" />
               </li>
             ))}

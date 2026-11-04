@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
+import Palabras from "./Palabras";
 import Picture from "./Picture";
 import Reveal from "./Reveal";
 import Icon from "./Icon";
 import { useSitio } from "../lib/sitio";
+import { conTransicion } from "../lib/transicion";
 import "../styles/Gallery.css";
 
 function Gallery() {
@@ -11,8 +13,32 @@ function Gallery() {
   const [abierta, setAbierta] = useState(null);
   const dialogRef = useRef(null);
   const toqueX = useRef(null);
+  const miniaturas = useRef([]);
 
   const total = galeria.length;
+
+  // abrir y cerrar con la foto que "viaja" desde la grilla (View Transitions)
+  const abrir = (i) => {
+    const mini = miniaturas.current[i];
+    if (mini) mini.style.viewTransitionName = "foto-galeria";
+    conTransicion(() => {
+      if (mini) mini.style.viewTransitionName = "";
+      setAbierta(i);
+      dialogRef.current?.showModal();
+    });
+  };
+
+  const cerrar = () => {
+    const mini = abierta !== null ? miniaturas.current[abierta] : null;
+    const t = conTransicion(() => {
+      dialogRef.current?.close();
+      setAbierta(null);
+      if (mini) mini.style.viewTransitionName = "foto-galeria";
+    });
+    const limpiar = () => mini && (mini.style.viewTransitionName = "");
+    if (t) t.finished.finally(limpiar);
+    else limpiar();
+  };
   const mover = (paso) => setAbierta((i) => (i + paso + total) % total);
 
   // <dialog> nativo: atrapa el foco, cierra con Escape y es accesible
@@ -45,7 +71,9 @@ function Gallery() {
         <Reveal className="galeria__cabecera">
           <p className="eyebrow">Galería</p>
           <h1>
-            Hechas con <em>amor</em>
+            <Palabras>
+              Hechas con <em>amor</em>
+            </Palabras>
           </h1>
           <p className="lead">
             Algunos de los trabajos que salieron de nuestra cocina.
@@ -57,8 +85,9 @@ function Gallery() {
             <Reveal as="li" key={f.src || f.alt} delay={(i % 3) * 80}>
               <button
                 type="button"
-                className="galeria__foto"
-                onClick={() => setAbierta(i)}
+                className="galeria__foto descubrir"
+                ref={(el) => (miniaturas.current[i] = el)}
+                onClick={() => abrir(i)}
               >
                 <Picture
                   foto={f}
@@ -75,11 +104,15 @@ function Gallery() {
         ref={dialogRef}
         className="visor"
         aria-label="Foto ampliada"
+        onCancel={(e) => {
+          e.preventDefault();
+          cerrar();
+        }}
         onClose={() => setAbierta(null)}
         onKeyDown={onKeyDown}
         onTouchStart={onTouchStart}
         onTouchEnd={onTouchEnd}
-        onClick={(e) => e.target === e.currentTarget && setAbierta(null)}
+        onClick={(e) => e.target === e.currentTarget && cerrar()}
       >
         {foto && (
           <figure className="visor__figura" key={abierta}>
@@ -95,7 +128,7 @@ function Gallery() {
         <button
           type="button"
           className="visor__btn visor__cerrar"
-          onClick={() => setAbierta(null)}
+          onClick={cerrar}
           autoFocus
         >
           <Icon name="close" />

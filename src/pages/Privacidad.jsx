@@ -1,4 +1,5 @@
 import { useTitulo } from "../lib/useTitulo";
+import Palabras from "../components/Palabras";
 import { useSitio } from "../lib/sitio";
 import "../styles/Privacidad.css";
 
@@ -10,7 +11,9 @@ function Privacidad() {
   return (
     <article className="privacidad seccion contenedor">
       <p className="eyebrow">Legal</p>
-      <h1>Privacidad</h1>
+      <h1 className="palabras--ya">
+        <Palabras>Privacidad</Palabras>
+      </h1>
       <p className="lead">
         En pocas palabras: usamos tus datos solo para responder tu pedido.
       </p>

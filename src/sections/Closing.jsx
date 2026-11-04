@@ -1,4 +1,5 @@
 import Reveal from "../components/Reveal";
+import Palabras from "../components/Palabras";
 import Icon from "../components/Icon";
 
 import { linkWhatsApp } from "../lib/whatsapp";
@@ -29,7 +30,9 @@ function Closing() {
         <Reveal className="cierre__cabecera">
           <p className="eyebrow">Cómo pedir</p>
           <h2 id="cierre-titulo">
-            Simple, como <em>tiene que ser</em>
+            <Palabras>
+              Simple, como <em>tiene que ser</em>
+            </Palabras>
           </h2>
         </Reveal>
 

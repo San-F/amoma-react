@@ -1,4 +1,5 @@
 import Picture from "../components/Picture";
+import Palabras from "../components/Palabras";
 import { fotos } from "../data/images";
 import Icon from "../components/Icon";
 
@@ -16,8 +17,10 @@ function Hero() {
           <p className="eyebrow hero__anim" style={{ "--d": "0ms" }}>
             Pastelería casera · {negocio.zona}
           </p>
-          <h1 className="hero__titulo hero__anim" style={{ "--d": "80ms" }}>
-            Tortas hechas a mano, <em>como en casa.</em>
+          <h1 className="hero__titulo palabras--ya">
+            <Palabras>
+              Tortas hechas a mano, <em>como en casa.</em>
+            </Palabras>
           </h1>
           <p className="lead hero__anim" style={{ "--d": "180ms" }}>
             Tortas, tartas y postres para cumpleaños, eventos y antojos.{" "}
@@ -47,10 +50,27 @@ function Hero() {
               fetchPriority="high"
             />
           </div>
-          <p className="hero__sello" aria-hidden="true">
-            <span>hecho</span>
-            <span>con amor</span>
-          </p>
+          <div className="hero__sello" aria-hidden="true">
+            {/* texto en círculo que gira lento, como un sello de pastelería */}
+            <svg viewBox="0 0 100 100">
+              <defs>
+                <path
+                  id="sello-circulo"
+                  d="M50,50 m-37,0 a37,37 0 1,1 74,0 a37,37 0 1,1 -74,0"
+                />
+              </defs>
+              <text>
+                <textPath
+                  href="#sello-circulo"
+                  textLength="230"
+                  lengthAdjust="spacing"
+                >
+                  hecho con amor ✦ casero ✦ hecho con amor ✦ casero ✦
+                </textPath>
+              </text>
+            </svg>
+            <span className="hero__corazon">♥</span>
+          </div>
         </div>
       </div>
     </section>

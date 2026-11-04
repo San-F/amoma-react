@@ -59,3 +59,23 @@ Cada sección tiene **un** botón principal. Todo termina en la acción que impo
 
 Si la página **no usa cookies ni rastreo**, no se pone banner (es ruido). Si algún día hace falta:
 chico, en una esquina, "Aceptar" y "Rechazar" del mismo tamaño, sin bloquear la página (estilo luccianos.net).
+
+## Sistema de movimiento (lo que usamos en Amoma)
+
+Un mismo "lenguaje" en toda la página, para que se sienta diseñado y no un efecto suelto por sección:
+
+| Qué            | Cómo                                                                                 | Dónde                                   |
+| -------------- | ------------------------------------------------------------------------------------ | --------------------------------------- |
+| Títulos        | cada palabra sube detrás de una "cortina" (`<Palabras>`), escalonada                 | todos los h1/h2                         |
+| Fotos          | se **descubren** de abajo hacia arriba (`clip-path`) mientras se achican de 1.18 a 1 | portada, categorías, galería, temáticas |
+| Foto → detalle | la foto **viaja** y se agranda (View Transitions)                                    | catálogo y galería                      |
+| Entre páginas  | fundido suave (View Transitions de React Router: `viewTransition`)                   | menú, pie, links                        |
+| Filtros        | las tarjetas se **deslizan** a su nuevo lugar                                        | catálogo                                |
+| Detalles vivos | sello con texto girando, corazón que late, cinta que pasa, torta que se arma         | portada, personalizada                  |
+| Menú           | se esconde al bajar, vuelve al subir                                                 | todas                                   |
+
+Reglas: solo `transform`, `opacity` y `clip-path`; curvas suaves (`cubic-bezier(.22,1,.36,1)`);
+duraciones entre 0.4 s y 1.2 s; todo se apaga con "reducir movimiento"; animaciones en loop solo
+mientras se ven. `text-wrap: balance` en títulos para que no quede una palabra sola.
+Revisar siempre en **390, 768, 1366 y 1920 px**: en monitores grandes, ampliar el ancho del
+contenido y la tipografía para que no quede "chiquito" con mucho vacío.
