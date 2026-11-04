@@ -44,6 +44,9 @@ Lista viva. ✅ = hecho · ⏳ = en curso · 🔲 = falta
 - 🔲 Conectar con Supabase real y probar de punta a punta (necesita las claves)
 - 🔲 Mudanza a Cloudflare Pages (archivos ya listos: `public/_headers`, `public/_redirects`)
 - 🔲 Etapa 3 — Sitio público conectado + formulario real con anti-spam
+- 🔲 Etapa 3 — Página de **Privacidad** (link en el pie). Sin aviso de cookies: la página no usa cookies ni rastreo.
+  Si algún día se agrega algo que requiera consentimiento, aviso chico y poco invasivo estilo luccianos.net
+  (esquina inferior, "Aceptar" y "Rechazar" del mismo tamaño, sin bloquear la página).
 - ✅ Etapa 4 (primera versión) — Front premium: 5 secciones, "Armá tu torta", galería con visor, contacto por WhatsApp
 - 🔲 Etapa 4 — Versión 3D de la torta para compu (opcional) y ajustes según tu feedback
 - 🔲 Etapa 5 — Velocidad, Google y accesibilidad
