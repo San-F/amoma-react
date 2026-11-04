@@ -206,13 +206,17 @@ Datos de contexto: el informe de Veracode 2025 encontró que ~45 % de muestras d
 
 ## 5. Etapas
 
-### Etapa 0 — Fundaciones y limpieza
+### Etapa 0 — Fundaciones y limpieza ✅
 
-- Estructura de carpetas (`features/`, `components/ui/`, `lib/`), alias de imports.
-- TypeScript (gradual) o JSDoc + lint estricto, Prettier.
-- Reemplazar Font Awesome por `lucide-react`; quitar `console.log`.
-- Cabeceras de seguridad base en `vercel.json`.
-- CI en GitHub Actions: lint + build + `npm audit`.
+- [x] Vite actualizado (vulnerabilidad alta del servidor de desarrollo).
+- [x] Font Awesome Kit reemplazado por íconos SVG propios (`src/components/Icon.jsx`).
+- [x] Google Fonts reemplazado por fuentes auto-alojadas (Fontsource).
+- [x] Eliminados los `console.log` con datos de clientes.
+- [x] Cabeceras de seguridad en `vercel.json` (CSP estricta, HSTS, anti-framing, etc.), probadas en navegador sin violaciones.
+- [x] Prettier + script `npm run check` (lint + formato + build).
+- [x] CI en GitHub Actions (lint, formato, build, `npm audit`) + Dependabot.
+- [x] Guía de seguridad reutilizable: [`docs/security/SECURITY-BASELINE.md`](security/SECURITY-BASELINE.md).
+- Movido a la Etapa 2: reorganizar carpetas (`features/`, `lib/`) cuando existan esas piezas; TypeScript se decide ahí.
 - **Listo cuando:** el sitio se ve igual que hoy, sin scripts externos, CI verde.
 
 ### Etapa 1 — Base de datos y seguridad de datos
