@@ -1,4 +1,5 @@
 import logo from "../assets/img/logo.png";
+import Icon from "./Icon";
 import "../styles/Footer.css";
 
 function Footer() {
@@ -13,7 +14,7 @@ function Footer() {
           target="_blank"
           rel="noopener noreferrer"
         >
-          <i className="fa-brands fa-instagram"></i> @amoma.cakeshop
+          <Icon name="instagram" /> @amoma.cakeshop
         </a>
       </p>
     </footer>

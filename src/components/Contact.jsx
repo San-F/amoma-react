@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Icon from "./Icon";
 import "../styles/Contact.css";
 
 const FORMULARIO_VACIO = {
@@ -23,20 +24,17 @@ function Contact() {
   // el name de cada input coincide con su clave en el estado
   const manejarCambios = (e) => {
     const { name, value } = e.target;
-    console.log(`Campo ${name}:`, value);
     setForm({ ...form, [name]: value });
   };
 
   const enviarFormulario = (e) => {
     // evita que la página se recargue
     e.preventDefault();
-    console.log("Formulario enviado:", form);
     setEnviado(form);
     setForm(FORMULARIO_VACIO);
   };
 
   const limpiarFormulario = () => {
-    console.log("Formulario limpiado");
     setForm(FORMULARIO_VACIO);
     setEnviado(null);
   };
@@ -47,13 +45,13 @@ function Contact() {
 
       <div className="contacto-datos">
         <p>
-          <i className="fa-solid fa-phone"></i> Teléfono: 11 3636 2466
+          <Icon name="phone" /> Teléfono: 11 3636 2466
         </p>
         <p>
-          <i className="fa-brands fa-instagram"></i> Instagram: @amoma.cakeshop
+          <Icon name="instagram" /> Instagram: @amoma.cakeshop
         </p>
         <p>
-          <i className="fa-solid fa-location-dot"></i> Villa Pueyrredón, CABA
+          <Icon name="location" /> Villa Pueyrredón, CABA
         </p>
       </div>
 
