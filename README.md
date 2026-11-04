@@ -36,6 +36,7 @@ copiar `.env.example` a `.env.local` y completar las dos claves públicas (ver `
 - [`docs/PLAN.md`](docs/PLAN.md) — plan por etapas
 - [`docs/PENDIENTES.md`](docs/PENDIENTES.md) — qué falta (del cliente y del código)
 - [`docs/DESIGN.md`](docs/DESIGN.md) — dirección de diseño
+- [`docs/GUIA-PANEL.md`](docs/GUIA-PANEL.md) — guía de uso del panel para la dueña
 - [`docs/playbook/`](docs/playbook/README.md) — guía reutilizable para futuros proyectos
 - [`supabase/README.md`](supabase/README.md) — base de datos, configuración y backups
 - [`CLAUDE.md`](CLAUDE.md) — reglas de trabajo que Claude lee al empezar

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { Navigate, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabase";
 import { mensajeError, useAuth } from "../auth";
+import { qrSeguro } from "../lib/qr";
 
 function Seguridad() {
   const { session, estado, refrescarEstado, salir } = useAuth();
@@ -33,7 +34,7 @@ function Seguridad() {
       });
       if (res.error) return setError(mensajeError(res.error));
       setFactorId(res.data.id);
-      setQr(res.data.totp.qr_code);
+      setQr(qrSeguro(res.data.totp.qr_code));
       setSecreto(res.data.totp.secret);
     })();
   }, [session, estado?.is_member]);

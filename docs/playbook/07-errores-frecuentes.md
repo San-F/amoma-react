@@ -51,3 +51,8 @@ Revisar esta lista en **cada diff** antes de dar algo por terminado.
 28. Sin backups → backup encriptado automático.
 29. Banner de cookies cuando no hay cookies (ruido) — o al revés, rastreo sin aviso.
 30. Pasarle contraseñas a la IA por el chat. Nunca: van en el gestor de contraseñas o en "secrets".
+31. **QR del doble factor que no se ve**: Supabase devuelve el SVG sin codificar dentro de un
+    `data:` URL; si el SVG trae `#` (colores), el navegador corta la URL y la imagen no carga.
+    Re-codificarlo (`src/admin/lib/qr.js`) y probar con un simulador que devuelva el formato real.
+32. Probar con datos simulados que "ayudan" (ya codificados, sin casos raros) esconde errores:
+    el simulador tiene que imitar el formato **real** del servidor.

@@ -46,5 +46,6 @@ Lista viva. ✅ = hecho · ⏳ = en curso · 🔲 = falta
   hoy las ve en el panel → Resumen)
 - 🔲 Mudanza a Cloudflare Pages (archivos ya listos: `public/_headers`, `public/_redirects`)
 - 🔲 Medir con Lighthouse en el sitio publicado
-- 🔲 Etapa 6 — Auditoría de seguridad final y guía de uso para la dueña
+- ✅ Guía de uso del panel para la dueña, con capturas: [`docs/GUIA-PANEL.md`](GUIA-PANEL.md)
+- 🔲 Etapa 6 — Auditoría de seguridad final
 - 🔲 Al final: extraer la **plantilla** a un repo propio para el próximo proyecto (gimnasio)
