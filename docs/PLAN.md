@@ -241,7 +241,7 @@ Datos de contexto: el informe de Veracode 2025 encontró que ~45 % de muestras d
 - Formulario de contacto real: Edge Function + Zod + Turnstile + límite de envíos + aviso por email.
 - **Listo cuando:** lo que se carga en el admin aparece en el sitio, y las consultas llegan.
 
-### Etapa 4 — Diseño premium y motion
+### Etapa 4 — Diseño premium y motion (ver [`DESIGN.md`](DESIGN.md))
 
 - Design tokens, tipografías, sistema de componentes.
 - Rediseño de cada sección según la sección 4.
