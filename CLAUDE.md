@@ -28,6 +28,8 @@ Pendientes: [`docs/PENDIENTES.md`](docs/PENDIENTES.md) (mantenerlo actualizado).
 
 ## Diseño
 
+- Antes de diseñar, leer `docs/playbook/11-lecciones-amoma.md` (recursos premium probados y errores a no repetir) y revisar `12-checklist-calidad.md` antes de publicar.
+
 - Celular primero (390 px). Fotos **reales** del negocio; nunca de banco/IA/Pinterest para productos.
 - Contraste AA medido (botón rosa `--rosa-boton`, no `--rosa`). `prefers-reduced-motion` siempre.
 - Pocas secciones, cada una con un propósito y un botón principal. Ver `docs/DESIGN.md`.
