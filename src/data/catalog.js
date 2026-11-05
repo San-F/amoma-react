@@ -110,12 +110,12 @@ export const productos = [
     foto: fotos.tartitasHalloween,
   },
   {
-    // ⚠️ PROVISORIO: foto de referencia y opciones a confirmar con la dueña
+    // ⚠️ Opciones a confirmar con la dueña
     id: "chipa",
     categoria: "salado",
     nombre: "Chipá",
     descripcion: "Casero, recién horneado, con mucho queso.",
-    foto: portada.salado,
+    foto: fotos.chipa,
     variantes: [
       { id: "media", nombre: "Media docena", porciones: null, precio: null },
       { id: "docena", nombre: "Docena", porciones: null, precio: null },

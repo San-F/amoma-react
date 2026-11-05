@@ -6,6 +6,7 @@ import card2 from "../assets/img/card-2.jpg?w=400;717&format=avif;webp;jpg&as=pi
 import cardSalado from "../assets/img/card-salado.jpg?w=400;768&format=avif;webp;jpg&as=picture";
 import card3 from "../assets/img/card-3.jpg?w=400;800;1068&format=avif;webp;jpg&as=picture";
 // Trabajos reales de Amoma
+import chipa from "../assets/img/chipa.jpg?w=480;800;922&format=avif;webp;jpg&as=picture";
 import torta1 from "../assets/img/torta-1.jpeg?w=480;800;1200&format=avif;webp;jpg&as=picture";
 import torta2 from "../assets/img/torta-2.jpeg?w=480;800;1008&format=avif;webp;jpg&as=picture";
 import torta3 from "../assets/img/torta-3.jpeg?w=480;800;912&format=avif;webp;jpg&as=picture";
@@ -34,6 +35,10 @@ export const portada = {
 };
 
 export const fotos = {
+  chipa: {
+    picture: chipa,
+    alt: "Plato de chipá dorado, uno abierto con queso estirándose",
+  },
   chocolateRosetas: {
     picture: torta1,
     alt: "Torta de chocolate con rosetas de crema",
