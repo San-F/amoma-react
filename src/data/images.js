@@ -3,6 +3,7 @@
 // Fotos de portada y categorías (las originales de la página)
 import hero from "../assets/img/hero.jpg?w=400;736&format=avif;webp;jpg&as=picture";
 import card2 from "../assets/img/card-2.jpg?w=400;717&format=avif;webp;jpg&as=picture";
+import cardSalado from "../assets/img/card-salado.jpg?w=400;768&format=avif;webp;jpg&as=picture";
 import card3 from "../assets/img/card-3.jpg?w=400;800;1068&format=avif;webp;jpg&as=picture";
 // Trabajos reales de Amoma
 import torta1 from "../assets/img/torta-1.jpeg?w=480;800;1200&format=avif;webp;jpg&as=picture";
@@ -26,6 +27,10 @@ export const portada = {
     alt: "Porciones de torta con crema y frutos rojos",
   },
   personalizadas: { picture: card3, alt: "Torta armada capa por capa" },
+  salado: {
+    picture: cardSalado,
+    alt: "Chipá recién horneado, abierto, con queso que se estira",
+  },
 };
 
 export const fotos = {

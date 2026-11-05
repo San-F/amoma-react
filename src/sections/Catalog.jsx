@@ -94,7 +94,7 @@ function Catalog() {
       <div className="contenedor">
         <Reveal className="catalogo__cabecera">
           <div>
-            <p className="eyebrow">Nuestras tortas</p>
+            <p className="eyebrow">Nuestro catálogo</p>
             <h2 id="catalogo-titulo">
               <Palabras>
                 Tocá una y <em>conocela</em>
@@ -115,6 +115,26 @@ function Catalog() {
             ))}
           </div>
         </Reveal>
+
+        {!lista.length && (
+          <p className="catalogo__vacio" role="status">
+            Pronto vas a ver acá esta sección. Mientras tanto,{" "}
+            <a
+              href={wa(
+                "¡Hola Amoma! Quería consultar por: " +
+                  NOMBRE_FILTRO[filtro] +
+                  ".",
+              )}
+
+              target="_blank"
+
+              rel="noopener noreferrer"
+            >
+              consultanos por WhatsApp
+            </a>
+            .
+          </p>
+        )}
 
         <ul className="catalogo__grid" ref={gridRef}>
           {lista.map((p, i) => (

@@ -12,6 +12,8 @@ export const negocio = {
 };
 
 // Las 3 puertas de entrada de la home
+// `tono`: colores que toma el fondo de la sección al pasar por cada tarjeta
+// (contraste AA medido para texto y acento)
 export const categorias = [
   {
     id: "tortas",
@@ -19,6 +21,7 @@ export const categorias = [
     descripcion: "Clásicas y caseras, con ingredientes de primera.",
     foto: portada.tortas,
     destino: "/?categoria=tortas#tortas",
+    tono: { fondo: "#2a1915", texto: "#fbf5ee", acento: "#f3a6bd" },
   },
   {
     id: "postres",
@@ -26,6 +29,15 @@ export const categorias = [
     descripcion: "Tartas, porciones y cajitas para regalar.",
     foto: portada.postres,
     destino: "/?categoria=postres#tortas",
+    tono: { fondo: "#f5d5de", texto: "#3b2420", acento: "#9a3556" },
+  },
+  {
+    id: "salado",
+    nombre: "Salado",
+    descripcion: "Chipá, tartas y bocaditos para la previa.",
+    foto: portada.salado,
+    destino: "/?categoria=salado#tortas",
+    tono: { fondo: "#f2dfb8", texto: "#3b2420", acento: "#7a3f0e" },
   },
   {
     id: "personalizadas",
@@ -33,6 +45,7 @@ export const categorias = [
     descripcion: "Para cumpleaños, casamientos y eventos. Vos imaginás.",
     foto: portada.personalizadas,
     destino: "/#personalizada",
+    tono: { fondo: "#1f1a1b", texto: "#fbf5ee", acento: "#f3a6bd" },
   },
 ];
 
@@ -40,6 +53,7 @@ export const filtros = [
   { id: "todas", nombre: "Todas" },
   { id: "tortas", nombre: "Tortas" },
   { id: "postres", nombre: "Tartas y postres" },
+  { id: "salado", nombre: "Salado" },
 ];
 
 // ⚠️ Descripciones de ejemplo: confirmar con la dueña (ver docs/PENDIENTES.md).

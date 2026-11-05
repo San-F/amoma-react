@@ -387,3 +387,17 @@
     animation: none;
   }
 }
+
+.catalogo__vacio {
+  padding: 2.5rem 1.5rem;
+  border-radius: var(--radio-grande);
+  background: var(--blanco);
+  text-align: center;
+  color: var(--cacao-suave);
+  animation: sabor-in 0.5s var(--ease) both;
+}
+
+.catalogo__vacio a {
+  font-weight: 700;
+  color: var(--cacao);
+}
