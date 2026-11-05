@@ -406,3 +406,39 @@ html.vt-portal::view-transition-new(root) {
     padding-bottom: calc(var(--seccion) + var(--radio-grande) + 22vh);
   }
 }
+
+/* compu: el portal es una tarjeta grande redondeada (no un rectángulo) y
+   la transición es más seguida */
+@media (min-width: 64rem) {
+  .portal {
+    inset: 3vh 3vw;
+    border-radius: var(--radio-grande);
+    box-shadow: 0 40px 80px -30px rgb(20 12 10 / 55%);
+  }
+
+  ::view-transition-group(portal) {
+    animation-duration: 0.6s;
+  }
+
+  .portal--saliendo {
+    animation-duration: 0.55s;
+  }
+
+  .portal__titulo {
+    animation-delay: 0.05s;
+    animation-duration: 0.5s;
+  }
+}
+
+/* las esquinas quedan redondeadas durante todo el crecimiento */
+::view-transition-image-pair(portal) {
+  overflow: hidden;
+  border-radius: var(--radio-grande);
+}
+
+@media (max-width: 63.99rem) {
+  /* celular: al final llena la pantalla, sin esquinas (quedó perfecto así) */
+  ::view-transition-image-pair(portal) {
+    border-radius: 0;
+  }
+}

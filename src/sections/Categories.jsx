@@ -64,7 +64,9 @@ function Categories() {
     }, "vt-portal");
     t?.finished.then(async () => {
       filtrar();
-      await new Promise((ok) => setTimeout(ok, 420)); // un instante para leer el nombre
+      // celular: un instante para leer el nombre; compu: casi sin pausa
+      const pausa = window.matchMedia("(min-width: 64rem)").matches ? 100 : 420;
+      await new Promise((ok) => setTimeout(ok, pausa));
       // detrás del portal, saltamos al destino; después el portal "se abre"
       const destino = document.getElementById(ancla);
       if (destino)
@@ -82,6 +84,8 @@ function Categories() {
     const lista = listaRef.current;
     const tactil = window.matchMedia("(hover: none)").matches;
     if (!lista || !tactil) return;
+    // celular: el fondo arranca con el tono de la tarjeta que está al frente
+    setActiva(0);
     let cuadro = 0;
     const alDeslizar = () => {
       cancelAnimationFrame(cuadro);
@@ -104,7 +108,12 @@ function Categories() {
     };
   }, []);
 
-  const tono = activa !== null ? categorias[activa].tono : null;
+  // durante el portal, el fondo mantiene el tono de la categoría elegida
+  const tono = portal
+    ? portal.c.tono
+    : activa !== null
+      ? categorias[activa].tono
+      : null;
   const estilo = tono
     ? {
         "--amb-fondo": tono.fondo,
@@ -133,7 +142,10 @@ function Categories() {
       <ul
         className="categorias__lista"
         ref={listaRef}
-        onPointerLeave={(e) => e.pointerType === "mouse" && setActiva(null)}
+        onPointerLeave={(e) =>
+          // durante el portal el mouse "sale" (lo tapa el portal): mantener el tono
+          e.pointerType === "mouse" && !portal && setActiva(null)
+        }
       >
         {categorias.map((c, i) => (
           <Reveal
