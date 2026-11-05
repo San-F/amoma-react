@@ -456,3 +456,22 @@ html.vt-portal::view-transition-new(root) {
     contain: none;
   }
 }
+
+/* compu: entra el zoom y se abre directo al destino, sin pausa ni título */
+@media (min-width: 64rem) {
+  .portal__titulo {
+    display: none;
+  }
+
+  .portal::after {
+    background: rgb(20 12 10 / 15%);
+  }
+
+  ::view-transition-group(portal) {
+    animation-duration: 0.55s;
+  }
+
+  .portal--saliendo {
+    animation-duration: 0.45s;
+  }
+}

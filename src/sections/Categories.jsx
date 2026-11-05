@@ -65,7 +65,7 @@ function Categories() {
     t?.finished.then(async () => {
       filtrar();
       // celular: un instante para leer el nombre; compu: casi sin pausa
-      const pausa = window.matchMedia("(min-width: 64rem)").matches ? 100 : 420;
+      const pausa = window.matchMedia("(min-width: 64rem)").matches ? 0 : 420;
       await new Promise((ok) => setTimeout(ok, pausa));
       // detrás del portal, saltamos al destino; después el portal "se abre"
       const destino = document.getElementById(ancla);
