@@ -129,6 +129,7 @@ function Categories() {
 
   return (
     <section
+      id="categorias"
       className={`categorias seccion ${tono ? "categorias--activa" : ""}`}
       style={estilo}
       aria-labelledby="cat-titulo"

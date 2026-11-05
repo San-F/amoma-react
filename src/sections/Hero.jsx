@@ -25,11 +25,11 @@ function Hero() {
           </p>
           <div className="hero__ctas hero__anim" style={{ "--d": "280ms" }}>
             <a
-              href="#tortas"
+              href="#categorias"
               className="btn btn--rosa"
               onClick={(e) => {
                 e.preventDefault();
-                irA("#tortas");
+                irA("#categorias", { margen: 0 });
               }}
             >
               Ver catálogo <Icon name="arrow" />
