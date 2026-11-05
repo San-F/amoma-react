@@ -9,7 +9,7 @@
   font-family: var(--font-display);
   font-size: clamp(6rem, 25vw, 12rem);
   line-height: 0.9;
-  color: var(--rosa);
+  color: var(--rosa-boton); /* contraste suficiente para texto grande */
   font-variation-settings: "SOFT" 100;
 }
 

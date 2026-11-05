@@ -164,3 +164,10 @@
 .contacto__nota a {
   font-weight: 700;
 }
+
+/* links de teléfono e Instagram: zona táctil cómoda (≥ 44 px) */
+.contacto__datos a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}

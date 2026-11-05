@@ -464,3 +464,11 @@ html.vt-detalle::view-transition-new(root) {
     opacity: 0;
   }
 }
+
+/* celulares muy chicos: botones más compactos para que no se partan */
+@media (max-width: 22.5rem) {
+  .btn {
+    padding-inline: 1.1rem;
+    font-size: 0.95rem;
+  }
+}

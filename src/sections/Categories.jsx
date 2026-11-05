@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { irA } from "../lib/scroll";
+import { conTransicion } from "../lib/transicion";
 import Palabras from "../components/Palabras";
 import Picture from "../components/Picture";
 import Reveal from "../components/Reveal";
@@ -16,12 +17,43 @@ function Categories() {
   const [centrada, setCentrada] = useState(0);
   const navigate = useNavigate();
 
-  // filtra el catálogo y baja suave hasta él (o hasta "personalizada")
-  const abrirCategoria = (e, c) => {
+  const [portal, setPortal] = useState(null); // { c, fase: "abierto" | "saliendo" }
+  const linksRef = useRef([]);
+
+  // "Entrar" a la categoría: la tarjeta se expande a pantalla completa
+  // (View Transitions), se lee el nombre, y se abre al catálogo ya filtrado.
+  // Sin soporte o con "reducir movimiento": desplazamiento suave.
+  const abrirCategoria = (e, c, i) => {
     e.preventDefault();
     const [ruta, ancla] = c.destino.split("#");
-    navigate(ruta, { replace: true, preventScrollReset: true });
-    requestAnimationFrame(() => irA(`#${ancla}`));
+    const filtrar = () =>
+      navigate(ruta, { replace: true, preventScrollReset: true });
+    const menosMovimiento = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    if (!document.startViewTransition || menosMovimiento) {
+      filtrar();
+      requestAnimationFrame(() => irA(`#${ancla}`));
+      return;
+    }
+    const tarjeta = linksRef.current[i];
+    if (tarjeta) tarjeta.style.viewTransitionName = "portal";
+    const t = conTransicion(() => {
+      if (tarjeta) tarjeta.style.viewTransitionName = "";
+      setPortal({ c, fase: "abierto" });
+    }, "vt-portal");
+    t?.finished.then(async () => {
+      filtrar();
+      await new Promise((ok) => setTimeout(ok, 420)); // un instante para leer el nombre
+      // detrás del portal, saltamos al destino; después el portal "se abre"
+      const destino = document.getElementById(ancla);
+      if (destino)
+        window.scrollTo(
+          0,
+          destino.getBoundingClientRect().top + window.scrollY - 16,
+        );
+      setPortal({ c, fase: "saliendo" });
+    });
   };
   const listaRef = useRef(null);
 
@@ -94,7 +126,8 @@ function Categories() {
             <Link
               to={c.destino}
               className="categoria__link descubrir"
-              onClick={(e) => abrirCategoria(e, c)}
+              onClick={(e) => abrirCategoria(e, c, i)}
+              ref={(el) => (linksRef.current[i] = el)}
               onFocus={() => setActiva(i)}
               onBlur={() => setActiva(null)}
             >
@@ -113,6 +146,24 @@ function Categories() {
           </Reveal>
         ))}
       </ul>
+
+      {portal && (
+        <div
+          className={`portal portal--${portal.fase}`}
+          style={{ "--portal-fondo": portal.c.tono.fondo }}
+          aria-hidden="true"
+          onAnimationEnd={(e) =>
+            e.target === e.currentTarget &&
+            portal.fase === "saliendo" &&
+            setPortal(null)
+          }
+        >
+          <div className="portal__foto">
+            <Picture foto={portal.c.foto} sizes="100vw" loading="eager" />
+          </div>
+          <p className="portal__titulo">{portal.c.nombre}</p>
+        </div>
+      )}
     </section>
   );
 }
