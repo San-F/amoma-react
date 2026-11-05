@@ -513,3 +513,10 @@
 .etiqueta--temporada {
   --punto: var(--dulce);
 }
+
+/* ocupa al menos toda la pantalla (al "entrar" a una categoría con pocos
+   productos no aparece la sección siguiente cortada) */
+.catalogo {
+  min-height: calc(100svh + var(--radio-grande) + 1rem);
+  padding-bottom: calc(var(--seccion) + var(--radio-grande));
+}

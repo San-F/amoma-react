@@ -354,3 +354,14 @@
     align-self: center;
   }
 }
+
+/* se apoya sobre el catálogo como hoja redondeada (mismo recurso que el
+   catálogo sobre las tarjetas): sin bordes rectos entre secciones */
+.personalizada {
+  position: relative;
+  z-index: 2;
+  margin-top: calc(-1 * var(--radio-grande));
+  border-radius: var(--radio-grande) var(--radio-grande) 0 0;
+  background: var(--crema);
+  box-shadow: 0 -12px 30px -18px rgb(59 36 32 / 22%);
+}
