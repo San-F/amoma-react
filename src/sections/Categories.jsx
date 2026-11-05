@@ -135,7 +135,6 @@ function Categories() {
                 <Picture foto={c.foto} sizes="(min-width: 64rem) 18rem, 80vw" />
               </div>
               <div className="categoria__texto">
-                <span className="categoria__num">0{i + 1}</span>
                 <h3>{c.nombre}</h3>
                 <p>{c.descripcion}</p>
                 <span className="categoria__ver">

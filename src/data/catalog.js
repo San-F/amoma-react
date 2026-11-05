@@ -18,15 +18,15 @@ export const categorias = [
   {
     id: "tortas",
     nombre: "Tortas",
-    descripcion: "Clásicas y caseras, con ingredientes de primera.",
+    descripcion: "Clásicas y caseras.",
     foto: portada.tortas,
     destino: "/?categoria=tortas#tortas",
     tono: { fondo: "#2a1915", texto: "#fbf5ee", acento: "#f3a6bd" },
   },
   {
     id: "postres",
-    nombre: "Postres individuales",
-    descripcion: "Tartas, porciones y cajitas para regalar.",
+    nombre: "Tartas y postres",
+    descripcion: "Tartas, porciones y cajitas.",
     foto: portada.postres,
     destino: "/?categoria=postres#tortas",
     tono: { fondo: "#f5d5de", texto: "#3b2420", acento: "#9a3556" },
@@ -34,7 +34,7 @@ export const categorias = [
   {
     id: "salado",
     nombre: "Salado",
-    descripcion: "Chipá, tartas y bocaditos para la previa.",
+    descripcion: "Chipá y bocaditos.",
     foto: portada.salado,
     destino: "/?categoria=salado#tortas",
     tono: { fondo: "#f2dfb8", texto: "#3b2420", acento: "#7a3f0e" },
@@ -42,7 +42,7 @@ export const categorias = [
   {
     id: "personalizadas",
     nombre: "Tortas personalizadas",
-    descripcion: "Para cumpleaños, casamientos y eventos. Vos imaginás.",
+    descripcion: "Para tu evento, como la imagines.",
     foto: portada.personalizadas,
     destino: "/#personalizada",
     tono: { fondo: "#1f1a1b", texto: "#fbf5ee", acento: "#f3a6bd" },

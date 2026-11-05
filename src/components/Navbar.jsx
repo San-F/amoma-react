@@ -6,7 +6,7 @@ import { useSitio } from "../lib/sitio";
 import "../styles/Navbar.css";
 
 const LINKS = [
-  { to: "/#tortas", texto: "Tortas", ancla: true },
+  { to: "/#tortas", texto: "Catálogo", ancla: true },
   { to: "/#personalizada", texto: "Personalizadas", ancla: true },
   { to: "/galeria", texto: "Galería" },
   { to: "/contacto", texto: "Contacto" },

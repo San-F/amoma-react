@@ -185,7 +185,7 @@ function CustomCake() {
             </button>
           </form>
           <Link to="/galeria" className="personalizada__galeria" viewTransition>
-            Ver tortas personalizadas que ya hicimos <Icon name="arrow" />
+            Ver trabajos anteriores <Icon name="arrow" />
           </Link>
         </Reveal>
       </div>

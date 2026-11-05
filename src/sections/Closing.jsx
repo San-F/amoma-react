@@ -17,7 +17,7 @@ const pasos = (zona) => [
   },
   {
     titulo: "Coordinamos",
-    texto: `Confirmás, y acordamos el retiro en ${zona.split(",")[0]} o el envío.`,
+    texto: `Confirmás y acordamos el retiro en ${zona.split(",")[0]} o el envío.`,
   },
 ];
 

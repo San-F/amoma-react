@@ -1,12 +1,6 @@
 import "../styles/Ribbon.css";
 
-const PALABRAS = [
-  "Tortas",
-  "Tartas",
-  "Postres",
-  "Personalizadas",
-  "Hecho con amor",
-];
+const PALABRAS = ["Tortas", "Tartas", "Postres", "Salado", "Personalizadas"];
 
 // Cinta editorial que pasa lento. Decorativa: los lectores de pantalla la ignoran.
 function Ribbon() {

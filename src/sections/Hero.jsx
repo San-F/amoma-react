@@ -21,7 +21,7 @@ function Hero() {
             </Palabras>
           </h1>
           <p className="lead hero__anim" style={{ "--d": "180ms" }}>
-            Tortas, tartas y postres caseros para tus festejos.
+            Tortas, postres y salados caseros para tus festejos.
           </p>
           <div className="hero__ctas hero__anim" style={{ "--d": "280ms" }}>
             <a
@@ -32,7 +32,7 @@ function Hero() {
                 irA("#tortas");
               }}
             >
-              Ver tortas <Icon name="arrow" />
+              Ver catálogo <Icon name="arrow" />
             </a>
             <a
               className="btn btn--borde"
