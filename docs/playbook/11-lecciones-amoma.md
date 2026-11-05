@@ -28,7 +28,8 @@ Código de referencia: este mismo repo.
 - **Un nombre por cosa** (tarjeta y filtro igual), sin repetir el lema en todos lados.
 - El **celular manda**: tarjetas que descansan más chicas y crecen al frente; sección a pantalla completa; detalle que entra sin scroll interno (probado en 320 px y en pantallas bajitas).
 - Lo interactivo "paso a paso" (armador de torta) **no gustó**: lo personalizado se resuelve mejor conversando (WhatsApp).
-- **Pedido de varios productos sin carrito pesado**: botón "Agregar al pedido" en el detalle, pastilla flotante "Tu pedido" y una hoja para cambiar tamaño/cantidad y mandar **un solo WhatsApp** con total, fecha y nota. Sin cuentas ni pagos; se guarda en el navegador (`src/lib/pedido.js`). Siempre dejar también "pedila sola por WhatsApp".
+- **Pedido de varios productos sin carrito pesado** (`src/lib/pedido.js`): en el detalle, tamaño + cantidad + total en vivo y **dos botones** ("Agregar y seguir" / "Pedir ahora", que abre la hoja). Hoja con tamaño editable (si se repite, se junta), cantidad, tachito + **Deshacer**, y **un solo WhatsApp**. Lo guardado es solo "qué y cuánto": nombre y precio salen **siempre del catálogo actual** (precio viejo o producto borrado no llegan al mensaje). Probarlo con miles de toques al azar (test "fuzz") además del navegador.
+- **Ventana abierta = fondo quieto**: `html:has(dialog[open]) { overflow: hidden }` + `scrollbar-gutter: stable` (sin salto en compu). El cliente lo notó enseguida.
 - Mostrar **maquetas** antes de construir algo grande (ej. menú a pantalla completa) ahorra idas y vueltas.
 
 ## Errores que tuvimos (y la regla para no repetirlos)

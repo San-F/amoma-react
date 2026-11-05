@@ -216,3 +216,74 @@
     border-radius: var(--radio-grande);
   }
 }
+
+/* ---------- avisos ---------- */
+
+.pedido__item.is-problema {
+  background: var(--crema-2);
+}
+
+.pedido__item.is-problema .pedido__foto {
+  filter: grayscale(1);
+  opacity: 0.6;
+}
+
+.pedido__aviso {
+  font-size: 0.85rem;
+  color: var(--cacao-suave);
+}
+
+.pedido__item .pedido__aviso {
+  font-weight: 600;
+}
+
+.pedido__deshacer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 0.9rem;
+  border-radius: var(--radio);
+  background: var(--cacao);
+  color: var(--crema);
+  font-size: 0.9rem;
+  animation: sabor-in 0.3s var(--ease) both;
+}
+
+.pedido__deshacer .pedido__boton-texto {
+  color: var(--crema);
+  font-weight: 700;
+  text-decoration: underline;
+}
+
+.pedido__cantidad button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pedido__total small {
+  font-size: 0.8rem;
+}
+
+.pedido__subtotal {
+  margin-top: 0.2rem;
+  font-size: 0.85rem;
+  font-weight: 700;
+}
+
+.pedido__cantidad button {
+  display: grid;
+  place-items: center;
+}
+
+.pedido__boton-texto {
+  min-height: 2.75rem;
+  padding: 0 0.5rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}

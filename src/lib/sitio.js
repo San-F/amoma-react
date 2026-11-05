@@ -3,8 +3,10 @@
 // Si la base falla o está vacía, la página sigue mostrando el contenido fijo.
 import { useSyncExternalStore } from "react";
 import {
+  etiquetasDeEjemplo,
   galeria as galeriaBase,
   negocio as negocioBase,
+  preciosDeEjemplo,
   productos as productosBase,
 } from "../data/catalog";
 import { fotos } from "../data/images";
@@ -19,6 +21,8 @@ let estado = {
   galeria: galeriaBase,
   tematicas: tematicasBase,
   desdeBase: false,
+  // false mientras se espera a la base (si hay base configurada)
+  listo: !import.meta.env.VITE_SUPABASE_URL,
 };
 const suscriptos = new Set();
 let iniciado = false;
@@ -122,12 +126,13 @@ async function iniciar() {
     }
     const problema = ajustes.error ?? productos.error ?? galeria.error;
     if (problema) console.warn("Supabase:", problema);
-    emitir(cambios);
+    emitir({ ...cambios, listo: true });
   } catch (err) {
     console.warn(
       "No se pudo cargar el catálogo; se muestra el contenido fijo.",
       err,
     );
+    emitir({ listo: true });
   }
 }
 
@@ -139,4 +144,19 @@ function suscribir(fn) {
 
 export function useSitio() {
   return useSyncExternalStore(suscribir, () => estado);
+}
+
+// Modo demo (?precios=demo): precios y etiquetas inventados para ver el diseño.
+// Solo para productos que todavía no tienen precio real.
+export function conDemo(productos, demo) {
+  if (!demo) return productos;
+  return productos.map((p) =>
+    p.variantes?.some((v) => v.precio)
+      ? p
+      : {
+          ...p,
+          variantes: preciosDeEjemplo[p.id] ?? p.variantes,
+          etiqueta: p.etiqueta ?? etiquetasDeEjemplo[p.id] ?? null,
+        },
+  );
 }

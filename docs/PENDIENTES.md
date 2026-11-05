@@ -38,7 +38,8 @@ Lista viva. ✅ = hecho · ⏳ = en curso · 🔲 = falta
   personalizada animada, cómo pedir)
 - ✅ Etapa 5 — Google y compartir (OG, schema.org, sitemap), accesibilidad (axe sin errores), privacidad
 - ✅ Playbook reutilizable + `CLAUDE.md`
-- ✅ "Tu pedido": varios productos en un solo WhatsApp, cambiar tamaño/cantidad, queda guardado en el celular
+- ✅ "Tu pedido": varios productos en un solo WhatsApp. En el detalle: tamaño con porciones y precio, cantidad, total en vivo, "Agregar y seguir" o "Pedir ahora". En la hoja: cambiar tamaño (si queda repetido se junta), cantidad, quitar con "Deshacer", precio siempre del catálogo actual, avisos si algo ya no está. Fondo quieto con ventanas abiertas. Probado con 5.000 toques al azar + navegador en celular y compu.
+- 🔲 Que la dueña cargue **precios por tamaño**: sin eso el detalle dice "Te confirmamos el precio por WhatsApp".
 - 🔲 Conectar con Supabase real y probar de punta a punta (necesita las claves)
 - ✅ Formulario de contacto guarda las consultas en el panel (límite de envíos + trampa para robots,
   sin guardar IPs); si falla, ofrece WhatsApp. Sin base conectada sigue abriendo WhatsApp

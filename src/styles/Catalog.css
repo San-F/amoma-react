@@ -567,21 +567,95 @@
   }
 }
 
-.detalle__cta.is-agregado {
-  --btn-bg: #3f6b2a;
-  opacity: 1 !important;
+/* ---------- comprar desde el detalle ---------- */
+
+.detalle__compra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.detalle__cant {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-weight: 700;
+}
+
+.detalle__cant button {
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1.5px solid rgb(59 36 32 / 18%);
+  border-radius: 50%;
+  background: transparent;
+  color: var(--cacao);
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.detalle__cant button:disabled {
+  opacity: 0.35;
   cursor: default;
 }
 
-.detalle__solo {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  width: 100%;
-  min-height: 2.75rem;
-  margin-top: 0.4rem;
-  font-size: 0.9rem;
-  font-weight: 600;
+.detalle__cant span {
+  min-width: 1.6rem;
+  font-size: 1.1rem;
+  text-align: center;
+}
+
+.detalle__precio {
+  text-align: right;
+  font-size: 0.85rem;
+  line-height: 1.3;
   color: var(--cacao-suave);
+}
+
+.detalle__precio strong {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  color: var(--cacao);
+}
+
+.detalle__ya {
+  margin-bottom: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--cacao-suave);
+}
+
+.detalle__botones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.detalle__botones .btn {
+  padding-inline: 0.75rem;
+  white-space: nowrap;
+}
+
+.detalle__botones .btn:disabled {
+  cursor: default;
+}
+
+.detalle__seguir.is-agregado {
+  --btn-bg: #3f6b2a;
+  background: var(--btn-bg);
+  color: var(--blanco);
+}
+
+@media (max-width: 22.5rem) {
+  .detalle__botones .btn {
+    font-size: 0.9rem;
+    padding-inline: 0.5rem;
+  }
+}
+
+.tamano .tamano__precio {
+  font-weight: 700;
+  opacity: 1;
 }

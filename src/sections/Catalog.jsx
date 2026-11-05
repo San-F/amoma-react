@@ -4,17 +4,17 @@ import { useSearchParams } from "react-router-dom";
 import Picture from "../components/Picture";
 import Reveal from "../components/Reveal";
 import Icon from "../components/Icon";
-import {
-  etiquetasDeEjemplo,
-  filtros,
-  preciosDeEjemplo,
-  tamanos,
-} from "../data/catalog";
+import { filtros, tamanos } from "../data/catalog";
 import { linkWhatsApp } from "../lib/whatsapp";
 import { formatearPrecio } from "../lib/money";
 import { conTransicion } from "../lib/transicion";
-import { agregarAlPedido } from "../lib/pedido";
-import { useSitio } from "../lib/sitio";
+import {
+  abrirHojaPedido,
+  agregarAlPedido,
+  opcionesDe,
+  usePedido,
+} from "../lib/pedido";
+import { conDemo, useSitio } from "../lib/sitio";
 import "../styles/Catalog.css";
 
 const ETIQUETAS = {
@@ -37,17 +37,7 @@ function Catalog() {
   const { negocio, productos: productosSitio } = useSitio();
   // modo demo (?precios=demo): precios inventados para ver el diseño
   const demo = params.get("precios") === "demo";
-  const productos = demo
-    ? productosSitio.map((p) =>
-        p.variantes?.some((v) => v.precio)
-          ? p
-          : {
-              ...p,
-              variantes: preciosDeEjemplo[p.id] ?? p.variantes,
-              etiqueta: p.etiqueta ?? etiquetasDeEjemplo[p.id] ?? null,
-            },
-      )
-    : productosSitio;
+  const productos = conDemo(productosSitio, demo);
   const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   const pedido = params.get("categoria");
   const desdeUrl = NOMBRE_FILTRO[pedido] ? pedido : "todas";
@@ -63,22 +53,28 @@ function Catalog() {
   const [abierto, setAbierto] = useState(null);
   const [tamano, setTamano] = useState("mediana");
   const [agregado, setAgregado] = useState(false);
+  const [cant, setCant] = useState(1);
+  const enPedido = usePedido();
+  const timerCierre = useRef(null);
   const dialogRef = useRef(null);
   const fotosRef = useRef({});
 
   const abrir = (p) => {
+    clearTimeout(timerCierre.current);
     const foto = fotosRef.current[p.id];
     if (foto) foto.style.viewTransitionName = "foto-producto";
     conTransicion(() => {
       if (foto) foto.style.viewTransitionName = "";
       setAbierto(p);
       setAgregado(false);
+      setCant(1);
       setTamano(p.variantes?.[0]?.id ?? "mediana");
       dialogRef.current?.showModal();
     }, "vt-detalle");
   };
 
   const cerrar = () => {
+    clearTimeout(timerCierre.current);
     const foto = abierto && fotosRef.current[abierto.id];
     const t = conTransicion(() => {
       dialogRef.current?.close();
@@ -86,8 +82,9 @@ function Catalog() {
       if (foto) foto.style.viewTransitionName = "foto-producto";
     }, "vt-detalle");
     const limpiar = () => foto && (foto.style.viewTransitionName = "");
-    if (t) t.finished.finally(limpiar);
-    else limpiar();
+    if (t) return t.finished.finally(limpiar);
+    limpiar();
+    return Promise.resolve();
   };
 
   // las tarjetas se deslizan a su nuevo lugar. Los nombres de transición
@@ -108,19 +105,21 @@ function Catalog() {
     ? abierto.variantes.map((v) => ({
         id: v.id,
         nombre: v.nombre,
-        detalle: [
-          v.porciones && `${v.porciones} porciones`,
-          formatearPrecio(v.precio),
-        ]
-          .filter(Boolean)
-          .join(" · "),
+        detalle: v.porciones ? `${v.porciones} porciones` : "",
         precio: v.precio,
       }))
     : tamanos;
   const tamanoElegido = opciones.find((t) => t.id === tamano) ?? opciones[0];
 
-  // agrega al pedido, confirma con el botón y cierra el detalle
-  const agregar = () => {
+  const yaEnPedido = abierto ? enPedido.filter((x) => x.id === abierto.id) : [];
+
+  const hayPrecio = tamanoElegido?.precio != null;
+  const algunPrecio = opciones.some((o) => o.precio != null);
+
+  // "seguir": agrega, confirma con el botón y vuelve al catálogo.
+  // "ahora": agrega y abre la hoja del pedido para poner fecha y enviar.
+  const agregar = (modo) => {
+    if (agregado) return;
     const foto = abierto.foto?.picture?.img.src ?? abierto.foto?.src ?? null;
     agregarAlPedido({
       id: abierto.id,
@@ -128,13 +127,12 @@ function Catalog() {
       variante: tamanoElegido.nombre,
       precio: tamanoElegido.precio ?? null,
       foto,
-      opciones: opciones.map((o) => ({
-        nombre: o.nombre,
-        precio: o.precio ?? null,
-      })),
+      opciones: opcionesDe(abierto, tamanos),
+      cantidad: cant,
     });
-    setAgregado(true);
-    setTimeout(cerrar, 650);
+    setAgregado(modo);
+    if (modo === "ahora") cerrar().then(abrirHojaPedido);
+    else timerCierre.current = setTimeout(cerrar, 650);
   };
 
   return (
@@ -270,28 +268,79 @@ function Catalog() {
                       onChange={() => setTamano(t.id)}
                     />
                     <span>{t.nombre}</span>
-                    <small>{t.detalle}</small>
+                    {t.detalle && <small>{t.detalle}</small>}
+                    {t.precio != null && (
+                      <small className="tamano__precio">
+                        {formatearPrecio(t.precio)}
+                      </small>
+                    )}
                   </label>
                 ))}
               </fieldset>
-              <button
-                type="button"
-                className={`btn btn--rosa detalle__cta ${agregado ? "is-agregado" : ""}`}
-                onClick={agregar}
-                disabled={agregado}
-              >
-                {agregado ? "✓ Agregado a tu pedido" : "Agregar al pedido"}
-              </button>
-              <a
-                className="detalle__solo"
-                href={wa(
-                  `¡Hola Amoma! Quiero encargar: ${abierto.nombre}, ${tamanoElegido.nombre.toLowerCase()}${tamanoElegido.detalle ? ` (${tamanoElegido.detalle})` : ""}. ¿Me confirman precio y disponibilidad?`,
-                )}
-                target="_blank"
-                rel="noopener noreferrer"
-              >
-                <Icon name="whatsapp" /> o pedila sola por WhatsApp
-              </a>
+              <div className="detalle__compra">
+                <div
+                  className="detalle__cant"
+                  role="group"
+                  aria-label="Cantidad"
+                >
+                  <button
+                    type="button"
+                    onClick={() => setCant((c) => Math.max(c - 1, 1))}
+                    disabled={cant <= 1}
+                    aria-label="Uno menos"
+                  >
+                    −
+                  </button>
+                  <span aria-live="polite">{cant}</span>
+                  <button
+                    type="button"
+                    onClick={() => setCant((c) => Math.min(c + 1, 99))}
+                    disabled={cant >= 99}
+                    aria-label="Uno más"
+                  >
+                    +
+                  </button>
+                </div>
+                <p className="detalle__precio">
+                  {hayPrecio ? (
+                    <strong>
+                      {formatearPrecio(tamanoElegido.precio * cant)}
+                    </strong>
+                  ) : (
+                    <span>
+                      {algunPrecio
+                        ? "Este tamaño: precio a confirmar"
+                        : "Te confirmamos el precio por WhatsApp"}
+                    </span>
+                  )}
+                </p>
+              </div>
+              {yaEnPedido.length > 0 && (
+                <p className="detalle__ya">
+                  Ya tenés en tu pedido:{" "}
+                  {yaEnPedido
+                    .map((x) => `${x.cantidad} ${x.variante ?? ""}`.trim())
+                    .join(" · ")}
+                </p>
+              )}
+              <div className="detalle__botones">
+                <button
+                  type="button"
+                  className={`btn btn--borde detalle__seguir ${agregado === "seguir" ? "is-agregado" : ""}`}
+                  onClick={() => agregar("seguir")}
+                  disabled={!!agregado}
+                >
+                  {agregado === "seguir" ? "✓ Agregado" : "Agregar y seguir"}
+                </button>
+                <button
+                  type="button"
+                  className="btn btn--rosa detalle__cta"
+                  onClick={() => agregar("ahora")}
+                  disabled={!!agregado}
+                >
+                  Pedir ahora
+                </button>
+              </div>
             </div>
             <button
               type="button"

@@ -67,6 +67,17 @@ body {
   }
 }
 
+/* con un detalle, el pedido o el menú abiertos, la página de atrás queda quieta.
+   scrollbar-gutter: en compu la página no "salta" al ocultarse la barra */
+html {
+  scrollbar-gutter: stable;
+}
+
+html:has(dialog[open]),
+html:has(.nav__links.is-open) {
+  overflow: hidden;
+}
+
 #root {
   min-height: 100dvh;
   display: flex;
