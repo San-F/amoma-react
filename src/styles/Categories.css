@@ -13,22 +13,57 @@
   transition: color 0.6s var(--ease);
 }
 
-/* las demás tarjetas pasan a segundo plano */
+/* la tarjeta activa gana protagonismo; las demás pasan a segundo plano */
+.categoria {
+  position: relative;
+}
+
 .categoria .categoria__link {
   transition:
     opacity 0.6s var(--ease),
     filter 0.6s var(--ease),
-    transform 0.6s var(--ease),
+    transform 0.7s var(--ease),
+    box-shadow 0.7s var(--ease),
     clip-path 1.2s var(--ease);
 }
 
-.categorias--activa .categoria:not(.is-activa) .categoria__link {
-  opacity: 0.55;
-  filter: saturate(0.6);
+.categoria.is-activa {
+  z-index: 2;
 }
 
 .categoria.is-activa .categoria__link {
-  transform: translateY(-6px);
+  transform: translateY(-8px) scale(1.06);
+}
+
+/* sombra que sigue la forma redondeada real de la tarjeta (drop-shadow
+   en el contenedor: respeta el recorte y el agrandado) */
+.categoria {
+  filter: drop-shadow(0 12px 18px rgb(59 36 32 / 18%));
+  transition: filter 0.7s var(--ease);
+}
+
+.categoria.is-activa {
+  filter: drop-shadow(0 30px 34px rgb(0 0 0 / 38%));
+}
+
+/* el recorte del "descubrir" también es redondeado */
+.categoria__link.descubrir {
+  clip-path: inset(100% 0 0 0 round var(--radio-grande));
+}
+
+.is-visible .categoria__link.descubrir {
+  clip-path: inset(0 round var(--radio-grande));
+}
+
+/* zoom de la foto: también en celular (donde no hay "pasar el mouse") */
+.categoria.is-activa .categoria__foto img {
+  transform: scale(1.09);
+}
+
+.categorias--activa .categoria:not(.is-activa) .categoria__link {
+  opacity: 0.5;
+  filter: saturate(0.55);
+  transform: scale(0.96);
 }
 
 .cabecera {
@@ -44,6 +79,10 @@
   padding-inline: var(--pad);
   scroll-padding-inline: var(--pad);
   overflow-x: auto;
+  /* aire para que la tarjeta activa crezca sin cortarse (el carrusel
+     recorta lo que se sale de sus bordes) */
+  padding-block: 1.75rem;
+  margin-block: -1.75rem;
   scroll-snap-type: x mandatory;
   overscroll-behavior-x: contain;
   scrollbar-width: none;
@@ -67,7 +106,6 @@
   color: var(--crema);
   text-decoration: none;
   isolation: isolate;
-  box-shadow: var(--sombra);
 }
 
 .categoria__foto {
@@ -177,5 +215,25 @@
   /* una arriba, una abajo: ritmo editorial */
   .categoria:nth-child(even) {
     margin-top: 4rem;
+  }
+}
+
+/* celular: las tarjetas descansan más chicas y la que queda al frente crece */
+@media (max-width: 63.99rem) {
+  .categoria:not(.is-centrada) .categoria__link,
+  .categorias--activa .categoria:not(.is-activa) .categoria__link {
+    transform: scale(0.86);
+    opacity: 0.75;
+    filter: none;
+  }
+
+  .categoria.is-centrada .categoria__link,
+  .categoria.is-activa .categoria__link {
+    transform: none;
+    opacity: 1;
+  }
+
+  .categoria.is-centrada .categoria__foto img {
+    transform: scale(1.09);
   }
 }

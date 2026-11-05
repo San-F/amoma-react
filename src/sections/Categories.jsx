@@ -12,6 +12,8 @@ import "../styles/Categories.css";
 // el fondo de toda la sección toma el tono de esa foto.
 function Categories() {
   const [activa, setActiva] = useState(null);
+  // celular: la tarjeta que quedó al frente del carrusel (arranca la primera)
+  const [centrada, setCentrada] = useState(0);
   const navigate = useNavigate();
 
   // filtra el catálogo y baja suave hasta él (o hasta "personalizada")
@@ -35,9 +37,12 @@ function Categories() {
         const tarjeta = lista.firstElementChild;
         if (!tarjeta) return;
         const paso = tarjeta.getBoundingClientRect().width + 16;
-        setActiva(
-          Math.min(categorias.length - 1, Math.round(lista.scrollLeft / paso)),
+        const i = Math.min(
+          categorias.length - 1,
+          Math.round(lista.scrollLeft / paso),
         );
+        setCentrada(i);
+        setActiva(i);
       });
     };
     lista.addEventListener("scroll", alDeslizar, { passive: true });
@@ -83,7 +88,7 @@ function Categories() {
             as="li"
             key={c.id}
             delay={i * 110}
-            className={`categoria ${activa === i ? "is-activa" : ""}`}
+            className={`categoria ${activa === i ? "is-activa" : ""} ${centrada === i ? "is-centrada" : ""}`}
             onPointerEnter={(e) => e.pointerType === "mouse" && setActiva(i)}
           >
             <Link
