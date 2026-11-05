@@ -5,6 +5,7 @@ import Icon from "../components/Icon";
 
 import { linkWhatsApp } from "../lib/whatsapp";
 import { useSitio } from "../lib/sitio";
+import { irA } from "../lib/scroll";
 import "../styles/Hero.css";
 
 function Hero() {
@@ -23,7 +24,14 @@ function Hero() {
             Tortas, tartas y postres caseros para tus festejos.
           </p>
           <div className="hero__ctas hero__anim" style={{ "--d": "280ms" }}>
-            <a href="#tortas" className="btn btn--rosa">
+            <a
+              href="#tortas"
+              className="btn btn--rosa"
+              onClick={(e) => {
+                e.preventDefault();
+                irA("#tortas");
+              }}
+            >
               Ver tortas <Icon name="arrow" />
             </a>
             <a

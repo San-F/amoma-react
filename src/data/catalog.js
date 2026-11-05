@@ -109,6 +109,19 @@ export const productos = [
     descripcion: "Seis tartitas decoradas. Ideales para regalar.",
     foto: fotos.tartitasHalloween,
   },
+  {
+    // ⚠️ PROVISORIO: foto de referencia y opciones a confirmar con la dueña
+    id: "chipa",
+    categoria: "salado",
+    nombre: "Chipá",
+    descripcion: "Casero, recién horneado, con mucho queso.",
+    foto: portada.salado,
+    variantes: [
+      { id: "media", nombre: "Media docena", porciones: null, precio: null },
+      { id: "docena", nombre: "Docena", porciones: null, precio: null },
+      { id: "evento", nombre: "Para eventos", porciones: null, precio: null },
+    ],
+  },
 ];
 
 export const galeria = [

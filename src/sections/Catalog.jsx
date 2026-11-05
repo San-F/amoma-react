@@ -211,7 +211,7 @@ function Catalog() {
               <a
                 className="btn btn--rosa detalle__cta"
                 href={wa(
-                  `¡Hola Amoma! Quiero encargar: ${abierto.nombre}, tamaño ${tamanoElegido.nombre.toLowerCase()} (${tamanoElegido.detalle}). ¿Me confirman disponibilidad?`,
+                  `¡Hola Amoma! Quiero encargar: ${abierto.nombre}, ${tamanoElegido.nombre.toLowerCase()}${tamanoElegido.detalle ? ` (${tamanoElegido.detalle})` : ""}. ¿Me confirman precio y disponibilidad?`,
                 )}
                 target="_blank"
                 rel="noopener noreferrer"

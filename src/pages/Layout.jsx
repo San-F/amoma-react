@@ -3,6 +3,7 @@ import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
 import { useSitio } from "../lib/sitio";
+import { irA } from "../lib/scroll";
 
 // estructura que comparten todas las páginas
 function Layout() {
@@ -13,7 +14,7 @@ function Layout() {
   useEffect(() => {
     if (!hash) return;
     const el = document.getElementById(decodeURIComponent(hash.slice(1)));
-    el?.scrollIntoView({ behavior: "smooth", block: "start" });
+    if (el) requestAnimationFrame(() => irA(el));
   }, [hash, pathname, key]);
 
   return (

@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { irA } from "../lib/scroll";
 import Palabras from "../components/Palabras";
 import Picture from "../components/Picture";
 import Reveal from "../components/Reveal";
@@ -11,6 +12,15 @@ import "../styles/Categories.css";
 // el fondo de toda la sección toma el tono de esa foto.
 function Categories() {
   const [activa, setActiva] = useState(null);
+  const navigate = useNavigate();
+
+  // filtra el catálogo y baja suave hasta él (o hasta "personalizada")
+  const abrirCategoria = (e, c) => {
+    e.preventDefault();
+    const [ruta, ancla] = c.destino.split("#");
+    navigate(ruta, { replace: true, preventScrollReset: true });
+    requestAnimationFrame(() => irA(`#${ancla}`));
+  };
   const listaRef = useRef(null);
 
   // celular: la tarjeta activa es la que quedó alineada al deslizar
@@ -79,7 +89,7 @@ function Categories() {
             <Link
               to={c.destino}
               className="categoria__link descubrir"
-              viewTransition
+              onClick={(e) => abrirCategoria(e, c)}
               onFocus={() => setActiva(i)}
               onBlur={() => setActiva(null)}
             >
