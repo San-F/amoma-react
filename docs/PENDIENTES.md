@@ -39,7 +39,8 @@ Lista viva. ✅ = hecho · ⏳ = en curso · 🔲 = falta
 - ✅ Etapa 5 — Google y compartir (OG, schema.org, sitemap), accesibilidad (axe sin errores), privacidad
 - ✅ Playbook reutilizable + `CLAUDE.md`
 - ✅ "Tu pedido": varios productos en un solo WhatsApp. En el detalle: tamaño con porciones y precio, cantidad, total en vivo, "Agregar y seguir" o "Pedir ahora". En la hoja: cambiar tamaño (si queda repetido se junta), cantidad, quitar con "Deshacer", precio siempre del catálogo actual, avisos si algo ya no está. Fondo quieto con ventanas abiertas. Probado con 5.000 toques al azar + navegador en celular y compu.
-- ✅ Imagen para compartir (`public/og-4.jpg`, se rehace con `node scripts/og.cjs`): fondo rosa, torta de rosetas real al centro y un solo texto ("Amoma"), así no se corta en ningún recorte de WhatsApp. Título y descripciones **con "Villa Pueyrredón, CABA"** (ayuda a aparecer en Google en búsquedas del barrio).
+- ✅ Imagen para compartir (`public/og-5.jpg`, se rehace con `node scripts/og.cjs`): porción de torta de chocolate (foto de la tarjeta "Tortas") en rectángulo sobre fondo chocolate, con el **logo real** de Amoma como sello al centro. Nada en los costados (WhatsApp los recorta). Título y descripciones **con "Villa Pueyrredón, CABA"** (Google).
+- 🔲 Confirmar con la dueña que la foto de la **porción de chocolate** es suya o tiene permiso de uso (no parece de Amoma: sin mármol ni plato con logo). Si no, volver a la de rosetas (opción guardada en el historial: `og-4.jpg`).
 - 🔲 Que la dueña cargue **precios por tamaño**: sin eso el detalle dice "Te confirmamos el precio por WhatsApp".
 - 🔲 Conectar con Supabase real y probar de punta a punta (necesita las claves)
 - ✅ Formulario de contacto guarda las consultas en el panel (límite de envíos + trampa para robots,
