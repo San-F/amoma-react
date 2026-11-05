@@ -32,6 +32,15 @@ const desde = (p) => {
   return precios.length ? Math.min(...precios) : null;
 };
 
+// al abrir un producto queda elegida la opción más chica (la del "desde $…")
+const masChica = (p) => {
+  const vs = p.variantes ?? [];
+  if (!vs.length) return "chica";
+  const conPrecio = vs.filter((v) => v.precio != null);
+  if (!conPrecio.length) return vs[0].id;
+  return conPrecio.reduce((a, b) => (b.precio < a.precio ? b : a)).id;
+};
+
 function Catalog() {
   const [params] = useSearchParams();
   const { negocio, productos: productosSitio } = useSitio();
@@ -49,7 +58,7 @@ function Catalog() {
       : productos.filter((p) => p.categoria === filtro);
 
   const [abierto, setAbierto] = useState(null);
-  const [tamano, setTamano] = useState("mediana");
+  const [tamano, setTamano] = useState("chica");
   const [agregado, setAgregado] = useState(false);
   const [cant, setCant] = useState(1);
   const enPedido = usePedido();
@@ -66,7 +75,7 @@ function Catalog() {
       setAbierto(p);
       setAgregado(false);
       setCant(1);
-      setTamano(p.variantes?.[0]?.id ?? "mediana");
+      setTamano(masChica(p));
       dialogRef.current?.showModal();
     }, "vt-detalle");
   };

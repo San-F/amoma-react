@@ -5,6 +5,9 @@ Código de referencia: este mismo repo.
 
 ## Recursos premium que funcionaron
 
+Receta detallada de cada efecto (cómo se siente, cómo está hecho, celu vs. compu, cómo llevarlo a
+otro rubro): [`13-efectos-premium.md`](13-efectos-premium.md).
+
 | Recurso                              | Qué hace                                                                                                                                                                                                       | Dónde está                                        |
 | ------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
 | **Bienvenida tipo telón**            | Logo + línea + frase; el telón sube con borde curvo y recién ahí arranca la portada. Una vez por visita, nunca en el panel. Archivos propios (CSS/JS) para respetar la CSP. Además tapa el "momento en blanco" | `public/splash.*`, `index.html`                   |
@@ -19,7 +22,6 @@ Código de referencia: este mismo repo.
 | **Sello con texto en círculo**       | Texto girando + corazón que late                                                                                                                                                                               | `Hero.jsx`                                        |
 | **Menú que se esconde al bajar**     | Vuelve al subir; en celu, velo desenfocado detrás                                                                                                                                                              | `Navbar.jsx`                                      |
 | **Etiquetas sutiles**                | "Más pedido / Nuevo / De temporada", editables en el panel                                                                                                                                                     | `products.badge`                                  |
-| **Modo demo de precios**             | `?precios=demo` muestra precios inventados para ver el diseño sin engañar a clientes reales                                                                                                                    | `Catalog.jsx`                                     |
 
 ## Decisiones de diseño que el cliente validó
 

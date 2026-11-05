@@ -3,20 +3,21 @@
 Todo lo aprendido armando **Amoma** (pastelería), escrito para reutilizar en el próximo proyecto
 (gimnasio, turnos, tienda…). Cada archivo es un frente; leelos en orden la primera vez.
 
-| #   | Archivo                                                         | Qué tiene                                                              |
-| --- | --------------------------------------------------------------- | ---------------------------------------------------------------------- |
-| 01  | [Proceso paso a paso](01-proceso.md)                            | Etapas, "listo cuando…", cómo trabajar con la IA sin que se mezcle     |
-| 02  | [Diseño premium](02-diseno-premium.md)                          | Qué hace que una página se vea cara, celular primero, fotos, motion    |
-| 03  | [Seguridad (base)](03-seguridad.md)                             | Fuentes reconocidas (OWASP, NIST) + checklist general + perfil gym     |
-| 04  | [Login y cuentas](04-login.md)                                  | Contraseñas, doble factor, invitaciones, recuperación, sesiones        |
-| 05  | [Base de datos](05-base-de-datos.md)                            | Supabase, RLS, permisos, migraciones, tests de permisos, backups       |
-| 06  | [Fraudes y abuso](06-fraudes.md)                                | Comprobantes falsos, suplantación, phishing, spam, robo de cuentas     |
-| 07  | [Errores frecuentes (IA y humanos)](07-errores-frecuentes.md)   | Lo que sale mal seguido, incluidos los errores reales de este proyecto |
-| 08  | [Velocidad, Google y accesibilidad](08-rendimiento-seo-a11y.md) | Fotos, SEO, vista previa al compartir, contraste, lectores de pantalla |
-| 09  | [Publicar, operar y entregar](09-operacion-y-entrega.md)        | Hosting gratis, dominio, mails, backups, costos, entrega al cliente    |
-| 11  | [Lecciones de Amoma](11-lecciones-amoma.md)                     | Recursos premium que funcionaron, errores reales y cómo se arreglaron  |
-| 12  | [Checklist de calidad](12-checklist-calidad.md)                 | Lista para revisar antes de publicar                                   |
-| 10  | [Cómo pedirle cosas a Claude](10-prompts.md)                    | Plantillas de mensajes para cada etapa                                 |
+| #   | Archivo                                                         | Qué tiene                                                                |
+| --- | --------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| 01  | [Proceso paso a paso](01-proceso.md)                            | Etapas, "listo cuando…", cómo trabajar con la IA sin que se mezcle       |
+| 02  | [Diseño premium](02-diseno-premium.md)                          | Qué hace que una página se vea cara, celular primero, fotos, motion      |
+| 03  | [Seguridad (base)](03-seguridad.md)                             | Fuentes reconocidas (OWASP, NIST) + checklist general + perfil gym       |
+| 04  | [Login y cuentas](04-login.md)                                  | Contraseñas, doble factor, invitaciones, recuperación, sesiones          |
+| 05  | [Base de datos](05-base-de-datos.md)                            | Supabase, RLS, permisos, migraciones, tests de permisos, backups         |
+| 06  | [Fraudes y abuso](06-fraudes.md)                                | Comprobantes falsos, suplantación, phishing, spam, robo de cuentas       |
+| 07  | [Errores frecuentes (IA y humanos)](07-errores-frecuentes.md)   | Lo que sale mal seguido, incluidos los errores reales de este proyecto   |
+| 08  | [Velocidad, Google y accesibilidad](08-rendimiento-seo-a11y.md) | Fotos, SEO, vista previa al compartir, contraste, lectores de pantalla   |
+| 09  | [Publicar, operar y entregar](09-operacion-y-entrega.md)        | Hosting gratis, dominio, mails, backups, costos, entrega al cliente      |
+| 11  | [Lecciones de Amoma](11-lecciones-amoma.md)                     | Recursos premium que funcionaron, errores reales y cómo se arreglaron    |
+| 12  | [Checklist de calidad](12-checklist-calidad.md)                 | Lista para revisar antes de publicar                                     |
+| 13  | [Efectos premium](13-efectos-premium.md)                        | Recetario de efectos (nombre, cómo, código) para usar en cualquier rubro |
+| 10  | [Cómo pedirle cosas a Claude](10-prompts.md)                    | Plantillas de mensajes para cada etapa                                   |
 
 ## Cómo usarlo en un proyecto nuevo
 

@@ -7,7 +7,7 @@ Idioma: **español rioplatense** en textos, UI y explicaciones. El usuario no es
 explicar en simple, sin jerga, y avisar qué necesita hacer él.
 
 Guía completa: [`docs/playbook/`](docs/playbook/README.md) — leer antes de planificar.
-Antes de diseñar: `docs/playbook/11-lecciones-amoma.md`. Antes de publicar: `12-checklist-calidad.md`.
+Antes de diseñar: `docs/playbook/13-efectos-premium.md` (efectos para copiar) y `11-lecciones-amoma.md`. Antes de publicar: `12-checklist-calidad.md`.
 Plan del proyecto: `docs/PLAN.md` · Pendientes: `docs/PENDIENTES.md` (mantenerlos actualizados).
 
 ## Cómo trabajar
