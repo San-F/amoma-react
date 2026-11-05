@@ -9,15 +9,17 @@ import "../styles/Closing.css";
 const pasos = (zona) => [
   {
     titulo: "Elegí",
-    texto: "Una torta del catálogo o contanos tu idea para una personalizada.",
+    texto:
+      "Sumá a tu pedido lo que quieras, con tamaño y precio. ¿Algo especial? Contanos tu idea.",
   },
   {
-    titulo: "Escribinos",
-    texto: "Por WhatsApp te pasamos el precio y las fechas disponibles.",
+    titulo: "Envialo",
+    texto:
+      "Con un toque nos llega por WhatsApp, con todo detallado y el total.",
   },
   {
     titulo: "Coordinamos",
-    texto: `Confirmás y acordamos el retiro en ${zona.split(",")[0]} o el envío.`,
+    texto: `Te confirmamos la fecha y acordamos el retiro en ${zona.split(",")[0]} o el envío.`,
   },
 ];
 
