@@ -73,6 +73,10 @@ function Categories() {
       const pausa = window.matchMedia("(min-width: 64rem)").matches ? 0 : 420;
       await new Promise((ok) => setTimeout(ok, pausa));
       // detrás del portal, saltamos al destino; después el portal "se abre"
+      // esperar a que el filtro nuevo se dibuje (cambia el alto del catálogo)
+      await new Promise((ok) =>
+        requestAnimationFrame(() => requestAnimationFrame(ok)),
+      );
       const destino = document.getElementById(ancla);
       if (destino)
         window.scrollTo(
