@@ -4,7 +4,7 @@ import { useSearchParams } from "react-router-dom";
 import Picture from "../components/Picture";
 import Reveal from "../components/Reveal";
 import Icon from "../components/Icon";
-import { filtros, tamanos } from "../data/catalog";
+import { filtros, preciosDeEjemplo, tamanos } from "../data/catalog";
 import { linkWhatsApp } from "../lib/whatsapp";
 import { formatearPrecio } from "../lib/money";
 import { conTransicion } from "../lib/transicion";
@@ -13,10 +13,27 @@ import "../styles/Catalog.css";
 
 const NOMBRE_FILTRO = Object.fromEntries(filtros.map((f) => [f.id, f.nombre]));
 
+// precio más bajo cargado (para "desde $…" en la tarjeta)
+const desde = (p) => {
+  const precios = (p.variantes ?? [])
+    .map((v) => v.precio)
+    .filter((x) => x != null);
+  return precios.length ? Math.min(...precios) : null;
+};
+
 function Catalog() {
-  const { negocio, productos } = useSitio();
-  const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   const [params] = useSearchParams();
+  const { negocio, productos: productosSitio } = useSitio();
+  // modo demo (?precios=demo): precios inventados para ver el diseño
+  const demo = params.get("precios") === "demo";
+  const productos = demo
+    ? productosSitio.map((p) =>
+        p.variantes?.some((v) => v.precio)
+          ? p
+          : { ...p, variantes: preciosDeEjemplo[p.id] ?? p.variantes },
+      )
+    : productosSitio;
+  const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   const pedido = params.get("categoria");
   const desdeUrl = NOMBRE_FILTRO[pedido] ? pedido : "todas";
   const [filtro, setFiltro] = useState(desdeUrl);
@@ -94,7 +111,12 @@ function Catalog() {
       <div className="contenedor">
         <Reveal className="catalogo__cabecera">
           <div>
-            <p className="eyebrow">Nuestro catálogo</p>
+            <p className="eyebrow">
+              Nuestro catálogo
+              {demo && (
+                <span className="catalogo__demo">precios de ejemplo</span>
+              )}
+            </p>
             <h2 id="catalogo-titulo">
               <Palabras>
                 Tocá una y <em>conocela</em>
@@ -158,6 +180,11 @@ function Catalog() {
                   />
                 </span>
                 <span className="sabor__nombre">{p.nombre}</span>
+                {desde(p) != null && (
+                  <span className="sabor__precio">
+                    desde {formatearPrecio(desde(p))}
+                  </span>
+                )}
                 <span className="sabor__mas" aria-hidden="true">
                   +
                 </span>
@@ -219,7 +246,9 @@ function Catalog() {
                 <Icon name="whatsapp" /> Pedir por WhatsApp
               </a>
               <p className="detalle__nota">
-                Te respondemos con el precio y las fechas disponibles.
+                {tamanoElegido?.precio != null
+                  ? "Te confirmamos fecha y disponibilidad por WhatsApp."
+                  : "Te respondemos con el precio y las fechas disponibles."}
               </p>
             </div>
             <button

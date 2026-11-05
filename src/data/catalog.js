@@ -211,3 +211,39 @@ export const tamanos = [
   { id: "mediana", nombre: "Mediana", detalle: "15 porciones" },
   { id: "grande", nombre: "Grande", detalle: "25 porciones" },
 ];
+
+// Precios INVENTADOS solo para ver cómo se ve el diseño. Se muestran únicamente
+// entrando con ?precios=demo (nunca en la página normal). Los reales los carga
+// la dueña en el panel.
+const t = (chica, mediana, grande) => [
+  { id: "chica", nombre: "Chica", porciones: 10, precio: chica * 100 },
+  { id: "mediana", nombre: "Mediana", porciones: 15, precio: mediana * 100 },
+  { id: "grande", nombre: "Grande", porciones: 25, precio: grande * 100 },
+];
+export const preciosDeEjemplo = {
+  "frutos-rojos": t(26000, 36000, 54000),
+  "chocolate-rosetas": t(24000, 34000, 50000),
+  "lemon-pie": [
+    { id: "chica", nombre: "Chica", porciones: 8, precio: 1800000 },
+    { id: "grande", nombre: "Grande", porciones: 16, precio: 3200000 },
+  ],
+  charlotte: t(28000, 39000, 58000),
+  crumble: [
+    { id: "chica", nombre: "Chica", porciones: 8, precio: 1600000 },
+    { id: "grande", nombre: "Grande", porciones: 16, precio: 2900000 },
+  ],
+  arandanos: t(25000, 35000, 52000),
+  tartitas: [
+    { id: "caja", nombre: "Caja x 6", porciones: null, precio: 1500000 },
+  ],
+  chipa: [
+    { id: "media", nombre: "Media docena", porciones: null, precio: 450000 },
+    { id: "docena", nombre: "Docena", porciones: null, precio: 800000 },
+    {
+      id: "evento",
+      nombre: "Para eventos (x 50)",
+      porciones: null,
+      precio: 3000000,
+    },
+  ],
+};
