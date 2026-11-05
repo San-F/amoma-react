@@ -1,8 +1,8 @@
 import { useEffect } from "react";
 
-const SITIO = "Amoma · Tortas caseras en CABA";
+const SITIO = "Amoma · Tortas caseras en Villa Pueyrredón, CABA";
 const DESCRIPCION =
-  "Pastelería casera en CABA. Tortas, tartas, postres y tortas personalizadas para cumpleaños y eventos. Encargos por WhatsApp.";
+  "Pastelería casera en Villa Pueyrredón, CABA. Tortas, tartas, postres y tortas personalizadas para cumpleaños y eventos. Encargos por WhatsApp.";
 
 function meta(selector, crear, valor) {
   let el = document.head.querySelector(selector);
