@@ -1,4 +1,4 @@
-// Arma la imagen para compartir (public/og-2.jpg, 1200×630) con fotos REALES.
+// Arma la imagen para compartir (public/og-3.jpg, 1200×630) con fotos REALES.
 // El nombre lleva número: WhatsApp guarda la imagen vieja; al cambiarla, subir el número (y en index.html).
 // WhatsApp a veces muestra solo el cuadrado del centro: la torta va ahí,
 // entera, y el texto a los costados. Uso: node scripts/og.cjs
@@ -11,9 +11,9 @@ const raiz = path.join(__dirname, "..");
 const b64 = (p) => fs.readFileSync(path.join(raiz, p)).toString("base64");
 
 (async () => {
-  // recorte cuadrado de las dos tortas de frutos rojos (foto de la portada)
-  const foto = await sharp(path.join(raiz, "src/assets/img/torta-3.jpeg"))
-    .extract({ left: 6, top: 120, width: 906, height: 906 })
+  // recorte cuadrado de la torta de rosetas blancas (opción C, elegida por el cliente)
+  const foto = await sharp(path.join(raiz, "src/assets/img/torta-1.jpeg"))
+    .extract({ left: 60, top: 60, width: 1080, height: 1080 })
     .resize(1120, 1120, { kernel: "lanczos3" })
     .jpeg({ quality: 92 })
     .toBuffer();
@@ -22,9 +22,9 @@ const b64 = (p) => fs.readFileSync(path.join(raiz, p)).toString("base64");
     @font-face{font-family:F;font-style:italic;src:url(data:font/woff2;base64,${b64("node_modules/@fontsource-variable/fraunces/files/fraunces-latin-opsz-italic.woff2")})}
     @font-face{font-family:M;src:url(data:font/woff2;base64,${b64("node_modules/@fontsource-variable/manrope/files/manrope-latin-wght-normal.woff2")})}
     *{margin:0;box-sizing:border-box}
-    body{width:1200px;height:630px;background:#fbf5ee;color:#3b2420;font-family:M;position:relative;overflow:hidden}
+    body{width:1200px;height:630px;background:#fbe3ea;color:#3b2420;font-family:M;position:relative;overflow:hidden}
     .halo{position:absolute;left:600px;top:315px;width:760px;height:760px;margin:-380px;border-radius:50%;
-      background:radial-gradient(circle,#f4eadf 0 55%,transparent 70%)}
+      background:radial-gradient(circle,#f8d3de 0 55%,transparent 70%)}
     .foto{position:absolute;left:600px;top:315px;width:560px;height:560px;margin:-280px;border-radius:50%;overflow:hidden;
       box-shadow:0 40px 60px -30px rgb(59 36 32/55%),0 0 0 10px #fff}
     .foto img{width:100%;height:100%;object-fit:cover}
@@ -48,10 +48,10 @@ const b64 = (p) => fs.readFileSync(path.join(raiz, p)).toString("base64");
   await p.evaluate(() => document.fonts.ready);
   const png = await p.screenshot({ type: "png" });
   await b.close();
-  const salida = path.join(raiz, "public/og-2.jpg");
+  const salida = path.join(raiz, "public/og-3.jpg");
   await sharp(png).jpeg({ quality: 84, mozjpeg: true }).toFile(salida);
   console.log(
-    "public/og-2.jpg",
+    "public/og-3.jpg",
     Math.round(fs.statSync(salida).size / 1024),
     "KB",
   );

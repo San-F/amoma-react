@@ -39,7 +39,7 @@ Lista viva. ✅ = hecho · ⏳ = en curso · 🔲 = falta
 - ✅ Etapa 5 — Google y compartir (OG, schema.org, sitemap), accesibilidad (axe sin errores), privacidad
 - ✅ Playbook reutilizable + `CLAUDE.md`
 - ✅ "Tu pedido": varios productos en un solo WhatsApp. En el detalle: tamaño con porciones y precio, cantidad, total en vivo, "Agregar y seguir" o "Pedir ahora". En la hoja: cambiar tamaño (si queda repetido se junta), cantidad, quitar con "Deshacer", precio siempre del catálogo actual, avisos si algo ya no está. Fondo quieto con ventanas abiertas. Probado con 5.000 toques al azar + navegador en celular y compu.
-- ✅ Imagen para compartir nueva (`public/og-2.jpg`, se rehace con `node scripts/og.cjs`): torta real en círculo al centro (se ve bien aunque WhatsApp recorte el cuadrado). Título y descripción con "CABA" sin el barrio (el barrio sigue en la ficha para Google y en los datos de contacto).
+- ✅ Imagen para compartir nueva (`public/og-3.jpg`, opción C: fondo rosa y torta de rosetas, se rehace con `node scripts/og.cjs`): foto real en círculo al centro (se ve bien aunque WhatsApp recorte el cuadrado). Título y descripción con "CABA" sin el barrio (el barrio sigue en la ficha para Google y en los datos de contacto).
 - 🔲 Que la dueña cargue **precios por tamaño**: sin eso el detalle dice "Te confirmamos el precio por WhatsApp".
 - 🔲 Conectar con Supabase real y probar de punta a punta (necesita las claves)
 - ✅ Formulario de contacto guarda las consultas en el panel (límite de envíos + trampa para robots,
