@@ -4,7 +4,7 @@ import Contact from "../components/Contact";
 function Contacto() {
   useTitulo(
     "Contacto",
-    "Encargá tu torta en Amoma: escribinos por WhatsApp o dejá tu consulta. Villa Pueyrredón, CABA.",
+    "Encargá tu torta en Amoma: escribinos por WhatsApp o dejá tu consulta. CABA.",
   );
   return <Contact />;
 }
