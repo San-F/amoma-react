@@ -43,6 +43,7 @@ function ProductoEditar() {
     description: "",
     is_published: false,
     is_featured: false,
+    badge: "",
   });
   const [variantes, setVariantes] = useState([{ ...VARIANTE_VACIA }]);
   const [imagenes, setImagenes] = useState([]);
@@ -64,6 +65,7 @@ function ProductoEditar() {
           description: p.description ?? "",
           is_published: p.is_published,
           is_featured: p.is_featured,
+          badge: p.badge ?? "",
         });
         setVariantes(
           p.variants.length
@@ -139,6 +141,7 @@ function ProductoEditar() {
           description: r.data.description || null,
           is_published: form.is_published,
           is_featured: form.is_featured,
+          badge: form.badge || null,
         },
         listas,
       );
@@ -237,6 +240,26 @@ function ProductoEditar() {
                   {c.name}
                 </option>
               ))}
+            </select>
+          </div>
+          <div className="campo">
+            <label htmlFor="badge">
+              Etiqueta <small>(opcional, se ve en la tarjeta)</small>
+            </label>
+
+            <select
+              id="badge"
+              name="badge"
+              value={form.badge}
+              onChange={cambiar}
+            >
+              <option value="">Sin etiqueta</option>
+
+              <option value="mas-pedido">Más pedido</option>
+
+              <option value="nuevo">Nuevo</option>
+
+              <option value="temporada">De temporada</option>
             </select>
           </div>
           <div className="campo">

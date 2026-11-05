@@ -9,8 +9,12 @@
       content="Pastelería casera en Villa Pueyrredón, CABA. Tortas, tartas, postres y tortas personalizadas para cumpleaños y eventos. Encargos por WhatsApp."
     />
     <meta name="theme-color" content="#fbf5ee" />
-    <link rel="icon" type="image/png" href="/logo.png" />
-    <link rel="apple-touch-icon" href="/logo.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- bienvenida: se carga primero para que nunca haya pantalla en blanco -->
+    <link rel="stylesheet" href="/splash.css" />
+    <script src="/splash.js"></script>
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <!-- ⚠️ cambiar por el dominio definitivo (ver docs/PENDIENTES.md) -->
     <link rel="canonical" href="https://amoma-react.vercel.app/" />
 
@@ -59,6 +63,13 @@
     </script>
   </head>
   <body>
+    <div id="bienvenida" aria-hidden="true">
+      <div class="bv-contenido">
+        <img src="/logo.png" alt="" width="104" height="104" />
+        <span class="bv-linea"></span>
+        <p class="bv-frase">casero y hecho con amor</p>
+      </div>
+    </div>
     <div id="root"></div>
     <noscript
       >Amoma · Tortas caseras. Escribinos por WhatsApp al 11 3636

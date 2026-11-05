@@ -12,3 +12,6 @@ createRoot(document.getElementById("root")).render(
     <App />
   </StrictMode>,
 );
+
+// la página ya está dibujada: la bienvenida puede abrirse como telón
+requestAnimationFrame(() => window.__cerrarBienvenida?.());

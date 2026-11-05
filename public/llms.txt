@@ -1,0 +1,18 @@
+# Amoma
+
+> Pastelería casera en Villa Pueyrredón, Ciudad de Buenos Aires (Argentina). Tortas, tartas, postres individuales, salados (chipá) y tortas personalizadas para cumpleaños, casamientos y eventos. Los pedidos se hacen por WhatsApp.
+
+## Páginas
+
+- [Inicio](https://amoma-react.vercel.app/): catálogo con tamaños y precios, tortas personalizadas y cómo pedir.
+- [Galería](https://amoma-react.vercel.app/galeria): trabajos realizados.
+- [Contacto](https://amoma-react.vercel.app/contacto): WhatsApp, Instagram y formulario de consulta.
+- [Privacidad](https://amoma-react.vercel.app/privacidad)
+
+## Cómo pedir
+
+1. Elegir una torta del catálogo o contar la idea para una personalizada.
+2. Escribir por WhatsApp para confirmar precio y fecha.
+3. Coordinar retiro o envío.
+
+Instagram: @amoma.cakeshop

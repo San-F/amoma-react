@@ -4,13 +4,23 @@ import { useSearchParams } from "react-router-dom";
 import Picture from "../components/Picture";
 import Reveal from "../components/Reveal";
 import Icon from "../components/Icon";
-import { filtros, preciosDeEjemplo, tamanos } from "../data/catalog";
+import {
+  etiquetasDeEjemplo,
+  filtros,
+  preciosDeEjemplo,
+  tamanos,
+} from "../data/catalog";
 import { linkWhatsApp } from "../lib/whatsapp";
 import { formatearPrecio } from "../lib/money";
 import { conTransicion } from "../lib/transicion";
 import { useSitio } from "../lib/sitio";
 import "../styles/Catalog.css";
 
+const ETIQUETAS = {
+  "mas-pedido": "Más pedido",
+  nuevo: "Nuevo",
+  temporada: "De temporada",
+};
 const NOMBRE_FILTRO = Object.fromEntries(filtros.map((f) => [f.id, f.nombre]));
 
 // precio más bajo cargado (para "desde $…" en la tarjeta)
@@ -30,7 +40,11 @@ function Catalog() {
     ? productosSitio.map((p) =>
         p.variantes?.some((v) => v.precio)
           ? p
-          : { ...p, variantes: preciosDeEjemplo[p.id] ?? p.variantes },
+          : {
+              ...p,
+              variantes: preciosDeEjemplo[p.id] ?? p.variantes,
+              etiqueta: p.etiqueta ?? etiquetasDeEjemplo[p.id] ?? null,
+            },
       )
     : productosSitio;
   const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
@@ -183,6 +197,11 @@ function Catalog() {
                 {desde(p) != null && (
                   <span className="sabor__precio">
                     desde {formatearPrecio(desde(p))}
+                  </span>
+                )}
+                {p.etiqueta && ETIQUETAS[p.etiqueta] && (
+                  <span className={`etiqueta etiqueta--${p.etiqueta}`}>
+                    {ETIQUETAS[p.etiqueta]}
                   </span>
                 )}
                 <span className="sabor__mas" aria-hidden="true">

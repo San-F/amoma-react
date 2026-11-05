@@ -220,6 +220,13 @@ const t = (chica, mediana, grande) => [
   { id: "mediana", nombre: "Mediana", porciones: 15, precio: mediana * 100 },
   { id: "grande", nombre: "Grande", porciones: 25, precio: grande * 100 },
 ];
+// etiquetas de ejemplo (solo en ?precios=demo)
+export const etiquetasDeEjemplo = {
+  "frutos-rojos": "mas-pedido",
+  chipa: "nuevo",
+  charlotte: "temporada",
+};
+
 export const preciosDeEjemplo = {
   "frutos-rojos": t(26000, 36000, 54000),
   "chocolate-rosetas": t(24000, 34000, 50000),

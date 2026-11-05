@@ -316,6 +316,8 @@ select tests.expect_error('precio negativo rechazado', $q$ insert into public.pr
 select tests.expect_error('slug con caracteres raros rechazado', $q$ insert into public.categories (slug,name) values ('<script>','x') $q$, '23514');
 select tests.expect_error('email inválido rechazado', $q$ insert into public.inquiries (name,email,reason,contact_pref) values ('x','no-es-email','torta','WhatsApp') $q$, '23514');
 select tests.expect_error('dos portadas para un producto rechazado', $q$ insert into public.product_images (product_id,storage_path,is_cover) values ('20000000-0000-0000-0000-000000000001','a',true),('20000000-0000-0000-0000-000000000001','b',true) $q$, '23505');
+select tests.expect_error('etiqueta inventada rechazada', $q$ update public.products set badge = 'oferta-falsa' where slug = 'publicado' $q$, '23514');
+select tests.expect_count('etiqueta válida aceptada', $q$ with u as (update public.products set badge = 'nuevo' where slug = 'publicado' returning 1) select count(*) from u $q$, 1);
 select tests.expect_error('solo puede haber una fila de ajustes', $q$ insert into public.site_settings (id) values (2) $q$, '23514');
 rollback;
 

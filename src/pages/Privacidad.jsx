@@ -6,7 +6,10 @@ import "../styles/Privacidad.css";
 // Texto base según la Ley 25.326 de Protección de Datos Personales (Argentina).
 // ⚠️ Revisar con la dueña antes de publicar (ver docs/PENDIENTES.md).
 function Privacidad() {
-  useTitulo("Privacidad");
+  useTitulo(
+    "Privacidad",
+    "Cómo usa Amoma los datos que nos enviás: solo para responder tu pedido. Sin cookies de seguimiento.",
+  );
   const { negocio } = useSitio();
   return (
     <article className="privacidad seccion contenedor">

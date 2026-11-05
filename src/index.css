@@ -472,3 +472,24 @@ html.vt-detalle::view-transition-new(root) {
     font-size: 0.95rem;
   }
 }
+
+/* aviso cuando falla una sección o la página */
+.seguro {
+  display: grid;
+  justify-items: center;
+  gap: 1rem;
+  padding: 3rem var(--gutter);
+  text-align: center;
+  color: var(--cacao-suave);
+}
+
+.seguro--pagina {
+  min-height: 70vh;
+  align-content: center;
+}
+
+.seguro__titulo {
+  font-family: var(--font-display);
+  font-size: 2rem;
+  color: var(--cacao);
+}

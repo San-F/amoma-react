@@ -1,3 +1,4 @@
+import Seguro from "../components/Seguro";
 import { useTitulo } from "../lib/useTitulo";
 import Hero from "../sections/Hero";
 import Ribbon from "../sections/Ribbon";
@@ -12,12 +13,24 @@ function Inicio() {
   useTitulo();
   return (
     <>
-      <Hero />
-      <Ribbon />
-      <Categories />
-      <Catalog />
-      <CustomCake />
-      <Closing />
+      <Seguro>
+        <Hero />
+      </Seguro>
+      <Seguro>
+        <Ribbon />
+      </Seguro>
+      <Seguro>
+        <Categories />
+      </Seguro>
+      <Seguro>
+        <Catalog />
+      </Seguro>
+      <Seguro>
+        <CustomCake />
+      </Seguro>
+      <Seguro>
+        <Closing />
+      </Seguro>
     </>
   );
 }
