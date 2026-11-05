@@ -58,6 +58,15 @@ body {
   overflow-x: hidden;
 }
 
+/* nada puede ensanchar la página (clip no rompe el menú fijo de arriba,
+   a diferencia de hidden en <html>) */
+@supports (overflow: clip) {
+  html,
+  body {
+    overflow-x: clip;
+  }
+}
+
 #root {
   min-height: 100dvh;
   display: flex;

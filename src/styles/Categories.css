@@ -442,3 +442,17 @@ html.vt-portal::view-transition-new(root) {
     border-radius: 0;
   }
 }
+
+/* Safari (iPhone): las sombras/filtros de las tarjetas podían "escaparse"
+   del carrusel y agrandar el ancho de la página (franja a la derecha).
+   contain: paint encierra todo lo que se dibuja dentro del carrusel. */
+.categorias__lista {
+  contain: paint;
+}
+
+@media (min-width: 64rem) {
+  /* en compu no es carrusel: las tarjetas agrandadas pueden sobresalir */
+  .categorias__lista {
+    contain: none;
+  }
+}
