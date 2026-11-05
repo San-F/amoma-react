@@ -14,7 +14,7 @@ import {
   opcionesDe,
   usePedido,
 } from "../lib/pedido";
-import { conDemo, useSitio } from "../lib/sitio";
+import { useSitio } from "../lib/sitio";
 import "../styles/Catalog.css";
 
 const ETIQUETAS = {
@@ -35,9 +35,7 @@ const desde = (p) => {
 function Catalog() {
   const [params] = useSearchParams();
   const { negocio, productos: productosSitio } = useSitio();
-  // modo demo (?precios=demo): precios inventados para ver el diseño
-  const demo = params.get("precios") === "demo";
-  const productos = conDemo(productosSitio, demo);
+  const productos = productosSitio;
   const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   const pedido = params.get("categoria");
   const desdeUrl = NOMBRE_FILTRO[pedido] ? pedido : "todas";
@@ -144,12 +142,7 @@ function Catalog() {
       <div className="contenedor">
         <Reveal className="catalogo__cabecera">
           <div>
-            <p className="eyebrow">
-              Nuestro catálogo
-              {demo && (
-                <span className="catalogo__demo">precios de ejemplo</span>
-              )}
-            </p>
+            <p className="eyebrow">Nuestro catálogo</p>
             <h2 id="catalogo-titulo">
               <Palabras>
                 Tocá una y <em>conocela</em>

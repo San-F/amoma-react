@@ -3,10 +3,8 @@
 // Si la base falla o está vacía, la página sigue mostrando el contenido fijo.
 import { useSyncExternalStore } from "react";
 import {
-  etiquetasDeEjemplo,
   galeria as galeriaBase,
   negocio as negocioBase,
-  preciosDeEjemplo,
   productos as productosBase,
 } from "../data/catalog";
 import { fotos } from "../data/images";
@@ -144,19 +142,4 @@ function suscribir(fn) {
 
 export function useSitio() {
   return useSyncExternalStore(suscribir, () => estado);
-}
-
-// Modo demo (?precios=demo): precios y etiquetas inventados para ver el diseño.
-// Solo para productos que todavía no tienen precio real.
-export function conDemo(productos, demo) {
-  if (!demo) return productos;
-  return productos.map((p) =>
-    p.variantes?.some((v) => v.precio)
-      ? p
-      : {
-          ...p,
-          variantes: preciosDeEjemplo[p.id] ?? p.variantes,
-          etiqueta: p.etiqueta ?? etiquetasDeEjemplo[p.id] ?? null,
-        },
-  );
 }

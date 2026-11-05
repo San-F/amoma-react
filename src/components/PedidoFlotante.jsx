@@ -1,5 +1,4 @@
 import { useEffect, useId, useRef, useState } from "react";
-import { useSearchParams } from "react-router-dom";
 import Icon from "./Icon";
 import {
   cambiarCantidad,
@@ -14,7 +13,7 @@ import {
 } from "../lib/pedido";
 import { formatearPrecio } from "../lib/money";
 import { fechaMinima, linkWhatsApp } from "../lib/whatsapp";
-import { conDemo, useSitio } from "../lib/sitio";
+import { useSitio } from "../lib/sitio";
 import { tamanos } from "../data/catalog";
 
 const DIAS_AVISO = 2;
@@ -25,13 +24,11 @@ function PedidoFlotante() {
   const uid = useId();
   const guardados = usePedido();
   const { negocio, productos, listo } = useSitio();
-  const [params] = useSearchParams();
   // nombre, precio y tamaños siempre del catálogo actual
-  const items = conCatalogo(
-    guardados,
-    conDemo(productos, params.get("precios") === "demo"),
-    { genericos: tamanos, definitivo: listo },
-  );
+  const items = conCatalogo(guardados, productos, {
+    genericos: tamanos,
+    definitivo: listo,
+  });
   const { unidades, total, subtotal, aConfirmar, problemas } =
     resumenPedido(items);
   const [quitado, setQuitado] = useState(null);

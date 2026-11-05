@@ -416,15 +416,6 @@
   color: var(--cacao-suave);
 }
 
-.catalogo__demo {
-  margin-left: 0.6rem;
-  padding: 0.15rem 0.5rem;
-  border-radius: 999px;
-  background: #fff4d6;
-  color: #6b4e00;
-  letter-spacing: 0.05em;
-}
-
 /* celular: el detalle entra entero en la pantalla, sin scroll interno */
 @media (max-width: 55.99rem) {
   .detalle__panel {
