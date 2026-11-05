@@ -20,8 +20,9 @@ Todo lo aprendido armando **Amoma** (pastelería), escrito para reutilizar en el
 
 ## Cómo usarlo en un proyecto nuevo
 
-1. Copiá la carpeta `docs/playbook/` y el archivo `CLAUDE.md` de la raíz al repo nuevo.
-2. Editá en `CLAUDE.md` la sección "Este proyecto" (nombre, rubro, stack).
+1. Copiá la carpeta `docs/playbook/` al repo nuevo.
+2. Copiá `docs/playbook/CLAUDE.plantilla.md` a la raíz como `CLAUDE.md` y completá "Este proyecto".
+   (O simplemente decile a Claude: _"fijate el sistema de Amoma"_; las instrucciones están en el `CLAUDE.md` de Amoma.)
 3. Primer mensaje a Claude: _"Leé CLAUDE.md y docs/playbook/. Armá el plan por etapas para [proyecto]"_
    (ver [10-prompts.md](10-prompts.md)).
 

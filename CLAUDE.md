@@ -44,3 +44,17 @@ Pendientes: [`docs/PENDIENTES.md`](docs/PENDIENTES.md) (mantenerlo actualizado).
 - Datos públicos: `src/lib/sitio.js` lee Supabase y, si falla o está vacío, usa `src/data/catalog.js`.
 - Comandos: `npm run dev` · `npm run check` · `npm run test:unit` ·
   `PGHOST=… PGPORT=… PGUSER=postgres npm run test:db` (Postgres local descartable).
+
+## Llevar este sistema a otro proyecto (mensaje para el Claude del futuro)
+
+Si en otro repo el usuario dice algo como _"fijate el sistema de Amoma"_ o _"usá lo de Amoma"_:
+
+1. Leé `docs/playbook/README.md` de este repo (`San-F/amoma-react`) y después las guías que apliquen.
+   Si la sesión no tiene acceso a este repo, pedí agregarlo (lectura alcanza).
+2. Copiá al repo nuevo la carpeta `docs/playbook/` completa.
+3. Copiá `docs/playbook/CLAUDE.plantilla.md` a la **raíz** del repo nuevo como `CLAUDE.md` y completá
+   la sección "Este proyecto" con lo que cuente el usuario.
+4. Armá `docs/PLAN.md` por etapas (ver `01-proceso.md`) y `docs/PENDIENTES.md`, y frená para que el
+   usuario lo apruebe antes de programar.
+5. Reutilizá el código probado de Amoma (tabla en `docs/playbook/README.md` → "Plantilla de código
+   reutilizable"): roles + MFA, RLS + tests de permisos, login, Excel, compresión de fotos, cabeceras, CI.

@@ -1,5 +1,12 @@
 # Amoma · Pastelería casera
 
+> **¿Sos Claude (u otra IA) y te dijeron "fijate el sistema de Amoma"?**
+> Este repo contiene el **sistema de creación de páginas** del usuario: proceso por etapas, diseño
+> premium, seguridad, base de datos, errores a evitar y checklist de calidad.
+> Está en [`docs/playbook/`](docs/playbook/README.md) (empezá por su README) y las reglas de trabajo en
+> [`CLAUDE.md`](CLAUDE.md). Para usarlo en otro repo seguí la sección _"Llevar este sistema a otro
+> proyecto"_ de `CLAUDE.md`.
+
 Página web y panel de administración de **Amoma**, pastelería casera en Villa Pueyrredón (CABA).
 
 - **Sitio público**: portada, categorías, catálogo con detalle y precios, tortas personalizadas,
