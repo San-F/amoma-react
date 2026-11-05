@@ -373,3 +373,36 @@ html.vt-portal::view-transition-new(root) {
   justify-content: center;
   padding-bottom: calc(var(--seccion) + var(--radio-grande));
 }
+
+/* la imagen nueva queda firme mientras crece (sin fundido que deje ver el
+   fondo) y ambas se recortan sin deformarse */
+::view-transition-old(portal),
+::view-transition-new(portal) {
+  height: 100%;
+  object-fit: cover;
+}
+
+::view-transition-new(portal) {
+  animation: none;
+}
+
+::view-transition-old(portal) {
+  animation: portal-vieja-sale 0.2s ease-out both;
+}
+
+@keyframes portal-vieja-sale {
+  to {
+    opacity: 0;
+  }
+}
+
+/* más aire abajo: con las tarjetas al centro no asoma la sección siguiente */
+.categorias {
+  padding-bottom: calc(var(--seccion) + var(--radio-grande) + 12vh);
+}
+
+@media (max-width: 63.99rem) {
+  .categorias {
+    padding-bottom: calc(var(--seccion) + var(--radio-grande) + 22vh);
+  }
+}

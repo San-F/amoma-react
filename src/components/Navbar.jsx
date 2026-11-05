@@ -49,63 +49,71 @@ function Navbar() {
   }, [abierto]);
 
   return (
-    <header
-      className={`nav ${conFondo || abierto ? "nav--fondo" : ""} ${oculta && !abierto ? "nav--oculta" : ""}`}
-    >
-      <nav className="nav__barra contenedor" aria-label="Principal">
-        <Link
-          to="/"
-          className="nav__logo"
-          aria-label="Amoma, ir al inicio"
-          viewTransition
-        >
-          <img src={logo} alt="" width="48" height="48" />
-          <span>Amoma</span>
-        </Link>
-
-        <ul
-          id="menu-principal"
-          className={`nav__links ${abierto ? "is-open" : ""}`}
-        >
-          {LINKS.map((l) => (
-            <li key={l.to}>
-              {l.ancla ? (
-                <Link to={l.to} viewTransition>
-                  {l.texto}
-                </Link>
-              ) : (
-                <NavLink to={l.to} viewTransition>
-                  {l.texto}
-                </NavLink>
-              )}
-            </li>
-          ))}
-        </ul>
-
-        <div className="nav__acciones">
-          <a
-            className="btn btn--rosa nav__cta"
-            href={wa("¡Hola Amoma! Quería hacer un pedido.")}
-            target="_blank"
-            rel="noopener noreferrer"
+    <>
+      <header
+        className={`nav ${conFondo || abierto ? "nav--fondo" : ""} ${oculta && !abierto ? "nav--oculta" : ""}`}
+      >
+        <nav className="nav__barra contenedor" aria-label="Principal">
+          <Link
+            to="/"
+            className="nav__logo"
+            aria-label="Amoma, ir al inicio"
+            viewTransition
           >
-            Pedir
-          </a>
-          <button
-            type="button"
-            className="nav__toggle"
-            aria-expanded={abierto}
-            aria-controls="menu-principal"
-            onClick={() => setAbierto((v) => !v)}
+            <img src={logo} alt="" width="48" height="48" />
+            <span>Amoma</span>
+          </Link>
+
+          <ul
+            id="menu-principal"
+            className={`nav__links ${abierto ? "is-open" : ""}`}
           >
-            <span className="sr-only">
-              {abierto ? "Cerrar menú" : "Abrir menú"}
-            </span>
-            <span className="nav__hamburguesa" aria-hidden="true" />
-          </button>
-        </div>
-      </nav>
-    </header>
+            {LINKS.map((l) => (
+              <li key={l.to}>
+                {l.ancla ? (
+                  <Link to={l.to} viewTransition>
+                    {l.texto}
+                  </Link>
+                ) : (
+                  <NavLink to={l.to} viewTransition>
+                    {l.texto}
+                  </NavLink>
+                )}
+              </li>
+            ))}
+          </ul>
+
+          <div className="nav__acciones">
+            <a
+              className="btn btn--rosa nav__cta"
+              href={wa("¡Hola Amoma! Quería hacer un pedido.")}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Pedir
+            </a>
+            <button
+              type="button"
+              className="nav__toggle"
+              aria-expanded={abierto}
+              aria-controls="menu-principal"
+              onClick={() => setAbierto((v) => !v)}
+            >
+              <span className="sr-only">
+                {abierto ? "Cerrar menú" : "Abrir menú"}
+              </span>
+              <span className="nav__hamburguesa" aria-hidden="true" />
+            </button>
+          </div>
+        </nav>
+      </header>
+      {/* velo: desenfoca la página detrás del menú abierto; tocarlo lo cierra */}
+      <div
+        className={`nav__velo ${abierto ? "is-open" : ""}`}
+        aria-hidden="true"
+        onClick={() => setAbierto(false)}
+      />
+    </>
   );
 }
 

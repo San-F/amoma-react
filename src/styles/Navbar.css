@@ -186,3 +186,30 @@
     display: none;
   }
 }
+
+/* velo detrás del menú del celular: desenfoca y aclara la página */
+.nav__velo {
+  position: fixed;
+  inset: 0;
+  z-index: 45; /* debajo de la barra (50), encima de la página */
+  background: rgb(251 245 238 / 55%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 0.35s var(--ease),
+    visibility 0s 0.35s;
+}
+
+.nav__velo.is-open {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+@media (min-width: 48rem) {
+  .nav__velo {
+    display: none;
+  }
+}

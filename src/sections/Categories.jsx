@@ -20,10 +20,25 @@ function Categories() {
   const [portal, setPortal] = useState(null); // { c, fase: "abierto" | "saliendo" }
   const linksRef = useRef([]);
 
+  // Precarga la foto a pantalla completa (si no, en la expansión se veía el
+  // fondo claro un instante mientras cargaba: el "parpadeo blanco").
+  const precargadas = useRef(new Map());
+  const precargar = (c) => {
+    if (precargadas.current.has(c.id)) return precargadas.current.get(c.id);
+    const fuentes = c.foto.picture?.sources ?? {};
+    const img = new Image();
+    img.sizes = "100vw";
+    img.srcset = fuentes.avif ?? fuentes.webp ?? "";
+    img.src = c.foto.picture?.img.src ?? c.foto.src;
+    const lista = img.decode().catch(() => {});
+    precargadas.current.set(c.id, lista);
+    return lista;
+  };
+
   // "Entrar" a la categoría: la tarjeta se expande a pantalla completa
   // (View Transitions), se lee el nombre, y se abre al catálogo ya filtrado.
   // Sin soporte o con "reducir movimiento": desplazamiento suave.
-  const abrirCategoria = (e, c, i) => {
+  const abrirCategoria = async (e, c, i) => {
     e.preventDefault();
     const [ruta, ancla] = c.destino.split("#");
     const filtrar = () =>
@@ -36,6 +51,11 @@ function Categories() {
       requestAnimationFrame(() => irA(`#${ancla}`));
       return;
     }
+    // esperar la foto grande (con tope, para no demorar el toque)
+    await Promise.race([
+      precargar(c),
+      new Promise((ok) => setTimeout(ok, 450)),
+    ]);
     const tarjeta = linksRef.current[i];
     if (tarjeta) tarjeta.style.viewTransitionName = "portal";
     const t = conTransicion(() => {
@@ -121,14 +141,20 @@ function Categories() {
             key={c.id}
             delay={i * 110}
             className={`categoria ${activa === i ? "is-activa" : ""} ${centrada === i ? "is-centrada" : ""}`}
-            onPointerEnter={(e) => e.pointerType === "mouse" && setActiva(i)}
+            onPointerEnter={(e) => {
+              precargar(c);
+              if (e.pointerType === "mouse") setActiva(i);
+            }}
           >
             <Link
               to={c.destino}
               className="categoria__link descubrir"
               onClick={(e) => abrirCategoria(e, c, i)}
               ref={(el) => (linksRef.current[i] = el)}
-              onFocus={() => setActiva(i)}
+              onFocus={() => {
+                precargar(c);
+                setActiva(i);
+              }}
               onBlur={() => setActiva(null)}
             >
               <div className="categoria__foto">
