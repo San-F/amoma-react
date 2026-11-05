@@ -17,6 +17,11 @@ function Categories() {
   const [centrada, setCentrada] = useState(0);
   const navigate = useNavigate();
 
+  // al llegar al destino, sus esquinas redondeadas quedan justo fuera de la
+  // pantalla (si no, se ve un borde de la sección anterior arriba)
+  const margenHoja = () =>
+    -parseFloat(getComputedStyle(document.documentElement).fontSize) * 2; // --radio-grande: 2rem
+
   const [portal, setPortal] = useState(null); // { c, fase: "abierto" | "saliendo" }
   const linksRef = useRef([]);
 
@@ -48,7 +53,7 @@ function Categories() {
     ).matches;
     if (!document.startViewTransition || menosMovimiento) {
       filtrar();
-      requestAnimationFrame(() => irA(`#${ancla}`));
+      requestAnimationFrame(() => irA(`#${ancla}`, { margen: margenHoja() }));
       return;
     }
     // esperar la foto grande (con tope, para no demorar el toque)
@@ -72,7 +77,7 @@ function Categories() {
       if (destino)
         window.scrollTo(
           0,
-          destino.getBoundingClientRect().top + window.scrollY - 16,
+          destino.getBoundingClientRect().top + window.scrollY - margenHoja(),
         );
       setPortal({ c, fase: "saliendo" });
     });
