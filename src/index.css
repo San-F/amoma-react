@@ -416,3 +416,52 @@ em {
     font-size: 1.125rem;
   }
 }
+
+/* coreografía de aperturas (detalle del catálogo, visor de la galería):
+   el fondo cambia al instante, solo se animan el panel y la foto que viaja */
+html.vt-detalle::view-transition-old(root),
+html.vt-detalle::view-transition-new(root) {
+  animation: none;
+}
+
+::view-transition-new(detalle-panel) {
+  animation: panel-entra 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+::view-transition-old(detalle-panel) {
+  animation: panel-sale 0.2s ease-in both;
+}
+
+::view-transition-new(visor) {
+  animation: visor-entra 0.3s ease-out both;
+}
+
+::view-transition-old(visor) {
+  animation: visor-sale 0.3s ease-in both;
+}
+
+@keyframes panel-entra {
+  from {
+    opacity: 0;
+    transform: translateY(48px);
+  }
+}
+
+@keyframes panel-sale {
+  to {
+    opacity: 0;
+    transform: translateY(36px);
+  }
+}
+
+@keyframes visor-entra {
+  from {
+    opacity: 0;
+  }
+}
+
+@keyframes visor-sale {
+  to {
+    opacity: 0;
+  }
+}

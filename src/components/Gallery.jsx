@@ -25,7 +25,7 @@ function Gallery() {
       if (mini) mini.style.viewTransitionName = "";
       setAbierta(i);
       dialogRef.current?.showModal();
-    });
+    }, "vt-detalle");
   };
 
   const cerrar = () => {
@@ -34,7 +34,7 @@ function Gallery() {
       dialogRef.current?.close();
       setAbierta(null);
       if (mini) mini.style.viewTransitionName = "foto-galeria";
-    });
+    }, "vt-detalle");
     const limpiar = () => mini && (mini.style.viewTransitionName = "");
     if (t) t.finished.finally(limpiar);
     else limpiar();

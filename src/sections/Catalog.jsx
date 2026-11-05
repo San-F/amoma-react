@@ -1,6 +1,5 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Palabras from "../components/Palabras";
-import { flushSync } from "react-dom";
 import { useSearchParams } from "react-router-dom";
 import Picture from "../components/Picture";
 import Reveal from "../components/Reveal";
@@ -8,30 +7,22 @@ import Icon from "../components/Icon";
 import { filtros, tamanos } from "../data/catalog";
 import { linkWhatsApp } from "../lib/whatsapp";
 import { formatearPrecio } from "../lib/money";
+import { conTransicion } from "../lib/transicion";
 import { useSitio } from "../lib/sitio";
 import "../styles/Catalog.css";
 
 const NOMBRE_FILTRO = Object.fromEntries(filtros.map((f) => [f.id, f.nombre]));
 
-// Envuelve un cambio de pantalla en una View Transition (la foto "viaja").
-// Si el navegador no la soporta o el usuario pidió menos movimiento: cambio directo.
-function conTransicion(cambio) {
-  const menosMovimiento = window.matchMedia(
-    "(prefers-reduced-motion: reduce)",
-  ).matches;
-  if (!document.startViewTransition || menosMovimiento) {
-    cambio();
-    return null;
-  }
-  return document.startViewTransition(() => flushSync(cambio));
-}
-
 function Catalog() {
   const { negocio, productos } = useSitio();
   const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
-  const [params, setParams] = useSearchParams();
+  const [params] = useSearchParams();
   const pedido = params.get("categoria");
-  const filtro = NOMBRE_FILTRO[pedido] ? pedido : "todas";
+  const desdeUrl = NOMBRE_FILTRO[pedido] ? pedido : "todas";
+  const [filtro, setFiltro] = useState(desdeUrl);
+  const gridRef = useRef(null);
+  // si llegan desde un link con ?categoria=…, se aplica ese filtro
+  useEffect(() => setFiltro(desdeUrl), [desdeUrl]);
   const lista =
     filtro === "todas"
       ? productos
@@ -50,7 +41,7 @@ function Catalog() {
       setAbierto(p);
       setTamano(p.variantes?.[0]?.id ?? "mediana");
       dialogRef.current?.showModal();
-    });
+    }, "vt-detalle");
   };
 
   const cerrar = () => {
@@ -59,18 +50,24 @@ function Catalog() {
       dialogRef.current?.close();
       setAbierto(null);
       if (foto) foto.style.viewTransitionName = "foto-producto";
-    });
+    }, "vt-detalle");
     const limpiar = () => foto && (foto.style.viewTransitionName = "");
     if (t) t.finished.finally(limpiar);
     else limpiar();
   };
 
-  const elegirFiltro = (id) =>
-    setParams(id === "todas" ? {} : { categoria: id }, {
-      replace: true,
-      preventScrollReset: true,
-      viewTransition: true,
-    });
+  // las tarjetas se deslizan a su nuevo lugar. Los nombres de transición
+  // solo se activan durante el filtrado (clase "filtrando"): si quedaran
+  // puestos, al abrir el detalle las tarjetas se dibujarían encima del panel.
+  const elegirFiltro = (id) => {
+    if (id === filtro) return;
+    const grid = gridRef.current;
+    grid?.classList.add("filtrando");
+    const t = conTransicion(() => setFiltro(id));
+    const limpiar = () => grid?.classList.remove("filtrando");
+    if (t) t.finished.finally(limpiar);
+    else limpiar();
+  };
 
   // tamaños reales (cargados por la dueña) o los genéricos de ejemplo
   const opciones = abierto?.variantes?.length
@@ -119,12 +116,12 @@ function Catalog() {
           </div>
         </Reveal>
 
-        <ul className="catalogo__grid">
+        <ul className="catalogo__grid" ref={gridRef}>
           {lista.map((p, i) => (
             <li
               key={p.id}
               className="sabor"
-              style={{ "--i": i, viewTransitionName: `sabor-${p.id}` }}
+              style={{ "--i": i, "--vt": `sabor-${p.id}` }}
             >
               <button
                 type="button"

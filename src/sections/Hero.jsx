@@ -14,17 +14,13 @@ function Hero() {
     <section className="hero">
       <div className="hero__inner contenedor">
         <div className="hero__texto">
-          <p className="eyebrow hero__anim" style={{ "--d": "0ms" }}>
-            Pastelería casera · {negocio.zona}
-          </p>
           <h1 className="hero__titulo palabras--ya">
             <Palabras>
               Tortas hechas a mano, <em>como en casa.</em>
             </Palabras>
           </h1>
           <p className="lead hero__anim" style={{ "--d": "180ms" }}>
-            Tortas, tartas y postres para cumpleaños, eventos y antojos.{" "}
-            {negocio.lema}.
+            Tortas, tartas y postres caseros para tus festejos.
           </p>
           <div className="hero__ctas hero__anim" style={{ "--d": "280ms" }}>
             <a href="#tortas" className="btn btn--rosa">

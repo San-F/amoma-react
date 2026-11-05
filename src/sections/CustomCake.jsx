@@ -1,7 +1,7 @@
 import { useEffect, useId, useRef, useState } from "react";
 import Palabras from "../components/Palabras";
+import { Link } from "react-router-dom";
 import CakeIllustration from "./CakeIllustration";
-import Picture from "../components/Picture";
 import Reveal from "../components/Reveal";
 import Icon from "../components/Icon";
 import { opcionesTorta } from "../data/catalog";
@@ -40,7 +40,7 @@ const TIEMPOS = [600, 1500, 1100, 1700, 3400, 650];
 const SALE = 5;
 
 function CustomCake() {
-  const { negocio, tematicas } = useSitio();
+  const { negocio } = useSitio();
   const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   const uid = useId();
   const escenaRef = useRef(null);
@@ -184,23 +184,9 @@ function CustomCake() {
               <Icon name="whatsapp" /> Enviar idea por WhatsApp
             </button>
           </form>
-        </Reveal>
-      </div>
-
-      <div className="contenedor">
-        <Reveal className="tematicas">
-          <p className="tematicas__titulo">Algunas que ya hicimos</p>
-          <ul>
-            {tematicas.map((f, i) => (
-              <li
-                key={f.src || f.alt}
-                className="descubrir"
-                style={{ "--reveal-delay": `${i * 120}ms` }}
-              >
-                <Picture foto={f} sizes="(min-width: 64rem) 22rem, 30vw" />
-              </li>
-            ))}
-          </ul>
+          <Link to="/galeria" className="personalizada__galeria" viewTransition>
+            Ver tortas personalizadas que ya hicimos <Icon name="arrow" />
+          </Link>
         </Reveal>
       </div>
     </section>

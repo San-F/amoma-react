@@ -365,8 +365,25 @@
   }
 }
 
-/* al filtrar, las tarjetas se deslizan a su nuevo lugar */
+/* al filtrar, las tarjetas se deslizan a su nuevo lugar (solo durante el filtrado) */
+.catalogo__grid.filtrando .sabor {
+  view-transition-name: var(--vt);
+}
+
 ::view-transition-group(*) {
   animation-duration: 0.5s;
   animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* el panel del detalle es su propia capa en la transición */
+.detalle[open] .detalle__panel {
+  view-transition-name: detalle-panel;
+}
+
+/* con View Transitions, la animación la hace la transición (no duplicar) */
+@supports (view-transition-name: none) {
+  .detalle[open],
+  .detalle__info {
+    animation: none;
+  }
 }

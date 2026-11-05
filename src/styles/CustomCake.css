@@ -313,44 +313,24 @@
   }
 }
 
-/* ---------- temáticas ---------- */
-
-.tematicas {
-  margin-top: clamp(3rem, 8vw, 5rem);
-  padding-top: 2rem;
-  border-top: 1px solid rgb(59 36 32 / 12%);
+/* link a la galería */
+.personalizada__galeria {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  min-height: 2.75rem;
+  margin-top: 1rem;
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 1px solid currentColor;
 }
 
-.tematicas__titulo {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-size: 1.2rem;
-  margin-bottom: 1rem;
+.personalizada__galeria .icon {
+  transition: transform 0.3s var(--ease);
 }
 
-.tematicas ul {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: clamp(0.5rem, 2vw, 1.25rem);
-  list-style: none;
-}
-
-.tematicas li {
-  aspect-ratio: 4 / 5;
-  border-radius: var(--radio);
-  overflow: hidden;
-}
-
-.tematicas picture,
-.tematicas img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  transition: transform 0.8s var(--ease);
-}
-
-.tematicas li:hover img {
-  transform: scale(1.05);
+.personalizada__galeria:hover .icon {
+  transform: translateX(4px);
 }
 
 @media (min-width: 40rem) {
