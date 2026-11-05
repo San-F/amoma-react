@@ -237,3 +237,63 @@
     transform: scale(1.09);
   }
 }
+
+/* el tono de la sección se funde suave con la siguiente (sin corte brusco) */
+.categorias {
+  position: relative;
+}
+
+.categorias::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0;
+  height: clamp(4rem, 12vw, 7rem);
+  background: linear-gradient(to bottom, transparent, var(--crema-2));
+  pointer-events: none;
+}
+
+/* celular: la sección ocupa toda la pantalla, así el tono la cubre entera
+   cuando la tarjeta queda en el medio */
+@media (max-width: 63.99rem) {
+  .categorias {
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-bottom: calc(var(--seccion) + 1.5rem);
+  }
+}
+
+/* celular: sombra más corta y con lugar suficiente dentro del carrusel
+   (si no, el carrusel la cortaba en línea recta y se veía una franja) */
+@media (max-width: 63.99rem) {
+  .categorias__lista {
+    padding-block: 1.75rem 4rem;
+    margin-block: -1.75rem -4rem;
+  }
+
+  .categoria {
+    filter: drop-shadow(0 8px 10px rgb(59 36 32 / 14%));
+  }
+
+  .categoria.is-activa,
+  .categoria.is-centrada {
+    filter: drop-shadow(0 16px 16px rgb(0 0 0 / 26%));
+  }
+
+  /* crecimiento más lento y suave al deslizar */
+  .categoria .categoria__link {
+    transition:
+      opacity 1s cubic-bezier(0.25, 0.8, 0.25, 1),
+      transform 1.1s cubic-bezier(0.25, 0.8, 0.25, 1),
+      clip-path 1.2s var(--ease);
+  }
+
+  .categoria .categoria__foto img {
+    transition: transform 1.6s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+
+  .categoria {
+    transition: filter 1.1s cubic-bezier(0.25, 0.8, 0.25, 1);
+  }
+}
