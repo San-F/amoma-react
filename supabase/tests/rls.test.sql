@@ -76,6 +76,9 @@ insert into public.product_variants (product_id, label, price_cents) values
   ('20000000-0000-0000-0000-000000000002', '1 kg', 9900000),
   ('20000000-0000-0000-0000-000000000003', '1 kg', 9900000);
 
+insert into public.product_images (id, product_id, storage_path) values
+  ('30000000-0000-0000-0000-000000000001', '20000000-0000-0000-0000-000000000001', 'productos/p.webp');
+
 insert into public.gallery_items (storage_path, is_published) values
   ('gallery/a.webp', true), ('gallery/b.webp', false);
 
@@ -133,6 +136,7 @@ select tests.expect_error('anon no lee auditoría', 'select * from public.audit_
 select tests.expect_error('anon no crea categorías', $q$ insert into public.categories (slug,name) values ('hack','Hack') $q$);
 select tests.expect_error('anon no cambia precios', 'update public.product_variants set price_cents = 1');
 select tests.expect_error('anon no borra productos', 'delete from public.products');
+select tests.expect_error('anon no cambia el encuadre de una foto', 'update public.product_images set zoom = 2');
 select tests.expect_error('anon no cambia el WhatsApp', $q$ update public.site_settings set whatsapp = '5490000000000' $q$);
 select tests.expect_error('anon no sube imágenes', $q$ insert into storage.objects (bucket_id,name) values ('public-images','x.jpg') $q$);
 select tests.expect_count('anon no puede listar el bucket', 'select count(*) from storage.objects', 0);
@@ -152,6 +156,7 @@ select tests.expect_error('no-admin no crea categorías', $q$ insert into public
 select tests.expect_rows('no-admin no cambia precios', 'update public.product_variants set price_cents = 1', 0);
 select tests.expect_rows('no-admin no publica borradores', $q$ update public.products set is_published = true where slug = 'borrador' $q$, 0);
 select tests.expect_rows('no-admin no borra productos', 'delete from public.products', 0);
+select tests.expect_rows('no-admin no cambia el encuadre de una foto', 'update public.product_images set focus_x = 0, zoom = 3', 0);
 select tests.expect_rows('no-admin no cambia el WhatsApp', $q$ update public.site_settings set whatsapp = '5490000000000' $q$, 0);
 select tests.expect_rows('no-admin no borra consultas', 'delete from public.inquiries', 0);
 select tests.expect_error('no-admin no se agrega como admin', $q$ insert into public.admins values ('00000000-0000-0000-0000-00000000000b') $q$);
@@ -180,6 +185,7 @@ select tests.expect_rows('admin sube imagen', $q$ insert into storage.objects (b
 select tests.expect_error('admin tampoco se gestiona admins por la API', $q$ insert into public.admins values ('00000000-0000-0000-0000-00000000000b') $q$);
 select tests.expect_count('auditoría registra los cambios del admin con su id',
   $q$ select count(*) from public.audit_log where actor = '00000000-0000-0000-0000-00000000000a' $q$, 7);
+select tests.expect_rows('admin encuadra una foto', $q$ update public.product_images set focus_x = 30, focus_y = 70, zoom = 1.4 where id = '30000000-0000-0000-0000-000000000001' $q$, 1);
 rollback;
 
 -- ---------------------------------------------------------------------
@@ -194,6 +200,7 @@ select tests.expect_count('admin sin MFA: admin_status dice miembro sin MFA',
 select tests.expect_count('admin sin MFA no ve borradores', 'select count(*) from public.products', 1);
 select tests.expect_count('admin sin MFA no ve consultas', 'select count(*) from public.inquiries', 0);
 select tests.expect_rows('admin sin MFA no cambia precios', 'update public.product_variants set price_cents = 1', 0);
+select tests.expect_rows('admin sin MFA no cambia el encuadre', 'update public.product_images set zoom = 2', 0);
 select tests.expect_error('admin sin MFA no crea categorías', $q$ insert into public.categories (slug,name) values ('x','X') $q$);
 select tests.expect_error('admin sin MFA no sube imágenes', $q$ insert into storage.objects (bucket_id,name) values ('public-images','x.jpg') $q$);
 rollback;
@@ -318,6 +325,10 @@ select tests.expect_error('email inválido rechazado', $q$ insert into public.in
 select tests.expect_error('dos portadas para un producto rechazado', $q$ insert into public.product_images (product_id,storage_path,is_cover) values ('20000000-0000-0000-0000-000000000001','a',true),('20000000-0000-0000-0000-000000000001','b',true) $q$, '23505');
 select tests.expect_error('etiqueta inventada rechazada', $q$ update public.products set badge = 'oferta-falsa' where slug = 'publicado' $q$, '23514');
 select tests.expect_count('etiqueta válida aceptada', $q$ with u as (update public.products set badge = 'nuevo' where slug = 'publicado' returning 1) select count(*) from u $q$, 1);
+select tests.expect_error('encuadre fuera de la foto rechazado', $q$ update public.product_images set focus_x = 150 $q$, '23514');
+select tests.expect_error('zoom exagerado rechazado', $q$ update public.product_images set zoom = 5 $q$, '23514');
+select tests.expect_error('zoom menor a la foto entera rechazado', $q$ update public.product_images set zoom = 0.5 $q$, '23514');
+select tests.expect_count('encuadre por defecto: centrado y sin zoom', $q$ select count(*) from public.product_images where focus_x = 50 and focus_y = 50 and zoom = 1 $q$, 1);
 select tests.expect_error('solo puede haber una fila de ajustes', $q$ insert into public.site_settings (id) values (2) $q$, '23514');
 rollback;
 

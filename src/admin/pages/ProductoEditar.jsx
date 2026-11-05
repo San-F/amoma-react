@@ -5,12 +5,15 @@ import {
   agregarImagen,
   borrarImagen,
   borrarProducto,
+  guardarEncuadre,
   guardarProducto,
   listarCategorias,
   marcarPortada,
   obtenerProducto,
 } from "../lib/api";
 import { validarImagen } from "../lib/images";
+import Encuadre from "../Encuadre";
+import { desdeFila, estiloEncuadre } from "../../lib/encuadre";
 import { urlPublica } from "../../lib/supabase";
 import { pesosACentavos } from "../../lib/money";
 import { slugify } from "../../lib/slug";
@@ -47,6 +50,8 @@ function ProductoEditar() {
   });
   const [variantes, setVariantes] = useState([{ ...VARIANTE_VACIA }]);
   const [imagenes, setImagenes] = useState([]);
+  // foto que se está acomodando (ventana de encuadre abierta)
+  const [encuadrando, setEncuadrando] = useState(null);
   const [cargando, setCargando] = useState(!nuevo);
   const [error, setError] = useState("");
   const [ok, setOk] = useState("");
@@ -165,11 +170,16 @@ function ProductoEditar() {
     setSubiendo(true);
     try {
       let hayPortada = imagenes.some((i) => i.is_cover);
+      let primera = null;
       for (const f of archivos) {
-        await agregarImagen(id, f, form.name, !hayPortada);
+        const nueva = await agregarImagen(id, f, form.name, !hayPortada);
+        primera ??= nueva;
         hayPortada = true;
       }
-      setImagenes((await obtenerProducto(id)).images);
+      const lista = (await obtenerProducto(id)).images;
+      setImagenes(lista);
+      // recién subida: se abre para acomodarla dentro del círculo
+      setEncuadrando(lista.find((i) => i.id === primera) ?? null);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -395,11 +405,24 @@ function ProductoEditar() {
           <h2>Fotos</h2>
           <p className="adm-ayuda">
             Se achican solas antes de subir. La marcada con ★ es la portada.
+            Tocá una foto para acomodarla dentro del círculo.
           </p>
           <ul className="adm-fotos">
             {imagenes.map((img) => (
               <li key={img.id}>
-                <img src={urlPublica(img.storage_path)} alt={img.alt_text} />
+                <button
+                  type="button"
+                  className="adm-fotos__ver"
+                  onClick={() => setEncuadrando(img)}
+                  aria-label="Acomodar esta foto"
+                >
+                  <img
+                    src={urlPublica(img.storage_path)}
+                    alt={img.alt_text}
+                    style={estiloEncuadre(desdeFila(img))}
+                  />
+                  <span className="adm-fotos__acomodar">Acomodar</span>
+                </button>
                 <div>
                   <button
                     type="button"
@@ -442,6 +465,18 @@ function ProductoEditar() {
             />
           </label>
         </section>
+      )}
+      {encuadrando && (
+        <Encuadre
+          src={urlPublica(encuadrando.storage_path)}
+          inicial={desdeFila(encuadrando)}
+          onCerrar={() => setEncuadrando(null)}
+          onGuardar={async (enc) => {
+            await guardarEncuadre(encuadrando.id, enc);
+            setImagenes((await obtenerProducto(id)).images);
+            setEncuadrando(null);
+          }}
+        />
       )}
       {nuevo && (
         <p className="adm-ayuda">

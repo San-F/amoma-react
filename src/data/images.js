@@ -48,7 +48,12 @@ export const fotos = {
     alt: "Tarta de dulce de leche con crumble",
   },
   frutosRojos: { picture: torta3, alt: "Dos tortas con crema y frutos rojos" },
-  charlotte: { picture: torta4, alt: "Charlotte de vainillas con moño azul" },
+  // encuadre: la torta está abajo en la foto; se sube y acerca un poco
+  charlotte: {
+    picture: torta4,
+    alt: "Charlotte de vainillas con moño azul",
+    encuadre: { x: 50, y: 75, zoom: 1.15 },
+  },
   arandanos: { picture: torta5, alt: "Torta con crema y arándanos" },
   arcoiris: { picture: torta6, alt: "Torta arcoíris con flores" },
   surf: { picture: torta7, alt: "Torta temática de surf" },

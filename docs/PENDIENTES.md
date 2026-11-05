@@ -43,6 +43,8 @@ Lista viva. ✅ = hecho · ⏳ = en curso · 🔲 = falta
 - 🔲 Confirmar con la dueña que la foto de la **porción de chocolate** es suya o tiene permiso de uso (no parece de Amoma: sin mármol ni plato con logo). Si no, volver a la de rosetas (opción guardada en el historial: `og-4.jpg`).
 - ✅ **Precios de referencia visibles** en la página (estimados para pastelería casera de CABA, nov. 2026; ver `src/data/catalog.js`). Se quitó el modo `?precios=demo`.
 - 🔲 Que la dueña **revise y corrija los precios** en el panel o con la planilla Excel (los de ahora son estimados: torta chica $28.000, lemon pie chico $19.000, docena de chipá $9.000, etc.).
+- ✅ **Acomodar la foto** en el panel: al subirla (o tocándola después) se mueve y acerca dentro del círculo, viendo cómo queda en la tarjeta. Se guarda en la base (`focus_x`, `focus_y`, `zoom`, con límites que controla la base y tests de permisos). La Charlotte ya quedó centrada.
+- 🔲 Ideas para el panel: encuadre también en la **Galería**; **ordenar productos** arrastrando; **duplicar** un producto; marcar **"sin stock"** por unos días.
 - 🔲 Conectar con Supabase real y probar de punta a punta (necesita las claves)
 - ✅ Formulario de contacto guarda las consultas en el panel (límite de envíos + trampa para robots,
   sin guardar IPs); si falla, ofrece WhatsApp. Sin base conectada sigue abriendo WhatsApp

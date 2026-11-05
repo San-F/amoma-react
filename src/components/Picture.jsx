@@ -1,3 +1,5 @@
+import { estiloEncuadre } from "../lib/encuadre";
+
 // Muestra una foto optimizada (AVIF → WebP → JPEG) con srcset.
 // `sizes` le dice al navegador qué ancho ocupa, para que baje el archivo justo.
 function Picture({
@@ -7,6 +9,8 @@ function Picture({
   loading = "lazy",
   fetchPriority,
 }) {
+  // encuadre elegido en el panel (punto central + zoom)
+  const estilo = estiloEncuadre(foto.encuadre);
   // foto subida por la dueña (URL de Supabase): una sola imagen ya optimizada
   if (!foto.picture) {
     return (
@@ -19,6 +23,7 @@ function Picture({
           loading={loading}
           decoding="async"
           fetchPriority={fetchPriority}
+          style={estilo}
         />
       </picture>
     );
@@ -42,6 +47,7 @@ function Picture({
         loading={loading}
         decoding="async"
         fetchPriority={fetchPriority}
+        style={estilo}
       />
     </picture>
   );

@@ -455,11 +455,37 @@
   position: relative;
 }
 
-.adm-fotos img {
+/* miniaturas redondas, con el mismo encuadre que en la página */
+.adm-fotos__ver {
+  position: relative;
+  display: block;
   width: 100%;
   aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--crema-2);
+  cursor: pointer;
+}
+
+.adm-fotos img {
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border-radius: var(--radio);
+}
+
+.adm-fotos__acomodar {
+  position: absolute;
+  left: 50%;
+  bottom: 0.6rem;
+  padding: 0.15rem 0.6rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 90%);
+  color: var(--cacao);
+  font-size: 0.75rem;
+  font-weight: 700;
+  transform: translateX(-50%);
 }
 
 .adm-fotos li > div {
@@ -532,4 +558,112 @@
 
 .adm-peligro-texto {
   color: #a32020;
+}
+
+/* ---------- acomodar foto (encuadre) ---------- */
+
+.adm-encuadre {
+  margin: auto;
+  width: min(100% - 2rem, 30rem);
+  max-height: 100dvh;
+  padding: 1.25rem;
+  border: 0;
+  border-radius: var(--radio-grande);
+  background: var(--crema);
+  color: var(--cacao);
+  overflow: auto;
+}
+
+.adm-encuadre::backdrop {
+  background: rgb(30 18 16 / 60%);
+}
+
+.adm-encuadre h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.3rem;
+}
+
+.adm-encuadre__vistas {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.adm-encuadre__circulo,
+.adm-encuadre__chica > div {
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--crema-2);
+  box-shadow:
+    0 0 0 4px var(--blanco),
+    0 14px 26px -14px rgb(59 36 32 / 55%);
+}
+
+.adm-encuadre__circulo {
+  width: min(68vw, 16rem);
+  aspect-ratio: 1;
+  cursor: grab;
+  touch-action: none; /* el dedo mueve la foto, no la página */
+  user-select: none;
+}
+
+.adm-encuadre__circulo:active {
+  cursor: grabbing;
+}
+
+.adm-encuadre__circulo:focus-visible {
+  outline: 3px solid var(--rosa-boton);
+  outline-offset: 6px;
+}
+
+.adm-encuadre__circulo img,
+.adm-encuadre__chica img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  pointer-events: none;
+}
+
+.adm-encuadre__chica {
+  display: grid;
+  justify-items: center;
+  gap: 0.3rem;
+  font-size: 0.75rem;
+  color: var(--cacao-suave);
+}
+
+.adm-encuadre__chica > div {
+  width: 4.5rem;
+  aspect-ratio: 1;
+}
+
+.adm-encuadre__zoom {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-weight: 600;
+}
+
+.adm-encuadre__zoom input {
+  flex: 1;
+  accent-color: var(--rosa-boton);
+  min-height: 2.75rem;
+}
+
+.adm-encuadre__acciones {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.adm-encuadre__acciones > span {
+  flex: 1;
+}
+
+.adm-encuadre__acciones .btn {
+  min-height: 2.9rem;
+  padding: 0.6rem 1.1rem;
 }

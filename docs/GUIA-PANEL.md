@@ -52,6 +52,10 @@ nuevas** llegaron por el formulario de la página.
   El precio va en pesos, sin puntos ni signo $ (igual los entiende).
 - **Fotos**: tocá **"+ Agregar fotos"**. Se achican solas para que la página cargue rápido.
   La que tiene la **★** es la portada; tocá la estrella de otra para cambiarla.
+- **Acomodar la foto**: apenas subís una foto se abre **"Acomodá la foto"**. Arrastrala con el dedo
+  para que la torta quede al centro del círculo y usá la barra **"Acercar"** si querés que se vea más
+  grande. El circulito de al lado muestra cómo va a quedar **en la tarjeta**. Tocá **Guardar**.
+  Para cambiarla después, tocá la foto (dice **"Acomodar"**). **"Centrar"** la deja como estaba.
 - Para que se vea en la página tiene que tener **al menos un precio y una foto**.
 
 <img src="guia/05-editar-producto.jpg" width="300" alt="Editar producto">

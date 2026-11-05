@@ -2,6 +2,7 @@
 // con un mensaje entendible (nunca el detalle técnico al usuario).
 import { BUCKET, supabase, urlPublica } from "../../lib/supabase";
 import { comprimirImagen, rutaNueva } from "./images";
+import { aFila } from "../../lib/encuadre";
 
 function fallar(error, texto) {
   // el detalle técnico queda en la consola del admin para diagnosticar
@@ -157,18 +158,36 @@ export async function agregarImagen(productoId, file, alt, esPortada) {
       .update({ is_cover: false })
       .eq("product_id", productoId);
   }
-  const { error } = await supabase.from("product_images").insert({
-    product_id: productoId,
-    storage_path: path,
-    alt_text: alt.slice(0, 200),
-    width,
-    height,
-    is_cover: esPortada,
-  });
+  const { data, error } = await supabase
+    .from("product_images")
+    .insert({
+      product_id: productoId,
+      storage_path: path,
+      alt_text: alt.slice(0, 200),
+      width,
+      height,
+      is_cover: esPortada,
+    })
+    .select("id")
+    .single();
   if (error) {
     await supabase.storage.from(BUCKET).remove([path]);
     fallar(error, "No se pudo guardar la foto.");
   }
+  return data.id;
+}
+
+// Encuadre de la foto (punto central + zoom). La base limita los valores.
+export async function guardarEncuadre(imagenId, encuadre) {
+  const { data, error } = await supabase
+    .from("product_images")
+    .update(aFila(encuadre))
+    .eq("id", imagenId)
+    .select("id");
+  if (error) fallar(error, "No se pudo guardar el encuadre.");
+  // sin permiso, la base no cambia nada (y no avisa): lo detectamos acá
+  if (!data?.length)
+    fallar(new Error("0 filas"), "No se pudo guardar el encuadre.");
 }
 
 export async function marcarPortada(productoId, imagenId) {

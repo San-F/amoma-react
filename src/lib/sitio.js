@@ -8,6 +8,7 @@ import {
   productos as productosBase,
 } from "../data/catalog";
 import { fotos } from "../data/images";
+import { desdeFila } from "./encuadre";
 
 // temáticas de ejemplo para "Tortas personalizadas" (se reemplazan por las
 // 3 primeras fotos de la galería cuando la dueña las sube)
@@ -50,7 +51,7 @@ async function iniciar() {
       supabase
         .from("products")
         .select(
-          "slug, name, badge, short_description, description, sort_order, category:categories(slug), variants:product_variants(label, servings, price_cents, is_available, sort_order), images:product_images(storage_path, alt_text, width, height, is_cover, sort_order)",
+          "slug, name, badge, short_description, description, sort_order, category:categories(slug), variants:product_variants(label, servings, price_cents, is_available, sort_order), images:product_images(storage_path, alt_text, width, height, is_cover, sort_order, focus_x, focus_y, zoom)",
         )
         .order("sort_order"),
       supabase
@@ -94,6 +95,7 @@ async function iniciar() {
                 alt: img.alt_text || p.name,
                 width: img.width,
                 height: img.height,
+                encuadre: desdeFila(img),
               }
             : null,
           variantes: p.variants
