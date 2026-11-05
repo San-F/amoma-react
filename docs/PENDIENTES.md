@@ -44,6 +44,9 @@ Lista viva. ✅ = hecho · ⏳ = en curso · 🔲 = falta
 - ✅ Galería administrable desde el panel (subir, describir, ordenar, ocultar, borrar)
 - 🔲 Aviso por email a la dueña cuando entra una consulta (necesita configurar un servicio de mails;
   hoy las ve en el panel → Resumen)
+- 🔲 Hacer administrables las tarjetas de "Elegí por dónde empezar" y los filtros del catálogo
+  (que salgan de las categorías del panel, con foto de portada por categoría). Hacerlo cuando la
+  clienta defina sus categorías: hoy son fijas en `src/data/catalog.js`
 - 🔲 Mudanza a Cloudflare Pages (archivos ya listos: `public/_headers`, `public/_redirects`)
 - 🔲 Medir con Lighthouse en el sitio publicado
 - ✅ Guía de uso del panel para la dueña, con capturas: [`docs/GUIA-PANEL.md`](GUIA-PANEL.md)
