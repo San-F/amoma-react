@@ -238,20 +238,6 @@
   }
 }
 
-/* el tono de la sección se funde suave con la siguiente (sin corte brusco) */
-.categorias {
-  position: relative;
-}
-
-.categorias::after {
-  content: "";
-  position: absolute;
-  inset: auto 0 0;
-  height: clamp(4rem, 12vw, 7rem);
-  background: linear-gradient(to bottom, transparent, var(--crema-2));
-  pointer-events: none;
-}
-
 /* celular: la sección ocupa toda la pantalla, así el tono la cubre entera
    cuando la tarjeta queda en el medio */
 @media (max-width: 63.99rem) {

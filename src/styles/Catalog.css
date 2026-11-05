@@ -1,5 +1,12 @@
 .catalogo {
+  /* se apoya sobre la sección anterior como una hoja con esquinas
+     redondeadas: el borde queda intencional con cualquier color de fondo */
+  position: relative;
+  z-index: 1;
+  margin-top: calc(-1 * var(--radio-grande));
+  border-radius: var(--radio-grande) var(--radio-grande) 0 0;
   background: var(--crema-2);
+  box-shadow: 0 -12px 30px -18px rgb(59 36 32 / 22%);
 }
 
 .catalogo__cabecera {
