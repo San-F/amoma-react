@@ -566,3 +566,22 @@
     font-size: 0.75rem;
   }
 }
+
+.detalle__cta.is-agregado {
+  --btn-bg: #3f6b2a;
+  opacity: 1 !important;
+  cursor: default;
+}
+
+.detalle__solo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+  width: 100%;
+  min-height: 2.75rem;
+  margin-top: 0.4rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--cacao-suave);
+}

@@ -38,6 +38,7 @@ Lista viva. ✅ = hecho · ⏳ = en curso · 🔲 = falta
   personalizada animada, cómo pedir)
 - ✅ Etapa 5 — Google y compartir (OG, schema.org, sitemap), accesibilidad (axe sin errores), privacidad
 - ✅ Playbook reutilizable + `CLAUDE.md`
+- ✅ "Tu pedido": varios productos en un solo WhatsApp, cambiar tamaño/cantidad, queda guardado en el celular
 - 🔲 Conectar con Supabase real y probar de punta a punta (necesita las claves)
 - ✅ Formulario de contacto guarda las consultas en el panel (límite de envíos + trampa para robots,
   sin guardar IPs); si falla, ofrece WhatsApp. Sin base conectada sigue abriendo WhatsApp

@@ -13,6 +13,7 @@ import {
 import { linkWhatsApp } from "../lib/whatsapp";
 import { formatearPrecio } from "../lib/money";
 import { conTransicion } from "../lib/transicion";
+import { agregarAlPedido } from "../lib/pedido";
 import { useSitio } from "../lib/sitio";
 import "../styles/Catalog.css";
 
@@ -61,6 +62,7 @@ function Catalog() {
 
   const [abierto, setAbierto] = useState(null);
   const [tamano, setTamano] = useState("mediana");
+  const [agregado, setAgregado] = useState(false);
   const dialogRef = useRef(null);
   const fotosRef = useRef({});
 
@@ -70,6 +72,7 @@ function Catalog() {
     conTransicion(() => {
       if (foto) foto.style.viewTransitionName = "";
       setAbierto(p);
+      setAgregado(false);
       setTamano(p.variantes?.[0]?.id ?? "mediana");
       dialogRef.current?.showModal();
     }, "vt-detalle");
@@ -115,6 +118,24 @@ function Catalog() {
       }))
     : tamanos;
   const tamanoElegido = opciones.find((t) => t.id === tamano) ?? opciones[0];
+
+  // agrega al pedido, confirma con el botón y cierra el detalle
+  const agregar = () => {
+    const foto = abierto.foto?.picture?.img.src ?? abierto.foto?.src ?? null;
+    agregarAlPedido({
+      id: abierto.id,
+      nombre: abierto.nombre,
+      variante: tamanoElegido.nombre,
+      precio: tamanoElegido.precio ?? null,
+      foto,
+      opciones: opciones.map((o) => ({
+        nombre: o.nombre,
+        precio: o.precio ?? null,
+      })),
+    });
+    setAgregado(true);
+    setTimeout(cerrar, 650);
+  };
 
   return (
     <section
@@ -253,22 +274,24 @@ function Catalog() {
                   </label>
                 ))}
               </fieldset>
-
+              <button
+                type="button"
+                className={`btn btn--rosa detalle__cta ${agregado ? "is-agregado" : ""}`}
+                onClick={agregar}
+                disabled={agregado}
+              >
+                {agregado ? "✓ Agregado a tu pedido" : "Agregar al pedido"}
+              </button>
               <a
-                className="btn btn--rosa detalle__cta"
+                className="detalle__solo"
                 href={wa(
                   `¡Hola Amoma! Quiero encargar: ${abierto.nombre}, ${tamanoElegido.nombre.toLowerCase()}${tamanoElegido.detalle ? ` (${tamanoElegido.detalle})` : ""}. ¿Me confirman precio y disponibilidad?`,
                 )}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <Icon name="whatsapp" /> Pedir por WhatsApp
+                <Icon name="whatsapp" /> o pedila sola por WhatsApp
               </a>
-              <p className="detalle__nota">
-                {tamanoElegido?.precio != null
-                  ? "Te confirmamos fecha y disponibilidad por WhatsApp."
-                  : "Te respondemos con el precio y las fechas disponibles."}
-              </p>
             </div>
             <button
               type="button"

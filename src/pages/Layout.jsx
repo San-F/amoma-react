@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Outlet, ScrollRestoration, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import PedidoFlotante from "../components/PedidoFlotante";
 import { useSitio } from "../lib/sitio";
 import { irA } from "../lib/scroll";
 
@@ -33,6 +34,7 @@ function Layout() {
         <Outlet />
       </main>
       <Footer />
+      <PedidoFlotante />
       {/* vuelve arriba de todo al cambiar de página */}
       <ScrollRestoration />
     </>

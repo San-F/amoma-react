@@ -28,6 +28,7 @@ Código de referencia: este mismo repo.
 - **Un nombre por cosa** (tarjeta y filtro igual), sin repetir el lema en todos lados.
 - El **celular manda**: tarjetas que descansan más chicas y crecen al frente; sección a pantalla completa; detalle que entra sin scroll interno (probado en 320 px y en pantallas bajitas).
 - Lo interactivo "paso a paso" (armador de torta) **no gustó**: lo personalizado se resuelve mejor conversando (WhatsApp).
+- **Pedido de varios productos sin carrito pesado**: botón "Agregar al pedido" en el detalle, pastilla flotante "Tu pedido" y una hoja para cambiar tamaño/cantidad y mandar **un solo WhatsApp** con total, fecha y nota. Sin cuentas ni pagos; se guarda en el navegador (`src/lib/pedido.js`). Siempre dejar también "pedila sola por WhatsApp".
 - Mostrar **maquetas** antes de construir algo grande (ej. menú a pantalla completa) ahorra idas y vueltas.
 
 ## Errores que tuvimos (y la regla para no repetirlos)

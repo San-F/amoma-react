@@ -7,16 +7,7 @@ export function linkWhatsApp(mensaje, numero = negocio.whatsapp) {
   return `https://wa.me/${numero}?text=${texto}`;
 }
 
-// "2026-11-20" → "viernes 20 de noviembre"
-export function fechaLegible(isoDate) {
-  if (!isoDate) return "";
-  const [y, m, d] = isoDate.split("-").map(Number);
-  return new Date(y, m - 1, d).toLocaleDateString("es-AR", {
-    weekday: "long",
-    day: "numeric",
-    month: "long",
-  });
-}
+export { fechaLegible } from "./fechas.js";
 
 // Fecha mínima para encargar (hoy + días de anticipación), formato input date.
 export function fechaMinima(diasAnticipacion = 2) {
