@@ -1,8 +1,10 @@
 name: CI
 
+# Corre también en las ramas de trabajo: así se ve si algo falla ANTES de
+# pasar el cambio a main (que es lo que publica la página).
 on:
   push:
-    branches: [main]
+    branches: [main, "claude/**"]
   pull_request:
 
 permissions:
@@ -24,6 +26,27 @@ jobs:
       - run: npm run build
       - name: Audit dependencies (high and critical)
         run: npm audit --audit-level=high
+
+  navegador:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Instalar el navegador de pruebas
+        run: npx playwright install --with-deps chromium
+      - name: Pruebas de navegador (pedido, fondo quieto, panel)
+        run: npm run test:e2e
+      - name: Guardar capturas si algo falla
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: capturas-e2e
+          path: .e2e/capturas
+          retention-days: 7
 
   database:
     runs-on: ubuntu-latest
