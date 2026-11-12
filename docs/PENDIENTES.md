@@ -9,17 +9,17 @@ Project URL `https://qadtxsgsurfcmtrzopcu.supabase.co` · publishable key
 `sb_publishable_UiLdLhxtLBmkI0in9cQLzg_KUmPyCX0` (las dos son públicas).
 Para que Claude pueda llegar a la base y al sitio desde la nube, la sesión tiene que usar el entorno **"amoma-web"**.
 
-| Paso del alta (guía: `web-plantilla/docs/proceso/alta-supabase.md`)    | Estado                     |
-| ---------------------------------------------------------------------- | -------------------------- |
-| Tablas y permisos (`supabase/puesta-en-marcha.sql`)                    | ✅ comprobado desde afuera |
-| Registro público apagado                                               | ✅ comprobado desde afuera |
-| Contraseña mínima de 15 (Sign In / Providers → bajar → Email)          | ✅ (11/11)                 |
-| Dirección del sitio (URL Configuration): `https://amoma-1gq.pages.dev` | ⏳ a confirmar con captura |
-| Links de los mails (Emails → Templates): **bloqueado sin SMTP propio** | 🔲 ver nota abajo          |
-| Doble factor TOTP habilitado (Multi-Factor)                            | 🔲                         |
-| Francisco primer admin: **crear usuario a mano** (sin mail) + `admins` | 🔲                         |
-| Variables públicas en el hosting y en GitHub (base despierta, backup)  | 🔲                         |
-| Probar el panel de punta a punta contra la base real                   | 🔲                         |
+| Paso del alta (guía: `web-plantilla/docs/proceso/alta-supabase.md`)    | Estado                              |
+| ---------------------------------------------------------------------- | ----------------------------------- |
+| Tablas y permisos (`supabase/puesta-en-marcha.sql`)                    | ✅ comprobado desde afuera          |
+| Registro público apagado                                               | ✅ comprobado desde afuera          |
+| Contraseña mínima de 15 (Sign In / Providers → bajar → Email)          | ✅ (11/11)                          |
+| Dirección del sitio (URL Configuration): `https://amoma-1gq.pages.dev` | ⏳ a confirmar con captura          |
+| Links de los mails (Emails → Templates): **bloqueado sin SMTP propio** | 🔲 ver nota abajo                   |
+| Doble factor TOTP habilitado (Multi-Factor)                            | ✅ (12/11)                          |
+| Francisco primer admin: **crear usuario a mano** (sin mail) + `admins` | ✅ ingresó con doble factor (12/11) |
+| Variables públicas en el hosting y en GitHub (base despierta, backup)  | 🔲                                  |
+| Probar el panel de punta a punta contra la base real                   | 🔲                                  |
 
 Comprobación: `bash scripts/comprobar-base.sh <URL> <key>` (está en `web-plantilla/scripts/`): hoy pasa los 16 controles.
 
