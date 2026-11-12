@@ -98,6 +98,7 @@ probado contra la base real. Ver su `PROGRESO.md`.
 - ✅ Formulario de contacto guarda las consultas en el panel (límite de envíos + trampa para robots,
   sin guardar IPs); si falla, ofrece WhatsApp. Sin base conectada sigue abriendo WhatsApp
 - ✅ Galería administrable desde el panel (subir, describir, ordenar, ocultar, borrar)
+- 🔲 Opción **"Cambiar mi contraseña"** dentro del panel (hoy solo se puede por el mail de recuperación). Permite crear la cuenta del cliente a mano y que él la cambie al entrar, sin depender del mail. Llevarla también a la plantilla.
 - 🔲 Aviso por email a la dueña cuando entra una consulta (necesita configurar un servicio de mails;
   hoy las ve en el panel → Resumen)
 - 🔲 Hacer administrables las tarjetas de "Elegí por dónde empezar" y los filtros del catálogo
