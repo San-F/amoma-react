@@ -25,7 +25,7 @@ Necesita un Postgres local (variables `PGHOST`, `PGPORT`, `PGUSER`). En GitHub c
 
 ### 1. Base de datos
 
-1. Supabase → **SQL Editor** → pegar y ejecutar, **en orden**, cada archivo de `migrations/` y después `seed.sql`.
+1. Supabase → **SQL Editor** → pegar y ejecutar **`supabase/puesta-en-marcha.sql`** (un solo archivo: todas las migraciones + datos iniciales).
 2. **Advisors → Security Advisor**: tiene que quedar sin alertas críticas.
 
 ### 2. Login

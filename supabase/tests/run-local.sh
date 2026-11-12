@@ -12,3 +12,7 @@ for f in migrations/*.sql; do echo "migración: $f"; run -f "$f"; done
 echo "seed: seed.sql (en una base aparte se prueba que aplica)"
 run -c "begin;" -f seed.sql -c "rollback;" >/dev/null
 run -f tests/rls.test.sql
+# el archivo "todo en uno" para pegar en Supabase tiene que estar al día
+bash armar-puesta-en-marcha.sh /tmp/puesta-en-marcha.$$.sql
+diff -q /tmp/puesta-en-marcha.$$.sql puesta-en-marcha.sql >/dev/null || { echo "ERROR: supabase/puesta-en-marcha.sql está desactualizado. Correr: bash supabase/armar-puesta-en-marcha.sh"; rm -f /tmp/puesta-en-marcha.$$.sql; exit 1; }
+rm -f /tmp/puesta-en-marcha.$$.sql
