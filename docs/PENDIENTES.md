@@ -27,7 +27,7 @@ Comprobación: `bash scripts/comprobar-base.sh <URL> <key>` (está en `web-plant
 mail sin SMTP propio, y sin SMTP propio Supabase solo manda mails a miembros de la organización (2 por
 hora). Por eso: Francisco se crea su usuario a mano (Users → Add user → Create new user, con auto
 confirmación) y no hace falta mail. **Antes de dar de alta a la dueña** hay que resolver el link del mail (no la cantidad):
-SMTP gratis o adaptar el panel al link por defecto. Con SMTP gratis (Brevo, Resend, etc.: verificar límites en la fuente oficial) y recién ahí cambiar las plantillas
+SMTP gratis o adaptar el panel al link por defecto. Con SMTP gratis (Brevo, Resend, etc.: verificar límites en la fuente oficial) se pueden cambiar las plantillas
 (links con `token_hash`, ver `supabase/README.md`) y pasarlas a español. Fuentes:
 <https://supabase.com/docs/guides/auth/auth-smtp> y
 <https://supabase.com/changelog/46599-changes-to-email-template-customisation-on-free-tier>.
