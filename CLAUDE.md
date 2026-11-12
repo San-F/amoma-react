@@ -26,6 +26,14 @@ Pendientes: [`docs/PENDIENTES.md`](docs/PENDIENTES.md) (mantenerlo actualizado).
 - Sin scripts de terceros salvo los imprescindibles (hoy: solo Cloudflare Turnstile en el login).
 - Nunca pedir ni aceptar contraseñas/secret keys por el chat. Si el usuario pega una, pedir que la rote.
 
+## Cambios en la base real (Claude los aplica, decisión del usuario 12/11/2026)
+
+1. **Backup antes de tocar**: correr el backup automático (o exportar las tablas afectadas) y confirmar que existe.
+2. **Probar primero** en el Postgres local (`npm run test:db`) con la migración nueva.
+3. **Explicar en simple qué cambia** y aplicarlo recién con el OK del usuario.
+4. **Comprobar después** (`comprobar-base.sh` + lo que corresponda) y anotarlo en `docs/PENDIENTES.md`.
+5. Todo cambio de estructura queda además como migración en `supabase/migrations/`.
+
 ## Diseño
 
 - Antes de diseñar, leer `docs/playbook/13-efectos-premium.md` (recetario de efectos que el cliente amó: carrusel con tarjeta al frente, fondo ambiental, portal, etc.) y `11-lecciones-amoma.md` (errores a no repetir); revisar `12-checklist-calidad.md` antes de publicar.
