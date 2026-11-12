@@ -176,7 +176,11 @@ select tests.expect_count('admin: is_admin() es verdadero', 'select count(*) fro
 select tests.expect_count('admin ve todas las categorías', 'select count(*) from public.categories', 2);
 select tests.expect_count('admin ve todos los productos (incluye borradores)', 'select count(*) from public.products', 3);
 select tests.expect_count('admin ve consultas', 'select count(*) from public.inquiries', 1);
-select tests.expect_rows('admin crea categoría', $q$ insert into public.categories (slug,name) values ('nueva','Nueva') $q$, 1);
+select tests.expect_error('admin no crea categorías (son 4 fijas)', $q$ insert into public.categories (slug,name) values ('nueva','Nueva') $q$);
+select tests.expect_error('admin no borra categorías', $q$ delete from public.categories $q$);
+select tests.expect_error('admin no oculta categorías', $q$ update public.categories set is_published = false $q$);
+select tests.expect_error('admin no cambia el slug de una categoría', $q$ update public.categories set slug = 'otra' $q$);
+select tests.expect_rows('admin cambia el nombre de una categoría', $q$ update public.categories set name = 'Tortas clásicas' where slug = 'visible' $q$, 1);
 select tests.expect_rows('admin cambia precio', $q$ update public.product_variants set price_cents = 3500000 where label = '1 kg' $q$, 3);
 select tests.expect_rows('admin publica borrador', $q$ update public.products set is_published = true where slug = 'borrador' $q$, 1);
 select tests.expect_rows('admin cambia el aviso del negocio', $q$ update public.site_settings set notice = 'Agenda de diciembre completa' $q$, 1);

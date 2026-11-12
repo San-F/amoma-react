@@ -19,19 +19,13 @@ export async function listarCategorias() {
   return data;
 }
 
-export async function guardarCategoria(cat) {
-  const { id, ...campos } = cat;
-  const q = id
-    ? supabase.from("categories").update(campos).eq("id", id)
-    : supabase.from("categories").insert(campos);
-  const { error } = await q;
-  if (error)
-    fallar(
-      error,
-      error.code === "23505"
-        ? "Ya existe una categoría con ese nombre."
-        : "No se pudo guardar la categoría.",
-    );
+// Las 4 categorías son fijas: solo se cambia el texto (la base no deja más).
+export async function renombrarCategoria(id, { name, description }) {
+  const { error } = await supabase
+    .from("categories")
+    .update({ name, description })
+    .eq("id", id);
+  if (error) fallar(error, "No se pudo guardar la categoría.");
 }
 
 export async function listarProductos() {
