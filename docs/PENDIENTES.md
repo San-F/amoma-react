@@ -9,21 +9,34 @@ Project URL `https://qadtxsgsurfcmtrzopcu.supabase.co` · publishable key
 `sb_publishable_UiLdLhxtLBmkI0in9cQLzg_KUmPyCX0` (las dos son públicas).
 Para que Claude pueda llegar a la base y al sitio desde la nube, la sesión tiene que usar el entorno **"amoma-web"**.
 
-| Paso del alta (guía: `web-plantilla/docs/proceso/alta-supabase.md`)     | Estado                     |
-| ----------------------------------------------------------------------- | -------------------------- |
-| Tablas y permisos (`supabase/puesta-en-marcha.sql`)                     | ✅ comprobado desde afuera |
-| Registro público apagado                                                | ✅ comprobado desde afuera |
-| Contraseña mínima de 15 (Sign In / Providers → bajar → Email)           | 🔲                         |
-| Dirección del sitio (URL Configuration): la de Cloudflare cuando exista | 🔲                         |
-| Links de los mails (Emails → Templates), texto en `supabase/README.md`  | 🔲                         |
-| Doble factor TOTP habilitado (Multi-Factor)                             | 🔲                         |
-| Invitar a Francisco como primer administrador + agregarlo a `admins`    | 🔲                         |
-| Variables públicas en el hosting y en GitHub (base despierta, backup)   | 🔲                         |
-| Probar el panel de punta a punta contra la base real                    | 🔲                         |
+| Paso del alta (guía: `web-plantilla/docs/proceso/alta-supabase.md`)    | Estado                     |
+| ---------------------------------------------------------------------- | -------------------------- |
+| Tablas y permisos (`supabase/puesta-en-marcha.sql`)                    | ✅ comprobado desde afuera |
+| Registro público apagado                                               | ✅ comprobado desde afuera |
+| Contraseña mínima de 15 (Sign In / Providers → bajar → Email)          | ✅ (11/11)                 |
+| Dirección del sitio (URL Configuration): `https://amoma-1gq.pages.dev` | ⏳ a confirmar con captura |
+| Links de los mails (Emails → Templates): **bloqueado sin SMTP propio** | 🔲 ver nota abajo          |
+| Doble factor TOTP habilitado (Multi-Factor)                            | 🔲                         |
+| Francisco primer admin: **crear usuario a mano** (sin mail) + `admins` | 🔲                         |
+| Variables públicas en el hosting y en GitHub (base despierta, backup)  | 🔲                         |
+| Probar el panel de punta a punta contra la base real                   | 🔲                         |
 
 Comprobación: `bash scripts/comprobar-base.sh <URL> <key>` (está en `web-plantilla/scripts/`): hoy pasa los 16 controles.
 
-**Mudanza a Cloudflare** (el plan gratis de Vercel no admite sitios comerciales):
+**Mails (12/11):** desde el 3/6/2026 los proyectos gratis nuevos **no pueden editar las plantillas** de
+mail sin SMTP propio, y sin SMTP propio Supabase solo manda mails a miembros de la organización (2 por
+hora). Por eso: Francisco se crea su usuario a mano (Users → Add user → Create new user, con auto
+confirmación) y no hace falta mail. **Antes de dar de alta a la dueña** hay que configurar un SMTP
+gratis (Brevo, Resend, etc.: verificar límites en la fuente oficial) y recién ahí cambiar las plantillas
+(links con `token_hash`, ver `supabase/README.md`) y pasarlas a español. Fuentes:
+<https://supabase.com/docs/guides/auth/auth-smtp> y
+<https://supabase.com/changelog/46599-changes-to-email-template-customisation-on-free-tier>.
+
+**Mudanza a Cloudflare** ✅ publicado el 12/11 en `https://amoma-1gq.pages.dev` (Pages, con las dos
+variables). Comprobado: rutas, cabeceras de seguridad, `/admin` sin indexar, lee productos de la base
+real, sin scroll lateral en 390/1366. Detalle: una fuente chica viene incrustada (`data:`) y la regla
+`font-src 'self'` la bloquea (pasaba igual en Vercel); arreglar aparte. Falta: actualizar la dirección en
+`index.html`, `sitemap.xml`, `robots.txt` y `llms.txt`, y bajar Vercel. Cómo se hizo:
 Francisco ya creó la cuenta y autorizó solo el repo `amoma-react`. Se usa **Pages** (el repo ya trae
 `public/_headers` y `public/_redirects`): Compute → Workers & Pages → Create → _Get started with Pages_ →
 **Import an existing Git repository**. Valores: rama `main` · preset Vite · build `npm run build` ·
