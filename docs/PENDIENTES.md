@@ -2,6 +2,42 @@
 
 Lista viva. ✅ = hecho · ⏳ = en curso · 🔲 = falta
 
+## Dónde quedamos (12/11/2026) — leer esto primero en un chat nuevo
+
+**Base real (Supabase):** proyecto "Amoma" de Francisco.
+Project URL `https://qadtxsgsurfcmtrzopcu.supabase.co` · publishable key
+`sb_publishable_UiLdLhxtLBmkI0in9cQLzg_KUmPyCX0` (las dos son públicas).
+Para que Claude pueda llegar a la base y al sitio desde la nube, la sesión tiene que usar el entorno **"amoma-web"**.
+
+| Paso del alta (guía: `web-plantilla/docs/proceso/alta-supabase.md`)     | Estado                     |
+| ----------------------------------------------------------------------- | -------------------------- |
+| Tablas y permisos (`supabase/puesta-en-marcha.sql`)                     | ✅ comprobado desde afuera |
+| Registro público apagado                                                | ✅ comprobado desde afuera |
+| Contraseña mínima de 15 (Sign In / Providers → bajar → Email)           | 🔲                         |
+| Dirección del sitio (URL Configuration): la de Cloudflare cuando exista | 🔲                         |
+| Links de los mails (Emails → Templates), texto en `supabase/README.md`  | 🔲                         |
+| Doble factor TOTP habilitado (Multi-Factor)                             | 🔲                         |
+| Invitar a Francisco como primer administrador + agregarlo a `admins`    | 🔲                         |
+| Variables públicas en el hosting y en GitHub (base despierta, backup)   | 🔲                         |
+| Probar el panel de punta a punta contra la base real                    | 🔲                         |
+
+Comprobación: `bash scripts/comprobar-base.sh <URL> <key>` (está en `web-plantilla/scripts/`): hoy pasa los 16 controles.
+
+**Mudanza a Cloudflare** (el plan gratis de Vercel no admite sitios comerciales):
+Francisco ya creó la cuenta y autorizó solo el repo `amoma-react`. Se usa **Pages** (el repo ya trae
+`public/_headers` y `public/_redirects`): Compute → Workers & Pages → Create → _Get started with Pages_ →
+**Import an existing Git repository**. Valores: rama `main` · preset Vite · build `npm run build` ·
+salida `dist` · variables `VITE_SUPABASE_URL` y `VITE_SUPABASE_PUBLISHABLE_KEY`.
+Después: comprobar rutas y cabeceras en la dirección nueva, cambiar la dirección en Supabase, y recién
+entonces sacar el sitio de Vercel y actualizar la dirección en `index.html`, `sitemap.xml`, `robots.txt` y `llms.txt`.
+(El camino "Workers" también se probó en local y funciona con un `wrangler.jsonc`; queda como alternativa.)
+
+**Seguridad de las cuentas de Francisco:** lista en `web-plantilla/docs/para-francisco.md` (gestor de
+contraseñas, doble factor empezando por el mail, FileVault). 🔲 pendiente de confirmar.
+
+**Plantilla (`San-F/web-plantilla`):** tanda 1 lista; la tanda 2 espera a que el panel de Amoma esté
+probado contra la base real. Ver su `PROGRESO.md`.
+
 ## Para vos (Francisco)
 
 ### Cuando estés en casa
