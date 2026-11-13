@@ -7,6 +7,7 @@ import {
   cargarImagen,
   cargarLetras,
   dibujarPublicacion,
+  ETIQUETAS,
   moverFoto,
   partirNombre,
   zonaFoto,
@@ -61,6 +62,7 @@ function Publicar() {
     linea2: "",
     precio: "",
     desde: true,
+    etiqueta: "",
   });
   // cómo se acomoda la foto en ESTA publicación (no cambia la del producto)
   const [ajuste, setAjuste] = useState(CENTRO);
@@ -173,6 +175,8 @@ function Publicar() {
       linea1,
       linea2,
       precio: p.desde != null ? formatearPrecio(p.desde) : "",
+      // si el producto tiene etiqueta en la página, viene puesta
+      etiqueta: p.badge ?? "",
     }));
     setFuente({
       tipo: "producto",
@@ -464,6 +468,23 @@ function Publicar() {
                 value={textos.precio}
                 onChange={(e) => cambiarTexto("precio", e.target.value)}
               />
+            </div>
+            <div className="campo">
+              <label htmlFor="pub-etiqueta">
+                Etiqueta <small>(opcional)</small>
+              </label>
+              <select
+                id="pub-etiqueta"
+                value={textos.etiqueta}
+                onChange={(e) => cambiarTexto("etiqueta", e.target.value)}
+              >
+                <option value="">Sin etiqueta</option>
+                {Object.entries(ETIQUETAS).map(([id, nombre]) => (
+                  <option key={id} value={id}>
+                    {nombre}
+                  </option>
+                ))}
+              </select>
             </div>
             <label className="adm-check">
               <input

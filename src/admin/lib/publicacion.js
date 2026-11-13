@@ -30,6 +30,48 @@ export const COLORES = {
 };
 
 const ROSA_BOTON = "#c4466f";
+
+// Etiquetas opcionales (las mismas que se ven en la página)
+export const ETIQUETAS = {
+  "mas-pedido": "Más pedido",
+  nuevo: "Nuevo",
+  temporada: "De temporada",
+};
+
+// Texto con letras separadas (mayúsculas "de revista")
+function espaciado(ctx, texto, px) {
+  if ("letterSpacing" in ctx) {
+    ctx.letterSpacing = `${px}px`;
+    return () => (ctx.letterSpacing = "0px");
+  }
+  return () => {};
+}
+
+// Pastilla con texto centrado en (cx, cy); devuelve su ancho
+function pastilla(ctx, texto, cx, cy, { tam, fondo, color, angulo = 0 }) {
+  ctx.save();
+  ctx.translate(cx, cy);
+  ctx.rotate(angulo);
+  ctx.font = `800 ${tam}px ${TEXTO}`;
+  const volver = espaciado(ctx, texto, tam * 0.08);
+  const ancho = ctx.measureText(texto).width + tam * 1.6;
+  const alto = tam * 2;
+  ctx.shadowColor = "rgba(59,36,32,0.28)";
+  ctx.shadowBlur = tam * 0.8;
+  ctx.shadowOffsetY = tam * 0.2;
+  ctx.beginPath();
+  ctx.roundRect(-ancho / 2, -alto / 2, ancho, alto, alto / 2);
+  ctx.fillStyle = fondo;
+  ctx.fill();
+  ctx.shadowColor = "transparent";
+  ctx.fillStyle = color;
+  ctx.textAlign = "center";
+  ctx.textBaseline = "middle";
+  ctx.fillText(texto, 0, tam * 0.06);
+  volver();
+  ctx.restore();
+  return ancho;
+}
 const DISPLAY = '"Fraunces Variable", Georgia, serif';
 const TEXTO = '"Manrope Variable", system-ui, sans-serif';
 
@@ -185,6 +227,23 @@ function dibujarVitrina(ctx, { w, h }, c, img, logo, t, enc, circulo = 1) {
   if (img) dibujarFoto(ctx, img, cx - d / 2, cy - d / 2, d, d, enc);
   ctx.restore();
 
+  // etiqueta: sello rosa apoyado en el borde del círculo, arriba a la derecha
+  if (t.etiqueta) {
+    const ang = -Math.PI / 4;
+    pastilla(
+      ctx,
+      t.etiqueta.toUpperCase(),
+      cx + (d / 2) * Math.cos(ang),
+      cy + (d / 2) * Math.sin(ang),
+      {
+        tam: historia ? 34 : 26,
+        fondo: ROSA_BOTON,
+        color: "#ffffff",
+        angulo: -0.14,
+      },
+    );
+  }
+
   // texto
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
@@ -247,6 +306,25 @@ function dibujarPortada(ctx, { w, h }, c, img, logo, t, enc) {
   dibujarLogo(ctx, logo, w / 2, historia ? 150 : 84, historia ? 120 : 96, true);
 
   const m = 70; // margen
+  if (t.etiqueta) {
+    const tam = historia ? 32 : 26;
+    ctx.font = `800 ${tam}px ${TEXTO}`;
+    const ancho =
+      ctx.measureText(t.etiqueta.toUpperCase()).width +
+      tam * 1.6 +
+      t.etiqueta.length * tam * 0.08;
+    pastilla(
+      ctx,
+      t.etiqueta.toUpperCase(),
+      m * 0.7 + ancho / 2,
+      historia ? 150 : 84,
+      {
+        tam,
+        fondo: c.fondo,
+        color: c.cursiva,
+      },
+    );
+  }
   const arriba = h - franja;
   ctx.textAlign = "left";
   ctx.textBaseline = "alphabetic";
@@ -385,6 +463,21 @@ function dibujarPoster(ctx, { w, h }, c, img, logo, t, enc) {
   const base = historia ? 124 : 82;
   let y = h * (historia ? 0.74 : 0.7);
   if (!t.linea2) y += base * 0.5;
+  // etiqueta: mayúsculas espaciadas en bordó, arriba del nombre
+  if (t.etiqueta) {
+    const tam = historia ? 34 : 26;
+    ctx.save();
+    ctx.font = `800 ${tam}px ${TEXTO}`;
+    ctx.fillStyle = c.bordo;
+    const volver = espaciado(ctx, t.etiqueta, tam * 0.3);
+    ctx.fillText(
+      t.etiqueta.toUpperCase(),
+      cx,
+      y - base * (historia ? 1.05 : 1.1),
+    );
+    volver();
+    ctx.restore();
+  }
   if (t.linea1) {
     const s1 = letraQueEntra(
       ctx,
@@ -464,6 +557,7 @@ export function dibujarPublicacion(canvas, o) {
     linea2: (o.textos.linea2 ?? "").trim(),
     precio: (o.textos.precio ?? "").trim(),
     desde: o.textos.desde,
+    etiqueta: ETIQUETAS[o.textos.etiqueta] ?? "",
   };
   if (o.modelo === "portada")
     dibujarPortada(ctx, tam, c, o.foto, o.logo, t, o.encuadre);

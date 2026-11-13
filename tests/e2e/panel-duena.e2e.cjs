@@ -671,6 +671,13 @@ function atender(db) {
       "Publicar: la foto se puede agrandar y mover sobre la vista previa",
     );
     await captura(panel, "publicar-poster");
+    const sinEtiqueta = await lienzo.evaluate((c) => c.toDataURL().length);
+    await panel.selectOption("#pub-etiqueta", "nuevo");
+    ok(
+      (await lienzo.evaluate((c) => c.toDataURL().length)) !== sinEtiqueta,
+      "Publicar: se puede sumar la etiqueta (Nuevo) a la imagen",
+    );
+    await panel.selectOption("#pub-etiqueta", "");
     await panel.getByRole("button", { name: "Listo" }).click();
     await panel.getByRole("button", { name: "Vitrina" }).click();
     await panel.getByRole("button", { name: /Mover y agrandar/ }).click();

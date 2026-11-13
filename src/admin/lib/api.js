@@ -47,7 +47,7 @@ export async function listarProductos() {
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, slug, name, short_description, is_published, sort_order, category_id, category:categories(name), variants:product_variants(label, servings, price_cents, sort_order), images:product_images(storage_path, is_cover, width, height, focus_x, focus_y, zoom)",
+      "id, slug, name, short_description, badge, is_published, sort_order, category_id, category:categories(name), variants:product_variants(label, servings, price_cents, sort_order), images:product_images(storage_path, is_cover, width, height, focus_x, focus_y, zoom)",
     )
     .order("sort_order");
   if (error) fallar(error, "No se pudieron cargar los productos.");
