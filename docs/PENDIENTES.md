@@ -84,7 +84,7 @@ publicación (opcional), "Sin stock", portada del sitio editable, códigos de re
 producto, precios con formato, hoja "Cómo usar"); "Descargar mi catálogo" y "Planilla vacía con
 ejemplos" (los ejemplos se ignoran); botón "Excel" a la vista en Productos; **código de número** por
 producto (lo asigna la base, no cambia nunca: migración `20261113001200_codigo_productos.sql`, falta
-aplicarla en la base real con OK); **desplegables** en Categoría (con los nombres actuales de las
+**aplicada en la base real el 13/11** con copia previa: códigos 1 a 9 en el orden de la página, 23 precios intactos, `comprobar-base.sh` en verde); **desplegables** en Categoría (con los nombres actuales de las
 4 tarjetas al momento de descargar) y en Publicado (sí/no). Pruebas: `tests/planilla.test.js` (19 casos) + base + navegador de
 punta a punta (bajar, editar, guardar .xlsx, subir, volver a bajar, código tocado, planilla vacía).
 
