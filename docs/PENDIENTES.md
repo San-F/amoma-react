@@ -63,6 +63,12 @@ Resultado completo y orden de arreglos: [`AUDITORIA-2026-11-13.md`](AUDITORIA-20
 la proporción del logo (en una miniatura salió estirado). Mantener los dos modelos (Vitrina y Portada) y,
 a lo sumo, **sumar un tercero**; no sacar ninguno.
 
+**Galería (decisión de Francisco, 13/11):** se queda como está (fotos completas y grandes; ahí van también
+las tortas personalizadas). En el panel nuevo, "Fotos" se maneja como un feed: grilla, tocar una foto para
+**mostrarla u ocultarla**, ordenar y borrar (mostrar/ocultar y ordenar ya existen hoy). En "Publicar", la
+foto de una publicación **no** va sola a la galería: casilla opcional "Sumar también a la galería"
+(apagada por defecto). A evaluar: botón "Sumar a la galería" desde la foto de un producto.
+
 ## Para vos (Francisco)
 
 ### Cuando estés en casa
