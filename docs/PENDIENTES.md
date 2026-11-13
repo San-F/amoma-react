@@ -53,6 +53,16 @@ contraseñas, doble factor empezando por el mail, FileVault). 🔲 pendiente de 
 **Plantilla (`San-F/web-plantilla`):** tanda 1 lista; la tanda 2 espera a que el panel de Amoma esté
 probado contra la base real. Ver su `PROGRESO.md`.
 
+## Auditoría del 13/11/2026
+
+Resultado completo y orden de arreglos: [`AUDITORIA-2026-11-13.md`](AUDITORIA-2026-11-13.md)
+(9 importantes, 10 medios). Nada grave de seguridad; lo importante es de funcionamiento.
+
+**Maquetas del panel v2** (`docs/maquetas/panel-v2/`): aprobadas por Francisco el 13/11 con dos cambios:
+(1) en el **ingreso, sin la foto de la torta** (dejar logo + "Hola de nuevo"); (2) en **Publicar**, cuidar
+la proporción del logo (en una miniatura salió estirado). Mantener los dos modelos (Vitrina y Portada) y,
+a lo sumo, **sumar un tercero**; no sacar ninguno.
+
 ## Para vos (Francisco)
 
 ### Cuando estés en casa
