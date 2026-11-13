@@ -42,6 +42,14 @@ function Importar() {
     listarCategorias().then(setCategorias, (e) => setError(e.message));
   }, []);
 
+  // si se toca un botón antes de que lleguen las categorías, se buscan ahí
+  const conCategorias = async () => {
+    if (categorias.length) return categorias;
+    const lista = await listarCategorias();
+    setCategorias(lista);
+    return lista;
+  };
+
   const elegirPlanilla = async (e) => {
     const f = e.target.files[0];
     e.target.value = "";
@@ -55,7 +63,11 @@ function Importar() {
       return setError("Usá un archivo .xlsx (Excel) o .csv.");
     try {
       setArchivo(f.name);
-      setResultado(interpretarPlanilla(await leerArchivo(f), categorias));
+      const [filas, cats] = await Promise.all([
+        leerArchivo(f),
+        conCategorias(),
+      ]);
+      setResultado(interpretarPlanilla(filas, cats));
     } catch (err) {
       console.error(err);
       setResultado(null);
@@ -71,11 +83,16 @@ function Importar() {
     setError("");
     setBajando(vacia ? "vacia" : "catalogo");
     try {
-      const [{ armarPlanilla }, productos] = await Promise.all([
+      const [{ armarPlanilla }, productos, cats] = await Promise.all([
         import("../lib/planilla"),
         vacia ? [] : listarProductos(),
+        conCategorias(),
       ]);
-      const blob = await armarPlanilla({ productos, categorias, vacia });
+      const blob = await armarPlanilla({
+        productos,
+        categorias: cats,
+        vacia,
+      });
       descargar(
         vacia ? "amoma-planilla-vacia.xlsx" : "amoma-catalogo.xlsx",
         blob,
