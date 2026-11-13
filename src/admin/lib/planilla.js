@@ -3,6 +3,12 @@
 // Se usa la versión "universal" de la librería: no usa procesos aparte del
 // navegador (los bloquearía la política de seguridad del sitio).
 import writeExcelFile from "write-excel-file/universal";
+import {
+  getOrderOfSiblings,
+  insertElementMarkupAccordingToOrderOfSiblings,
+  sanitizeAttributeValue,
+  sanitizeTextContent,
+} from "write-excel-file/utility";
 import { ENCABEZADOS, filasCatalogo, filasModelo } from "./importer.js";
 
 const CACAO = "#3B2420";
@@ -73,6 +79,42 @@ function cuerpo(filas, { ejemplo = false } = {}) {
   });
 }
 
+// ---------- desplegables (validación de datos de Excel) ----------
+// La librería no los trae: se agregan al XML de la hoja con un "feature".
+// Cada hoja puede pasar `desplegables: [{ rango, formula, titulo, mensaje }]`.
+const HASTA_FILA = 1000;
+
+function reglaXml({ rango, formula, titulo, mensaje }) {
+  const atr = (v) => sanitizeAttributeValue(v);
+  return (
+    `<dataValidation type="list" allowBlank="1" ` +
+    `showErrorMessage="1" errorStyle="stop" errorTitle="${atr(titulo)}" ` +
+    `error="${atr(mensaje)}" sqref="${rango}">` +
+    `<formula1>${sanitizeTextContent(formula)}</formula1></dataValidation>`
+  );
+}
+
+const conDesplegables = {
+  files: {
+    transform: {
+      "xl/worksheets/sheet{id}.xml": {
+        transform(xml, opciones) {
+          const lista = opciones.desplegables;
+          if (!lista?.length) return xml;
+          return insertElementMarkupAccordingToOrderOfSiblings(
+            xml,
+            `<dataValidations count="${lista.length}">${lista.map(reglaXml).join("")}</dataValidations>`,
+            getOrderOfSiblings("xl/worksheets/sheet{id}.xml", "worksheet"),
+            "worksheet",
+          );
+        },
+      },
+    },
+  },
+};
+
+const HOJA_AYUDA = "Cómo usar";
+
 function instrucciones(categorias, { vacia }) {
   const titulo = (t) => [
     { value: t, fontWeight: "bold", fontSize: 13, textColor: CACAO },
@@ -113,8 +155,11 @@ function instrucciones(categorias, { vacia }) {
       "Categoría: una de las de abajo (tal cual). Publicado: “sí” o “no” (vacío = como está). Porciones: un número o vacío.",
     ),
     [],
-    titulo("Categorías válidas"),
-    ...categorias.map((c) => linea(`• ${c.name}`)),
+    titulo(
+      "Categorías válidas (también en el desplegable de la columna Categoría)",
+    ),
+    // sin viñeta: el desplegable de la hoja Catálogo toma estas celdas tal cual
+    ...categorias.map((c) => [{ value: c.name, textColor: CACAO, indent: 1 }]),
     [],
     titulo("5. Subirla"),
     linea(
@@ -132,6 +177,25 @@ function instrucciones(categorias, { vacia }) {
  */
 export function armarPlanilla({ productos = [], categorias, vacia = false }) {
   const filas = vacia ? filasModelo() : filasCatalogo(productos);
+  const ayuda = instrucciones(categorias, { vacia });
+  // fila (1 = primera) donde empiezan los nombres de categoría en "Cómo usar"
+  const desde = ayuda.findIndex((f) => f[0]?.value === categorias[0]?.name) + 1;
+  const hasta = desde + categorias.length - 1;
+  const desplegables = [
+    {
+      rango: `G2:G${HASTA_FILA}`,
+      formula: '"sí,no"',
+      titulo: "Publicado",
+      mensaje: "Elegí “sí” o “no” (o dejalo vacío para que quede como está).",
+    },
+  ];
+  if (categorias.length && desde > 0)
+    desplegables.unshift({
+      rango: `B2:B${HASTA_FILA}`,
+      formula: `'${HOJA_AYUDA}'!$A$${desde}:$A$${hasta}`,
+      titulo: "Categoría",
+      mensaje: "Elegí una de las categorías de la lista.",
+    });
   return writeExcelFile(
     [
       {
@@ -142,15 +206,16 @@ export function armarPlanilla({ productos = [], categorias, vacia = false }) {
         showGridLines: false,
         orientation: "landscape",
         zoomScale: 1.1,
+        desplegables,
       },
       {
-        sheet: "Cómo usar",
-        data: instrucciones(categorias, { vacia }),
+        sheet: HOJA_AYUDA,
+        data: ayuda,
         columns: [{ width: 120 }],
         showGridLines: false,
         orientation: "landscape",
       },
     ],
-    { fontFamily: LETRA, fontSize: 11 },
+    { fontFamily: LETRA, fontSize: 11, features: [conDesplegables] },
   ).toBlob();
 }

@@ -280,3 +280,46 @@ test("un producto sin precios igual aparece en la planilla (y avisa al subirla)"
   const { errores } = leer(filas);
   assert.ok(errores.some((e) => e.includes("no tiene ningún precio")));
 });
+
+// desplegables: Excel no los "lee" como datos, así que se mira el XML de la hoja
+const { unzipSync, strFromU8 } = await import("fflate");
+const xmlHoja = async (blob, n = 1) =>
+  strFromU8(
+    unzipSync(new Uint8Array(await blob.arrayBuffer()))[
+      `xl/worksheets/sheet${n}.xml`
+    ],
+  );
+
+test("desplegables: Categoría toma los nombres actuales y Publicado ofrece sí/no", async () => {
+  // la dueña renombró una tarjeta: el desplegable sale con el nombre nuevo
+  const categorias = [
+    { slug: "tortas", name: "Tortas de cumple" },
+    { slug: "postres", name: "Tartas y postres" },
+  ];
+  const blob = await armarPlanilla({ productos: CARGADO, categorias });
+  const xml = await xmlHoja(blob);
+  const regla = xml.match(
+    /sqref="B2:B1000"><formula1>'Cómo usar'!\$A\$(\d+):\$A\$(\d+)<\/formula1>/,
+  );
+  assert.ok(regla, "falta el desplegable de Categoría");
+  assert.match(
+    xml,
+    /sqref="G2:G1000"><formula1>&quot;sí,no&quot;|sqref="G2:G1000"><formula1>"sí,no"/,
+  );
+  // y esas filas de "Cómo usar" tienen exactamente los nombres actuales
+  const ayuda = (await readTodas(blob))[1].data;
+  const [desde, hasta] = [Number(regla[1]), Number(regla[2])];
+  assert.deepEqual(
+    ayuda.slice(desde - 1, hasta).map((f) => f[0]),
+    ["Tortas de cumple", "Tartas y postres"],
+  );
+  // la hoja de ayuda no lleva desplegables
+  assert.doesNotMatch(await xmlHoja(blob, 2), /dataValidation/);
+});
+
+test("desplegables: también en la planilla vacía", async () => {
+  const xml = await xmlHoja(
+    await armarPlanilla({ categorias: CATEGORIAS, vacia: true }),
+  );
+  assert.match(xml, /<dataValidations count="2">/);
+});

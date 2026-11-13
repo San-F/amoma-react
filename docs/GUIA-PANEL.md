@@ -84,6 +84,9 @@ En **Productos**, botón **"Excel"** (arriba, al lado de "Agregar").
 5. Tocá **"Importar"**. Si algo falla, **no se guarda nada** (no queda a medias).
 
 La segunda hoja de la planilla, **"Cómo usar"**, repite estas instrucciones y las categorías válidas.
+En las columnas **Categoría** y **Publicado** tocás la celda y elegís de una **lista desplegable**
+(si escribís otra cosa, Excel no la deja). La lista de categorías sale con los nombres que tengan
+las tarjetas al momento de descargar: si cambiás un nombre, volvé a descargar la planilla.
 
 **Las fotos no van en la planilla.** A los productos nuevos se las ponés después: en **Productos**,
 tocá el círculo **"+ Foto"** de cada uno.
