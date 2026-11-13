@@ -166,9 +166,14 @@ function Productos() {
     <>
       <div className="adm-cabecera">
         <h1 className="adm-titulo">Productos</h1>
-        <Link className="btn btn--rosa" to="/admin/productos/nuevo">
-          <Icono nombre="mas" width={18} height={18} /> Agregar
-        </Link>
+        <div className="adm-cabecera__botones">
+          <Link className="btn btn--borde" to="/admin/importar">
+            <Icono nombre="planilla" width={18} height={18} /> Excel
+          </Link>
+          <Link className="btn btn--rosa" to="/admin/productos/nuevo">
+            <Icono nombre="mas" width={18} height={18} /> Agregar
+          </Link>
+        </div>
       </div>
 
       {aviso && (
@@ -293,11 +298,6 @@ function Productos() {
             </section>
           );
         })}
-
-        <p className="adm-excel">
-          ¿Muchos cambios juntos?{" "}
-          <Link to="/admin/importar">Usar la planilla de Excel</Link>
-        </p>
       </Estado>
     </>
   );

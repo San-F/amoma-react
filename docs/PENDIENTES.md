@@ -80,6 +80,13 @@ Vitrina/Portada × crema/chocolate × cuadrado/historia, descarga JPG 1080 px. A
 borran solo si nadie más los usa. Prueba "un día de la dueña" ampliada. Pendiente: tercer modelo de
 publicación (opcional), "Sin stock", portada del sitio editable, códigos de respaldo del doble factor.
 
+**Excel (13/11, pedidos de Francisco):** planilla .xlsx prolija (encabezado de color fijo, franjas por
+producto, precios con formato, hoja "Cómo usar"); "Descargar mi catálogo" y "Planilla vacía con
+ejemplos" (los ejemplos se ignoran); botón "Excel" a la vista en Productos; **código de número** por
+producto (lo asigna la base, no cambia nunca: migración `20261113001200_codigo_productos.sql`, falta
+aplicarla en la base real con OK). Pruebas: `tests/planilla.test.js` (17 casos) + base + navegador de
+punta a punta (bajar, editar, guardar .xlsx, subir, volver a bajar, código tocado, planilla vacía).
+
 **Galería en Safari: confirmado arreglado por Francisco (13/11).**
 
 **Para publicar todo junto (13/11, pedido de Francisco):**

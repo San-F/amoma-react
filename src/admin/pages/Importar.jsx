@@ -1,11 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
-import {
-  catalogoCSV,
-  interpretarPlanilla,
-  parsearCSV,
-  plantillaCSV,
-} from "../lib/importer";
+import { interpretarPlanilla, parsearCSV } from "../lib/importer";
 import {
   importarCatalogo,
   listarCategorias,
@@ -15,8 +10,7 @@ import { formatearPrecio } from "../../lib/money";
 
 const MAX_PLANILLA = 5 * 1024 * 1024;
 
-function descargar(nombre, contenido) {
-  const blob = new Blob([contenido], { type: "text/csv;charset=utf-8" });
+function descargar(nombre, blob) {
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
@@ -38,7 +32,7 @@ function Importar() {
   const [categorias, setCategorias] = useState([]);
   const [archivo, setArchivo] = useState(null);
   const [resultado, setResultado] = useState(null); // { productos, errores }
-  const [bajando, setBajando] = useState(false);
+  const [bajando, setBajando] = useState("");
   const [fase, setFase] = useState("preparando"); // preparando | importando | listo
   const [progreso, setProgreso] = useState("");
   const [final, setFinal] = useState(null);
@@ -71,19 +65,26 @@ function Importar() {
     }
   };
 
-  // Baja la planilla con todo lo cargado (o el modelo, si no hay nada).
-  const bajarPlanilla = async () => {
+  // Planilla Excel prolija: con todo lo cargado, o vacía con ejemplos.
+  // (la librería se carga recién al tocar el botón)
+  const bajarPlanilla = async (vacia) => {
     setError("");
-    setBajando(true);
+    setBajando(vacia ? "vacia" : "catalogo");
     try {
-      const productos = await listarProductos();
-      if (productos.length)
-        descargar("amoma-catalogo.csv", catalogoCSV(productos));
-      else descargar("amoma-catalogo-modelo.csv", plantillaCSV());
+      const [{ armarPlanilla }, productos] = await Promise.all([
+        import("../lib/planilla"),
+        vacia ? [] : listarProductos(),
+      ]);
+      const blob = await armarPlanilla({ productos, categorias, vacia });
+      descargar(
+        vacia ? "amoma-planilla-vacia.xlsx" : "amoma-catalogo.xlsx",
+        blob,
+      );
     } catch (err) {
-      setError(err.message);
+      console.error(err);
+      setError("No se pudo armar la planilla. Probá de nuevo.");
     } finally {
-      setBajando(false);
+      setBajando("");
     }
   };
 
@@ -102,6 +103,7 @@ function Importar() {
       setFinal(
         await importarCatalogo(
           filas.map((p) => ({
+            code: p.code,
             slug: p.slug,
             name: p.name,
             category_slug: p.category_slug,
@@ -126,25 +128,37 @@ function Importar() {
 
       <ol className="adm-pasos adm-pasos--grandes">
         <li>
-          <strong>Descargá tu planilla</strong>: trae todo lo que tenés cargado,
-          una fila por tamaño.
-          <br />
-          <button
-            type="button"
-            className="btn btn--borde"
-            onClick={bajarPlanilla}
-            disabled={bajando}
-          >
-            {bajando ? "Preparando…" : "Descargar mi catálogo"}
-          </button>
+          <strong>Descargá la planilla</strong>: la de tu catálogo (trae todo lo
+          cargado, una fila por tamaño) o una vacía con ejemplos.
+          <div className="adm-acciones">
+            <button
+              type="button"
+              className="btn"
+              onClick={() => bajarPlanilla(false)}
+              disabled={Boolean(bajando)}
+            >
+              {bajando === "catalogo" ? "Preparando…" : "Descargar mi catálogo"}
+            </button>
+            <button
+              type="button"
+              className="btn btn--borde"
+              onClick={() => bajarPlanilla(true)}
+              disabled={Boolean(bajando)}
+            >
+              {bajando === "vacia"
+                ? "Preparando…"
+                : "Planilla vacía con ejemplos"}
+            </button>
+          </div>
         </li>
         <li>
           <strong>Abrila en Excel</strong>, cambiá precios o agregá filas para
           productos nuevos, y guardala.
           <br />
           <small className="adm-ayuda">
-            La columna “codigo” no se toca (en las filas nuevas va vacía). Lo
-            que borres de la planilla no se borra de la página.
+            La columna gris “Código (no tocar)” queda como está (en las filas
+            nuevas va vacía). Lo que borres de la planilla no se borra de la
+            página. La segunda hoja, “Cómo usar”, lo explica.
           </small>
         </li>
         <li>
@@ -192,6 +206,7 @@ function Importar() {
             <table className="adm-tabla">
               <thead>
                 <tr>
+                  <th>Código</th>
                   <th>Producto</th>
                   <th>Categoría</th>
                   <th>Precios</th>
@@ -200,7 +215,16 @@ function Importar() {
               </thead>
               <tbody>
                 {filas.map((p) => (
-                  <tr key={p.slug}>
+                  <tr key={p.code ?? `nuevo-${p.slug}`}>
+                    <td>
+                      {p.code != null ? (
+                        p.code
+                      ) : (
+                        <span className="adm-etiqueta adm-etiqueta--rosa">
+                          Nuevo
+                        </span>
+                      )}
+                    </td>
                     <td>{p.name}</td>
                     <td>
                       {categorias.find((c) => c.slug === p.category_slug)

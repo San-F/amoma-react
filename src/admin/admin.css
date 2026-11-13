@@ -1008,18 +1008,6 @@
   outline-offset: 2px;
 }
 
-.adm-excel {
-  margin: 2rem 0 0.5rem;
-  color: var(--cacao-suave);
-  font-size: 0.9rem;
-  text-align: center;
-}
-
-.adm-excel a {
-  color: var(--cacao);
-  font-weight: 700;
-}
-
 /* ---------- Ficha de producto ---------- */
 
 .adm-ficha-foto {
@@ -1804,4 +1792,15 @@
 .adm-ordenar__botones .btn {
   padding-inline: 0.75rem;
   white-space: nowrap;
+}
+
+.adm-cabecera__botones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.adm-cabecera__botones .btn {
+  gap: 0.35rem;
 }

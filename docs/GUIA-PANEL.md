@@ -65,22 +65,28 @@ En **Inicio** ves cuántos productos están a la vista, dos accesos grandes (**C
 
 ## 5. Cambiar muchos precios juntos con Excel
 
-1. Tocá **"Descargar mi catálogo"**: baja una planilla con **todo lo que tenés cargado**, una fila por
-   tamaño.
+En **Productos**, botón **"Excel"** (arriba, al lado de "Agregar").
+
+1. **"Descargar mi catálogo"** baja una planilla de Excel con **todo lo cargado**, una fila por tamaño.
+   (Si todavía no hay nada, **"Planilla vacía con ejemplos"**: las filas grises de ejemplo se ignoran
+   al subirla.)
 2. Abrila con Excel y cambiá lo que necesites:
-   - **Precios**: escribí el número nuevo.
-   - **Producto nuevo**: agregá una fila al final (si tiene 2 tamaños, 2 filas con el mismo nombre).
-     La columna "codigo" dejala vacía.
-   - La columna **"codigo" no se toca** en las filas que ya vinieron: es lo que une cada fila con su
-     producto (así podés cambiarle el nombre sin que se duplique).
-   - Lo que borres de la planilla **no** se borra de la página.
+   - **Precios**: escribí el número (ej. 28000).
+   - **Nombres**: cambialos tranquila; cada torta se reconoce por su **código** (la columna gris
+     "Código (no tocar)", un número que pone el panel solo y no cambia nunca).
+   - **Producto nuevo**: agregá filas al final (una por tamaño) y dejá el código **vacío**: el panel le
+     asigna uno.
+   - **Sacar un tamaño**: borrá esa fila. Borrar todas las filas de una torta **no** la borra de la
+     página (eso se hace desde la torta).
 3. Guardala y subila en **"Elegir planilla"**.
-4. Revisá la **vista previa**. Si hay algo mal, te dice en qué fila (ej. _"Fila 4: el precio no es
-   válido"_). Corregilo en el Excel y volvé a subirlo.
+4. Revisá la **vista previa**: muestra cada producto con su código o **"Nuevo"**. Si hay algo mal, te
+   dice en qué fila (ej. _"Fila 4: el precio no es válido"_). Corregilo en el Excel y volvé a subirla.
 5. Tocá **"Importar"**. Si algo falla, **no se guarda nada** (no queda a medias).
 
+La segunda hoja de la planilla, **"Cómo usar"**, repite estas instrucciones y las categorías válidas.
+
 **Las fotos no van en la planilla.** A los productos nuevos se las ponés después: en **Productos**,
-tocá el círculo **"+ Foto"** de cada uno. Hasta que no tenga foto, un producto no aparece en la página.
+tocá el círculo **"+ Foto"** de cada uno.
 
 <img src="guia/06-excel.jpg" width="300" alt="Cargar desde Excel">
 

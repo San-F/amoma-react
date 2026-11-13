@@ -3,8 +3,6 @@ import assert from "node:assert/strict";
 import {
   interpretarPlanilla,
   parsearCSV,
-  plantillaCSV,
-  catalogoCSV,
   claveFoto,
 } from "../src/admin/lib/importer.js";
 
@@ -12,20 +10,6 @@ const CATEGORIAS = [
   { slug: "tortas", name: "Tortas" },
   { slug: "postres", name: "Tartas y postres" },
 ];
-
-test("la planilla modelo se lee sin errores", () => {
-  const { productos, errores } = interpretarPlanilla(
-    parsearCSV(plantillaCSV()),
-    CATEGORIAS,
-  );
-  assert.deepEqual(errores, []);
-  assert.equal(productos.length, 2);
-  const lemon = productos.find((p) => p.slug === "lemon-pie");
-  assert.equal(lemon.category_slug, "postres");
-  assert.equal(lemon.variants.length, 2);
-  assert.equal(lemon.variants[1].price_cents, 3200000);
-  assert.equal(lemon.is_published, true);
-});
 
 test("sin 'publicado', no se decide nada (lo oculto sigue oculto)", () => {
   const { productos } = interpretarPlanilla(
@@ -36,69 +20,6 @@ test("sin 'publicado', no se decide nada (lo oculto sigue oculto)", () => {
     CATEGORIAS,
   );
   assert.equal(productos[0].is_published, null);
-});
-
-test("el catálogo descargado se vuelve a leer igual (ida y vuelta)", () => {
-  const cargado = [
-    {
-      slug: "lemon-pie",
-      name: "Lemon pie",
-      short_description: 'Con "merengue"; y limón',
-      is_published: false,
-      category: { name: "Tartas y postres" },
-      variants: [
-        { label: "Chica", servings: 8, price_cents: 1900000 },
-        { label: "Grande", servings: null, price_cents: 3000050 },
-      ],
-    },
-    {
-      slug: "sin-precio",
-      name: "=SUMA(A1)",
-      short_description: null,
-      is_published: true,
-      category: null,
-      variants: [],
-    },
-  ];
-  const csv = catalogoCSV(cargado);
-  assert.ok(csv.includes("'=SUMA(A1)"), "las fórmulas se guardan como texto");
-  const { productos, errores } = interpretarPlanilla(
-    parsearCSV(csv),
-    CATEGORIAS,
-  );
-  // el que no tiene precio se avisa; el resto vuelve idéntico
-  assert.equal(errores.length, 1);
-  const lemon = productos.find((p) => p.slug === "lemon-pie");
-  assert.equal(lemon.short_description, 'Con "merengue"; y limón');
-  assert.equal(lemon.category_slug, "postres");
-  assert.equal(lemon.is_published, false);
-  assert.deepEqual(
-    lemon.variants.map((v) => [v.label, v.servings, v.price_cents]),
-    [
-      ["Chica", 8, 1900000],
-      ["Grande", null, 3000050],
-    ],
-  );
-  assert.equal(
-    productos.find((p) => p.slug === "sin-precio").name,
-    "=SUMA(A1)",
-  );
-});
-
-test("con 'codigo', cambiar el nombre no crea un duplicado", () => {
-  const { productos, errores } = interpretarPlanilla(
-    [
-      ["nombre", "tamaño", "precio", "codigo"],
-      ["Lemon pie de la abuela", "Chica", "100", "lemon-pie"],
-      ["Lemon pie de la abuela", "Grande", "200", "lemon-pie"],
-    ],
-    CATEGORIAS,
-  );
-  assert.deepEqual(errores, []);
-  assert.equal(productos.length, 1);
-  assert.equal(productos[0].slug, "lemon-pie");
-  assert.equal(productos[0].name, "Lemon pie de la abuela");
-  assert.equal(productos[0].variants.length, 2);
 });
 
 test("encabezados con mayúsculas, tildes y sinónimos", () => {

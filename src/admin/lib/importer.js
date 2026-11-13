@@ -3,85 +3,73 @@
 import { pesosACentavos } from "../../lib/money.js";
 import { slugify } from "../../lib/slug.js";
 
-export const COLUMNAS = [
-  "nombre",
-  "categoria",
-  "descripcion",
-  "tamaño",
-  "porciones",
-  "precio",
-  "publicado",
-  "codigo",
+// Encabezados de la planilla (como los ve la dueña en Excel)
+export const ENCABEZADOS = [
+  "Nombre",
+  "Categoría",
+  "Descripción",
+  "Tamaño",
+  "Porciones",
+  "Precio",
+  "Publicado",
+  "Código (no tocar)",
 ];
 
+// Filas de ejemplo de la planilla vacía: su código empieza con "ejemplo" y
+// al subirla se ignoran (se pueden dejar o borrar).
+export const MARCA_EJEMPLO = "ejemplo";
 const EJEMPLO = [
   [
     "Lemon pie",
     "Tartas y postres",
     "Masa sablé, crema de limón y merengue",
     "Chica",
-    "8",
-    "18000",
+    8,
+    18000,
     "sí",
-    "",
+    "ejemplo (se ignora)",
   ],
-  ["Lemon pie", "", "", "Grande", "16", "32000", "", ""],
+  ["Lemon pie", "", "", "Grande", 16, 32000, "", "ejemplo (se ignora)"],
   [
     "Torta de frutos rojos",
     "Tortas",
     "Chocolate, dulce de leche y frutillas",
     "Mediana",
-    "15",
-    "35000",
+    15,
+    35000,
     "sí",
-    "",
+    "ejemplo (se ignora)",
   ],
 ];
 
-// Separador ";" y BOM: así Excel en español la abre bien.
-function aCSV(filas) {
-  const csv = filas
-    .map((f) =>
-      f
-        .map((c) => String(c ?? ""))
-        // una celda que empieza con = + - @ se guarda como texto: Excel no
-        // la ejecuta como fórmula
-        .map((c) => (/^[=+\-@\t\r]/.test(c) ? `'${c}` : c))
-        .map((c) => (/[;"\n]/.test(c) ? `"${c.replace(/"/g, '""')}"` : c))
-        .join(";"),
-    )
-    .join("\r\n");
-  return "\uFEFF" + csv;
+// Filas de la planilla vacía (solo ejemplos).
+export function filasModelo() {
+  return EJEMPLO.map((f) => [...f]);
 }
 
-// Planilla modelo (ejemplos), para cuando todavía no hay nada cargado.
-export function plantillaCSV() {
-  return aCSV([COLUMNAS, ...EJEMPLO]);
-}
-
-// Planilla con TODO lo que hay cargado: una fila por tamaño. La dueña cambia
-// precios o agrega filas y la vuelve a subir. "codigo" une cada fila con su
-// producto (así se puede cambiar el nombre sin crear un duplicado).
-export function catalogoCSV(productos) {
-  const filas = [COLUMNAS];
+// Filas con TODO lo que hay cargado: una por tamaño. La dueña cambia precios o
+// agrega filas y la vuelve a subir. El código une cada fila con su producto
+// (así se puede cambiar el nombre sin crear un duplicado).
+export function filasCatalogo(productos) {
+  const filas = [];
   for (const p of productos) {
     const vs = p.variants.length
       ? p.variants
-      : [{ label: "", servings: "", price_cents: null }];
+      : [{ label: "", servings: null, price_cents: null }];
     vs.forEach((v, i) =>
       filas.push([
         p.name,
         i === 0 ? (p.category?.name ?? "") : "",
         i === 0 ? (p.short_description ?? "") : "",
         v.label,
-        v.servings ?? "",
-        v.price_cents == null ? "" : String(v.price_cents / 100),
+        v.servings ?? null,
+        v.price_cents == null ? null : v.price_cents / 100,
         i === 0 ? (p.is_published ? "sí" : "no") : "",
-        p.slug,
+        p.code,
       ]),
     );
   }
-  return aCSV(filas);
+  return filas;
 }
 
 // CSV simple con comillas; detecta ";" o "," mirando la primera línea.
@@ -123,13 +111,15 @@ export function parsearCSV(texto) {
   return filas;
 }
 
+// "Código (no tocar)" → "codigo"; "Precio ($)" → "precio"
 const normalizarEncabezado = (t) =>
   String(t ?? "")
+    .replace(/\(.*?\)/g, "")
+    .replace(/\$/g, "")
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .trim()
-    .toLowerCase()
-    .replace(/ñ/g, "n");
+    .toLowerCase();
 
 const ALIAS = {
   nombre: "nombre",
@@ -221,6 +211,8 @@ export function interpretarPlanilla(filas, categorias) {
       r[col] = typeof v === "string" ? sinGuarda(v.trim()) : v;
     });
     if (Object.values(r).every((v) => texto(v) === "")) return; // fila vacía
+    // filas de ejemplo de la planilla vacía
+    if (texto(r.codigo).toLowerCase().startsWith(MARCA_EJEMPLO)) return;
 
     const nombre = texto(r.nombre);
     if (!nombre) {
@@ -230,17 +222,30 @@ export function interpretarPlanilla(filas, categorias) {
     if (nombre.length > 120)
       errores.push(`Fila ${n}: el nombre es muy largo (máx. 120).`);
 
-    // con "codigo" (planilla descargada) la fila se une a su producto aunque
-    // le hayan cambiado el nombre; sin código, se une por nombre
-    const codigo = slugify(texto(r.codigo));
-    const slug = codigo || slugify(nombre);
+    // Código de número (planilla descargada): une la fila con su producto
+    // aunque le hayan cambiado el nombre. Sin código = producto nuevo (o el
+    // que hoy se llama igual).
+    const codigoTexto = texto(r.codigo).replace(/\.0+$/, "");
+    let code = null;
+    if (codigoTexto) {
+      if (!/^\d{1,9}$/.test(codigoTexto)) {
+        errores.push(
+          `Fila ${n}: el código "${codigoTexto}" no es válido. No cambies esa columna (en las filas nuevas va vacía).`,
+        );
+        return;
+      }
+      code = Number.parseInt(codigoTexto, 10);
+    }
+    const slug = slugify(nombre);
     if (!slug) {
       errores.push(`Fila ${n}: el nombre "${nombre}" no sirve (usá letras).`);
       return;
     }
-    let p = productos.get(slug);
+    const clave = code != null ? `#${code}` : `nuevo:${slug}`;
+    let p = productos.get(clave);
     if (!p) {
       p = {
+        code,
         slug,
         name: nombre,
         category_slug: null,
@@ -251,7 +256,7 @@ export function interpretarPlanilla(filas, categorias) {
         variants: [],
         fila: n,
       };
-      productos.set(slug, p);
+      productos.set(clave, p);
     }
 
     if (texto(r.categoria)) {
@@ -296,13 +301,31 @@ export function interpretarPlanilla(filas, categorias) {
           porciones = null;
         }
       }
+      const label = (texto(r["tamaño"]) || "Única").slice(0, 60);
+      if (p.variants.some((v) => v.label.toLowerCase() === label.toLowerCase()))
+        errores.push(
+          `Fila ${n}: el tamaño "${label}" de "${p.name}" está repetido.`,
+        );
       p.variants.push({
-        label: (texto(r["tamaño"]) || "Única").slice(0, 60),
+        label,
         servings: porciones,
         price_cents: precio,
       });
     }
   });
+
+  // una fila nueva (sin código) que repite el nombre de una que tiene código
+  const conCodigo = [...productos.values()].filter((p) => p.code != null);
+  for (const p of productos.values()) {
+    if (p.code != null) continue;
+    const igual = conCodigo.find(
+      (o) => o.name.trim().toLowerCase() === p.name.trim().toLowerCase(),
+    );
+    if (igual)
+      errores.push(
+        `Fila ${p.fila}: "${p.name}" ya está en la planilla con el código ${igual.code}. Si es el mismo producto, poné sus tamaños con ese código.`,
+      );
+  }
 
   for (const p of productos.values()) {
     if (!p.variants.length)

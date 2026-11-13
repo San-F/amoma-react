@@ -31,6 +31,7 @@ function baseNueva() {
     productos: [
       {
         id: "p1",
+        code: 1,
         slug: "lemon-pie",
         name: "Lemon pie",
         category_id: "c2",
@@ -67,6 +68,7 @@ function baseNueva() {
       },
       {
         id: "p2",
+        code: 2,
         slug: "charlotte",
         name: "Charlotte",
         category_id: "c1",
@@ -219,12 +221,29 @@ function atender(db) {
       let creados = 0,
         actualizados = 0,
         variantes = 0;
-      for (const it of payload.products) {
-        let p = db.productos.find((x) => x.slug === it.slug);
+      const items = [...payload.products].sort(
+        (a, b) => (a.code ? 0 : 1) - (b.code ? 0 : 1),
+      );
+      for (const it of items) {
+        let p = it.code
+          ? db.productos.find((x) => String(x.code) === String(it.code))
+          : db.productos.find(
+              (x) => x.name.toLowerCase() === it.name.toLowerCase(),
+            );
+        if (it.code && !p)
+          return L.json(
+            r,
+            {
+              code: "22023",
+              message: `Fila de "${it.name}": no hay ningún producto con el código ${it.code}`,
+            },
+            400,
+          );
         const cat = db.categorias.find((c) => c.slug === it.category_slug);
         if (!p) {
           p = {
             id: "n" + db.productos.length,
+            code: Math.max(...db.productos.map((x) => x.code)) + 1,
             slug: it.slug,
             category_id: null,
             description: null,
@@ -391,6 +410,11 @@ function atender(db) {
       "la página no mezcla productos de muestra con los de la base",
     );
 
+    ok(
+      await panel.getByRole("link", { name: "Excel" }).isVisible(),
+      "el botón Excel está a la vista arriba en Productos",
+    );
+
     // 1b. cambiar el nombre de una categoría (no se pueden agregar)
     ok(
       !(await panel.getByText(/Nueva categoría|Agregar categoría/).count()),
@@ -481,45 +505,103 @@ function atender(db) {
       "ocultar: la dueña, con su sesión abierta, tampoco lo ve en la página",
     );
 
-    // 5. Excel: bajar lo cargado, cambiar un precio, subirlo
+    // 5. Excel de punta a punta: bajar, editar en "Excel", guardar como .xlsx,
+    //    subir, revisar la vista previa, importar y volver a bajar.
+    const { readSheet } = await import("read-excel-file/universal");
+    const { default: escribirXlsx } =
+      await import("write-excel-file/universal");
+    const bajarExcel = async (boton) => {
+      const [d] = await Promise.all([
+        panel.waitForEvent("download"),
+        panel.getByRole("button", { name: boton }).click(),
+      ]);
+      const bytes = fs.readFileSync(await d.path());
+      return {
+        nombre: d.suggestedFilename(),
+        bytes,
+        hoja: await readSheet(new Blob([bytes])),
+      };
+    };
+    // "guardar en Excel": vuelve a ser un .xlsx (como lo dejaría la dueña)
+    const guardarComoXlsx = async (hoja) =>
+      Buffer.from(
+        await (
+          await escribirXlsx(
+            hoja.map((f) => f.map((v) => ({ value: v ?? null }))),
+          )
+        )
+          .toBlob()
+          .then((b) => b.arrayBuffer()),
+      );
+    const subirExcel = (bytes, nombre = "amoma-catalogo.xlsx") =>
+      panel.locator('input[type=file][accept=".xlsx,.csv"]').setInputFiles({
+        name: nombre,
+        mimeType:
+          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        buffer: bytes,
+      });
+
     await panel.goto(PANEL + "/admin/importar", { waitUntil: "networkidle" });
-    const [bajada] = await Promise.all([
-      panel.waitForEvent("download"),
-      panel.getByRole("button", { name: "Descargar mi catálogo" }).click(),
-    ]);
-    const csv = fs.readFileSync(await bajada.path(), "utf8");
+    const cat1 = await bajarExcel("Descargar mi catálogo");
     ok(
-      csv.includes("Lemon pie;Tartas y postres") &&
-        csv.includes("Chica;8;21000;no;lemon-pie") &&
-        csv.includes("Charlotte;Tortas"),
-      "la planilla descargada trae lo cargado (precio nuevo, oculto = no)",
+      cat1.bytes[0] === 0x50 &&
+        cat1.bytes[1] === 0x4b &&
+        cat1.nombre === "amoma-catalogo.xlsx",
+      "Excel: 'Descargar mi catálogo' baja un .xlsx",
     );
-    const editado =
-      csv
-        .replace("Chica;8;21000;no;lemon-pie", "Chica;8;23500;;lemon-pie")
-        .replace(
-          "Lemon pie;Tartas y postres",
-          "Lemon pie clásico;Tartas y postres",
-        ) + "\r\nTorta nueva;Tortas;Recién salida;Única;;40000;;";
-    await panel.locator('input[type=file][accept=".xlsx,.csv"]').setInputFiles({
-      name: "amoma-catalogo.csv",
-      mimeType: "text/csv",
-      buffer: Buffer.from(editado, "utf8"),
-    });
+    const fila = (hoja, codigo, tam) =>
+      hoja.find((f) => f[7] === codigo && f[3] === tam);
+    ok(
+      cat1.hoja[0][7] === "Código (no tocar)" &&
+        fila(cat1.hoja, 1, "Chica")?.[0] === "Lemon pie" &&
+        fila(cat1.hoja, 1, "Chica")?.[5] === 21000 &&
+        fila(cat1.hoja, 1, "Chica")?.[6] === "no" &&
+        fila(cat1.hoja, 2, "Chica")?.[1] === "Tortas de la casa",
+      "la planilla trae lo cargado: código de número, precio nuevo, oculto = no",
+    );
+
+    // la dueña: renombra el Lemon pie (código 1), le cambia un precio, borra
+    // el tamaño Grande y suma una torta nueva sin código
+    const hoja = cat1.hoja.filter((f) => !(f[7] === 1 && f[3] === "Grande"));
+    for (const f of hoja) if (f[7] === 1) f[0] = "Lemon pie clásico";
+    fila(hoja, 1, "Chica")[5] = 23500;
+    fila(hoja, 1, "Chica")[6] = null;
+    hoja.push([
+      "Torta nueva",
+      "Tortas de la casa",
+      "Recién salida",
+      "Única",
+      null,
+      40000,
+      null,
+      null,
+    ]);
+    await subirExcel(await guardarComoXlsx(hoja));
     await panel.getByText("Vista previa").waitFor();
     await captura(panel, "excel");
     ok(
       !(await panel.locator(".adm-bloque .adm-error").count()),
-      "la planilla editada se lee sin errores",
+      "la planilla editada (.xlsx) se lee sin errores",
+    );
+    ok(
+      (
+        await panel
+          .locator(".adm-tabla tbody tr", { hasText: "Torta nueva" })
+          .innerText()
+      )
+        .toLowerCase()
+        .includes("nuevo"),
+      "la vista previa marca qué productos son nuevos",
     );
     await panel.getByRole("button", { name: /Importar 3 producto/ }).click();
     await panel.getByText(/1 nuevo\(s\), 2\s+actualizado\(s\)/).waitFor();
-    const lemon = db.productos.find((p) => p.slug === "lemon-pie");
+    const lemon = db.productos.find((p) => p.code === 1);
     ok(
       lemon.name === "Lemon pie clásico" &&
+        lemon.variants.length === 1 &&
         lemon.variants[0].price_cents === 2350000 &&
         db.productos.length === 3,
-      "Excel: cambia nombre y precio del mismo producto (sin duplicar) y agrega el nuevo",
+      "Excel: cambia nombre y precio del mismo producto (por código), saca el tamaño borrado y agrega el nuevo",
     );
     ok(
       lemon.is_published === false,
@@ -528,6 +610,55 @@ function atender(db) {
     ok(
       await panel.getByRole("link", { name: "Ponerles foto →" }).isVisible(),
       "después de importar, lleva a ponerle foto a los nuevos",
+    );
+
+    // volver a bajar: los códigos no cambiaron y el nuevo ya tiene el suyo
+    await panel.goto(PANEL + "/admin/importar", { waitUntil: "networkidle" });
+    const cat2 = await bajarExcel("Descargar mi catálogo");
+    ok(
+      fila(cat2.hoja, 1, "Chica")?.[0] === "Lemon pie clásico" &&
+        cat2.hoja.some((f) => f[0] === "Torta nueva" && f[7] === 3),
+      "al volver a bajar: mismo código para el renombrado y número nuevo para la torta nueva",
+    );
+
+    // un código tocado a mano: avisa y no deja importar
+    const tocada = cat2.hoja.map((f) => [...f]);
+    tocada[1][7] = 99;
+    await subirExcel(await guardarComoXlsx(tocada));
+    await panel.getByText("Vista previa").waitFor();
+    await panel.getByRole("button", { name: /Importar/ }).click();
+    await panel.getByText(/no hay ningún producto con el código 99/).waitFor();
+    ok(true, "un código inexistente se avisa y no se guarda nada");
+
+    // planilla vacía con ejemplos: se completa y se sube
+    const vacia = await bajarExcel("Planilla vacía con ejemplos");
+    ok(
+      vacia.nombre === "amoma-planilla-vacia.xlsx" && vacia.hoja.length === 4,
+      "Excel: la planilla vacía trae 3 filas de ejemplo",
+    );
+    const completada = [
+      ...vacia.hoja,
+      [
+        "Budín de limón",
+        "Tartas y postres",
+        "Húmedo",
+        "Único",
+        null,
+        12000,
+        "sí",
+        null,
+      ],
+    ];
+    await subirExcel(
+      await guardarComoXlsx(completada),
+      "amoma-planilla-vacia.xlsx",
+    );
+    await panel.getByText("Vista previa").waitFor();
+    ok(
+      await panel
+        .getByRole("button", { name: /Importar 1 producto/ })
+        .isVisible(),
+      "la planilla vacía completada: los ejemplos se ignoran, entra solo lo nuevo",
     );
 
     // 6. mostrar algo sin precio: no deja y explica por qué

@@ -237,7 +237,7 @@ select tests.expect_count('import: admin crea 1 y actualiza 1',
         {"slug":"nueva-torta","name":"Nueva torta","category_slug":"visible","is_published":true,
          "cover_path":"productos/nueva/a.webp",
          "variants":[{"label":"Chica","servings":8,"price_cents":1800000},{"label":"Grande","servings":20,"price_cents":3500000}]},
-        {"slug":"publicado","name":"Publicado (renombrado)","category_slug":"visible","is_published":true,
+        {"slug":"publicado","name":"Publicado","category_slug":"visible","is_published":true,
          "variants":[{"label":"Única","price_cents":2000000}]}
       ]}'::jsonb) r) t
       where true $q$, 1);
@@ -280,6 +280,46 @@ select tests.expect_count('import: el existente no cambia de lugar',
 select tests.expect_count('import: uno nuevo sin "publicado" nace visible y va al final',
   $q$ select count(*) from public.products where slug = 'recien-llegada' and is_published
       and sort_order = (select max(sort_order) from public.products) $q$, 1);
+rollback;
+
+-- ---------------------------------------------------------------------
+-- CÓDIGO DE NÚMERO (planilla de Excel)
+-- ---------------------------------------------------------------------
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated","aal":"aal2"}', true);
+select tests.expect_count('código: todos los productos tienen número y no se repite',
+  $q$ select count(distinct code) from public.products where code is not null $q$, 3);
+select public.admin_save_product('{"slug":"con-numero","name":"Con número","is_published":false,"variants":[]}'::jsonb);
+select tests.expect_count('código: un producto nuevo recibe el número siguiente',
+  $q$ select count(*) from public.products where slug = 'con-numero' and code = (select max(code) from public.products) $q$, 1);
+select tests.expect_error('código: no se puede cambiar',
+  $q$ update public.products set code = 999 where slug = 'con-numero' $q$, '22023');
+-- la planilla: renombrar TODO por código no duplica ni cambia el número
+select public.admin_import_catalog(jsonb_build_object('products', jsonb_build_array(
+  jsonb_build_object('code', (select code from public.products where slug = 'publicado')::text,
+    'slug', 'nombre-totalmente-distinto', 'name', 'Nombre totalmente distinto',
+    'variants', '[{"label":"Única","price_cents":4400000}]'::jsonb))));
+select tests.expect_count('import por código: cambia el nombre sin duplicar',
+  $q$ select count(*) from public.products where slug = 'publicado' and name = 'Nombre totalmente distinto' $q$, 1);
+select tests.expect_count('import por código: no crea uno nuevo con el nombre nuevo',
+  $q$ select count(*) from public.products where slug = 'nombre-totalmente-distinto' $q$, 0);
+-- renombrar el 'publicado' y sumar una fila NUEVA con su nombre viejo: no se confunden
+select public.admin_import_catalog(jsonb_build_object('products', jsonb_build_array(
+  jsonb_build_object('slug', 'publicado', 'name', 'Publicado',
+    'variants', '[{"label":"Única","price_cents":1000000}]'::jsonb),
+  jsonb_build_object('code', (select code from public.products where slug = 'publicado')::text,
+    'slug', 'otro-nombre', 'name', 'Otro nombre',
+    'variants', '[{"label":"Única","price_cents":2000000}]'::jsonb))));
+select tests.expect_count('import: la fila nueva con el nombre viejo crea un producto nuevo',
+  $q$ select count(*) from public.products where name = 'Publicado' and slug <> 'publicado' $q$, 1);
+select tests.expect_count('import: el renombrado conserva sus precios (no se pisaron)',
+  $q$ select count(*) from public.products p join public.product_variants v on v.product_id = p.id
+      where p.slug = 'publicado' and p.name = 'Otro nombre' and v.price_cents = 2000000 $q$, 1);
+select tests.expect_error('import: un código que no existe cancela todo',
+  $q$ select public.admin_import_catalog('{"products":[{"code":"98765","slug":"x","name":"X","variants":[]}]}'::jsonb) $q$, '22023');
+select tests.expect_error('import: un código que no es número cancela todo',
+  $q$ select public.admin_import_catalog('{"products":[{"code":"lemon","slug":"x","name":"X","variants":[]}]}'::jsonb) $q$, '22023');
 rollback;
 
 -- ---------------------------------------------------------------------

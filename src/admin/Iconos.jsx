@@ -77,6 +77,12 @@ const TRAZOS = {
   mover: (
     <path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20" />
   ),
+  planilla: (
+    <>
+      <rect x="3" y="3" width="18" height="18" rx="2" />
+      <path d="M3 9h18M3 15h18M9 3v18" />
+    </>
+  ),
   izq: <path d="M15 18l-6-6 6-6" />,
   der: <path d="M9 18l6-6-6-6" />,
   cerrar: <path d="M18 6L6 18M6 6l12 12" />,
