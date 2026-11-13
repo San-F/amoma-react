@@ -88,6 +88,10 @@ aplicarla en la base real con OK); **desplegables** en Categoría (con los nombr
 4 tarjetas al momento de descargar) y en Publicado (sí/no). Pruebas: `tests/planilla.test.js` (19 casos) + base + navegador de
 punta a punta (bajar, editar, guardar .xlsx, subir, volver a bajar, código tocado, planilla vacía).
 
+**Salir (13/11):** cerraba la sesión en todos los dispositivos (por eso el celular volvía a pedir
+contraseña y código). Ahora cierra solo el dispositivo donde se toca, con prueba de navegador.
+Revisado en la base real: las sesiones no vencen solas (sin límite de tiempo ni de inactividad).
+
 **Galería en Safari: confirmado arreglado por Francisco (13/11).**
 
 **Para publicar todo junto (13/11, pedido de Francisco):**

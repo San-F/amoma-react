@@ -44,7 +44,9 @@ export function AuthProvider({ children }) {
     else setEstado(null);
   }, [session, refrescarEstado]);
 
-  const salir = () => supabase.auth.signOut();
+  // "local": cierra solo ESTE dispositivo. Sin esto, Supabase cierra la
+  // sesión en todos (y el celular vuelve a pedir contraseña y código).
+  const salir = () => supabase.auth.signOut({ scope: "local" });
 
   return (
     <AuthContext.Provider

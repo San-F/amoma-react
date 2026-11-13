@@ -136,6 +136,13 @@ function atender(db) {
     }
     if (u.pathname.startsWith("/auth/v1/user"))
       return L.json(r, L.session.user);
+    if (u.pathname === "/auth/v1/logout") {
+      db.llamadas.push(["salir", q.get("scope")]);
+      return r.fulfill({
+        status: 204,
+        headers: { "access-control-allow-origin": "*" },
+      });
+    }
     if (u.pathname === "/rest/v1/rpc/admin_status")
       return L.json(r, [{ is_member: true, has_mfa: true }]);
     if (u.pathname === "/rest/v1/categories") {
@@ -852,6 +859,23 @@ function atender(db) {
       "si la base no responde, la página muestra el respaldo (no queda vacía)",
     );
     await caida.close();
+
+    // "Salir" cierra solo este dispositivo (no los demás)
+    await panel.goto(PANEL + "/admin/ajustes", { waitUntil: "networkidle" });
+    await panel.getByRole("button", { name: "Salir" }).click();
+    await panel
+      .waitForURL(/\/admin\/ingresar/, { timeout: 5000 })
+      .catch(() => {});
+    const salidas = db.llamadas.filter((l) => l[0] === "salir");
+    ok(
+      salidas.length === 1 && salidas[0][1] === "local",
+      "Salir cierra la sesión solo en este dispositivo (scope=local): " +
+        JSON.stringify(salidas),
+    );
+    ok(
+      /\/admin\/ingresar/.test(panel.url()),
+      "después de Salir vuelve a la pantalla de ingreso",
+    );
 
     ok(
       !errs.length,
