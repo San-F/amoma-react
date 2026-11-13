@@ -136,40 +136,139 @@ export function zonaFoto({ modelo, formato, circulo = 1 }) {
   return { w, h };
 }
 
-// Arrastrar la foto sobre la vista previa: dx/dy en píxeles del lienzo.
-// Mover la foto a la derecha deja ver más de su lado izquierdo.
-export function moverFoto(enc, dx, dy, img, zona) {
-  const iw = img.naturalWidth || img.width;
-  const ih = img.naturalHeight || img.height;
-  const zoom = Math.max(1, enc.zoom ?? 1);
-  const escala = Math.max(zona.w / iw, zona.h / ih) * zoom;
-  const x = (enc.x ?? 50) - (dx / escala / iw) * 100;
-  const y = (enc.y ?? 50) - (dy / escala / ih) * 100;
-  // límites: el centro no puede ir más allá de donde la foto ya no cubre
-  const mx = (zona.w / escala / iw) * 50;
-  const my = (zona.h / escala / ih) * 50;
-  const entre = (v, a, b) => Math.min(Math.max(v, a), b);
+// Zoom de las publicaciones: por debajo de 1 la foto se achica y lo que
+// sobra se rellena con la misma foto desenfocada (nunca con algo inventado).
+export const ZOOM_MIN_PUBLICACION = 0.5;
+const entre = (v, a, b) => Math.min(Math.max(v, a), b);
+
+// Cómo queda la foto en un eje: si cubre el lado (recorte) o si sobra lugar.
+function eje(largoZona, largoFoto, escala, pos) {
+  const dibujado = largoFoto * escala;
+  if (dibujado >= largoZona) {
+    // cubre: `pos` es el punto de la foto que queda al centro (en %)
+    const visible = largoZona / escala;
+    const centro = (pos / 100) * largoFoto;
+    const desde = entre(centro - visible / 2, 0, largoFoto - visible);
+    return { cubre: true, desde, visible, en: 0, mide: largoZona };
+  }
+  // sobra lugar: `pos` es dónde queda la foto dentro del espacio libre (en %)
   return {
-    zoom,
-    x: mx >= 50 ? 50 : entre(x, mx, 100 - mx),
-    y: my >= 50 ? 50 : entre(y, my, 100 - my),
+    cubre: false,
+    desde: 0,
+    visible: largoFoto,
+    en: (largoZona - dibujado) * (pos / 100),
+    mide: dibujado,
   };
 }
 
-// Dibuja la foto cubriendo el recuadro, respetando el encuadre elegido en el
-// panel (punto central x/y en % y zoom), igual que en la página.
+// Arrastrar la foto sobre la vista previa: dx/dy en píxeles del lienzo.
+// La foto sigue al dedo, en los dos casos (recortada o achicada).
+export function moverFoto(enc, dx, dy, img, zona) {
+  const iw = img.naturalWidth || img.width;
+  const ih = img.naturalHeight || img.height;
+  const zoom = entre(enc.zoom ?? 1, ZOOM_MIN_PUBLICACION, 3);
+  const escala = Math.max(zona.w / iw, zona.h / ih) * zoom;
+  const mover1 = (pos, d, largoZona, largoFoto) => {
+    const dibujado = largoFoto * escala;
+    if (dibujado >= largoZona) {
+      const m = (largoZona / escala / largoFoto) * 50;
+      if (m >= 50) return 50;
+      return entre(pos - (d / escala / largoFoto) * 100, m, 100 - m);
+    }
+    return entre(pos + (d / (largoZona - dibujado)) * 100, 0, 100);
+  };
+  return {
+    zoom,
+    x: mover1(enc.x ?? 50, dx, zona.w, iw),
+    y: mover1(enc.y ?? 50, dy, zona.h, ih),
+  };
+}
+
+// Fondo con la misma foto muy desenfocada (achicar y volver a agrandar:
+// funciona en todos los navegadores, también en iPhone viejos).
+function fondoDesenfocado(ctx, img, x, y, w, h) {
+  const chico = document.createElement("canvas");
+  chico.width = 24;
+  chico.height = Math.max(1, Math.round((24 * h) / w));
+  const c2 = chico.getContext("2d");
+  const iw = img.naturalWidth || img.width;
+  const ih = img.naturalHeight || img.height;
+  const esc = Math.max(chico.width / iw, chico.height / ih);
+  c2.drawImage(
+    img,
+    (chico.width - iw * esc) / 2,
+    (chico.height - ih * esc) / 2,
+    iw * esc,
+    ih * esc,
+  );
+  ctx.save();
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
+  ctx.drawImage(chico, x, y, w, h);
+  ctx.restore();
+}
+
+// Dibuja la foto en el recuadro, respetando el encuadre elegido (punto
+// central x/y en % y zoom), igual que en la página. Con zoom menor a 1 la
+// foto se achica y el resto se rellena con ella misma desenfocada.
 function dibujarFoto(ctx, img, x, y, w, h, enc = {}) {
   const iw = img.naturalWidth || img.width;
   const ih = img.naturalHeight || img.height;
-  const zoom = Math.max(1, enc.zoom ?? 1);
+  const zoom = entre(enc.zoom ?? 1, ZOOM_MIN_PUBLICACION, 3);
   const escala = Math.max(w / iw, h / ih) * zoom;
-  const sw = w / escala;
-  const sh = h / escala;
-  const cx = ((enc.x ?? 50) / 100) * iw;
-  const cy = ((enc.y ?? 50) / 100) * ih;
-  const sx = Math.min(Math.max(cx - sw / 2, 0), iw - sw);
-  const sy = Math.min(Math.max(cy - sh / 2, 0), ih - sh);
-  ctx.drawImage(img, sx, sy, sw, sh, x, y, w, h);
+  const ex = eje(w, iw, escala, enc.x ?? 50);
+  const ey = eje(h, ih, escala, enc.y ?? 50);
+  ctx.save();
+  ctx.beginPath();
+  ctx.rect(x, y, w, h);
+  ctx.clip();
+  if (ex.cubre && ey.cubre) {
+    ctx.drawImage(img, ex.desde, ey.desde, ex.visible, ey.visible, x, y, w, h);
+  } else {
+    fondoDesenfocado(ctx, img, x, y, w, h);
+    ctx.drawImage(
+      bordesSuaves(img, ex, ey),
+      x + ex.en,
+      y + ey.en,
+      ex.mide,
+      ey.mide,
+    );
+  }
+  ctx.restore();
+}
+
+// La foto achicada con los bordes esfumados (solo los lados que no tocan el
+// borde de la imagen), para que se funda con el fondo desenfocado.
+function bordesSuaves(img, ex, ey) {
+  const c = document.createElement("canvas");
+  c.width = Math.max(1, Math.round(ex.mide));
+  c.height = Math.max(1, Math.round(ey.mide));
+  const g = c.getContext("2d");
+  g.drawImage(
+    img,
+    ex.desde,
+    ey.desde,
+    ex.visible,
+    ey.visible,
+    0,
+    0,
+    c.width,
+    c.height,
+  );
+  g.globalCompositeOperation = "destination-in";
+  const mascara = (x0, y0, x1, y1, largo, esfumar) => {
+    const m = g.createLinearGradient(x0, y0, x1, y1);
+    const f = esfumar ? Math.min(0.18, 140 / largo) : 0;
+    m.addColorStop(0, f ? "rgba(0,0,0,0)" : "#000");
+    m.addColorStop(f || 0.0001, "#000");
+    m.addColorStop(1 - (f || 0.0001), "#000");
+    m.addColorStop(1, f ? "rgba(0,0,0,0)" : "#000");
+    g.fillStyle = m;
+    g.fillRect(0, 0, c.width, c.height);
+  };
+  mascara(0, 0, c.width, 0, c.width, !ex.cubre);
+  mascara(0, 0, 0, c.height, c.height, !ey.cubre);
+  return c;
 }
 
 // Logo siempre redondo y en su proporción (es cuadrado: ancho = alto).
@@ -443,25 +542,52 @@ function corazon(ctx, cx, cy, s, color) {
   ctx.restore();
 }
 
-function dibujarPoster(ctx, { w, h }, c, img, logo, t, enc) {
+// fondoTexto: "marcado" (degradé hasta color sólido: se lee con cualquier foto)
+// o "suave" (la foto sigue detrás; velo leve + halo en las letras).
+function dibujarPoster(ctx, { w, h }, c, img, logo, t, enc, fondoTexto) {
   const historia = h > w;
   ctx.fillStyle = c.fondo;
   ctx.fillRect(0, 0, w, h);
   if (img) dibujarFoto(ctx, img, 0, 0, w, h, enc);
 
-  // degradé hacia el color de fondo, para que el texto se lea sobre la foto
-  const desde = h * (historia ? 0.42 : 0.3);
-  const hasta = h * (historia ? 0.7 : 0.64);
-  const g = ctx.createLinearGradient(0, desde, 0, hasta);
   const rgb = c.fondo === "#fbf5ee" ? "251,245,238" : "59,36,32";
-  g.addColorStop(0, `rgba(${rgb},0)`);
-  g.addColorStop(0.35, `rgba(${rgb},0.35)`);
-  g.addColorStop(0.7, `rgba(${rgb},0.8)`);
-  g.addColorStop(1, `rgba(${rgb},0.97)`);
-  ctx.fillStyle = g;
-  ctx.fillRect(0, desde, w, h - desde);
-  ctx.fillStyle = `rgba(${rgb},0.97)`;
-  ctx.fillRect(0, hasta, w, h - hasta);
+  const suave = fondoTexto === "suave";
+  if (suave) {
+    // apenas un velo: la foto se sigue viendo detrás del texto
+    const desde = h * (historia ? 0.5 : 0.4);
+    const g = ctx.createLinearGradient(0, desde, 0, h);
+    const tope = c.fondo === "#fbf5ee" ? 0.5 : 0.62;
+    g.addColorStop(0, `rgba(${rgb},0)`);
+    g.addColorStop(0.45, `rgba(${rgb},${tope * 0.85})`);
+    g.addColorStop(1, `rgba(${rgb},${tope})`);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, desde, w, h - desde);
+  } else {
+    // degradé hacia el color de fondo, para que el texto se lea sobre la foto
+    const desde = h * (historia ? 0.42 : 0.3);
+    const hasta = h * (historia ? 0.7 : 0.64);
+    const g = ctx.createLinearGradient(0, desde, 0, hasta);
+    g.addColorStop(0, `rgba(${rgb},0)`);
+    g.addColorStop(0.35, `rgba(${rgb},0.35)`);
+    g.addColorStop(0.7, `rgba(${rgb},0.8)`);
+    g.addColorStop(1, `rgba(${rgb},0.97)`);
+    ctx.fillStyle = g;
+    ctx.fillRect(0, desde, w, h - desde);
+    ctx.fillStyle = `rgba(${rgb},0.97)`;
+    ctx.fillRect(0, hasta, w, h - hasta);
+  }
+  // halo detrás de las letras (solo en "suave"): ayuda a leer sin tapar
+  const halo = (dibujar) => {
+    ctx.save();
+    if (suave) {
+      ctx.shadowColor = `rgba(${rgb},0.95)`;
+      ctx.shadowBlur = historia ? 36 : 26;
+      dibujar();
+      ctx.shadowBlur = historia ? 14 : 10;
+    }
+    dibujar();
+    ctx.restore();
+  };
 
   lineasEsquina(ctx, w, h, c.bordo);
   dibujarLogo(
@@ -487,10 +613,12 @@ function dibujarPoster(ctx, { w, h }, c, img, logo, t, enc) {
     ctx.font = `800 ${tam}px ${TEXTO}`;
     ctx.fillStyle = c.bordo;
     const volver = espaciado(ctx, t.etiqueta, tam * 0.3);
-    ctx.fillText(
-      t.etiqueta.toUpperCase(),
-      cx,
-      y - base * (historia ? 1.05 : 1.1),
+    halo(() =>
+      ctx.fillText(
+        t.etiqueta.toUpperCase(),
+        cx,
+        y - base * (historia ? 1.05 : 1.1),
+      ),
     );
     volver();
     ctx.restore();
@@ -504,7 +632,8 @@ function dibujarPoster(ctx, { w, h }, c, img, logo, t, enc) {
       max,
     );
     ctx.fillStyle = c.texto;
-    ctx.fillText(t.linea1, cx, y);
+    const y1 = y;
+    halo(() => ctx.fillText(t.linea1, cx, y1));
     // si no hay segundo renglón, la línea del corazón va más cerca
     y += t.linea2 ? s1 * 1.08 : s1 * 0.25;
   }
@@ -517,7 +646,8 @@ function dibujarPoster(ctx, { w, h }, c, img, logo, t, enc) {
       max,
     );
     ctx.fillStyle = c.bordo;
-    ctx.fillText(t.linea2, cx, y);
+    const y2 = y;
+    halo(() => ctx.fillText(t.linea2, cx, y2));
     y += s2 * 0.55;
   }
 
@@ -561,6 +691,7 @@ function dibujarPoster(ctx, { w, h }, c, img, logo, t, enc) {
  * @param {{modelo:"vitrina"|"portada", color:"crema"|"chocolate",
  *          formato:"cuadrado"|"historia", foto?:CanvasImageSource, logo?:CanvasImageSource,
  *          circulo?:number (tamaño del círculo de "vitrina", 0.8 a 1.2),
+ *          fondoTexto?:"marcado"|"suave" (detrás del texto del "poster"),
  *          encuadre?:{x:number,y:number,zoom:number},
  *          textos:{linea1:string, linea2:string, precio:string, desde:boolean}}} o
  */
@@ -580,6 +711,6 @@ export function dibujarPublicacion(canvas, o) {
   if (o.modelo === "portada")
     dibujarPortada(ctx, tam, c, o.foto, o.logo, t, o.encuadre);
   else if (o.modelo === "poster")
-    dibujarPoster(ctx, tam, c, o.foto, o.logo, t, o.encuadre);
+    dibujarPoster(ctx, tam, c, o.foto, o.logo, t, o.encuadre, o.fondoTexto);
   else dibujarVitrina(ctx, tam, c, o.foto, o.logo, t, o.encuadre, o.circulo);
 }

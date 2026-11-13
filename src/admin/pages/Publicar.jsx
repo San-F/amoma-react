@@ -10,6 +10,7 @@ import {
   ETIQUETAS,
   moverFoto,
   partirNombre,
+  ZOOM_MIN_PUBLICACION,
   zonaFoto,
 } from "../lib/publicacion";
 import ElegirFoto from "../ElegirFoto";
@@ -67,6 +68,7 @@ function Publicar() {
   // cómo se acomoda la foto en ESTA publicación (no cambia la del producto)
   const [ajuste, setAjuste] = useState(CENTRO);
   const [circulo, setCirculo] = useState(1);
+  const [fondoTexto, setFondoTexto] = useState("marcado");
   const [acomodando, setAcomodando] = useState(false);
   const arrastre = useRef(null);
   const [aGaleria, setAGaleria] = useState(false);
@@ -125,6 +127,7 @@ function Publicar() {
     logo,
     encuadre: ajuste,
     circulo,
+    fondoTexto,
     textos,
   };
 
@@ -137,7 +140,24 @@ function Publicar() {
       if (c) dibujarPublicacion(c, { ...opciones, modelo: m.id });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listo, modelo, color, formato, foto, logo, textos, ajuste, circulo]);
+  }, [
+    listo,
+    modelo,
+    color,
+    formato,
+    foto,
+    logo,
+    textos,
+    ajuste,
+    circulo,
+    fondoTexto,
+  ]);
+
+  // alejar (zoom < 1) es solo del Póster
+  useEffect(() => {
+    if (modelo !== "poster")
+      setAjuste((a) => (a.zoom < 1 ? { ...a, zoom: 1, x: 50, y: 50 } : a));
+  }, [modelo]);
 
   // cada foto nueva arranca con el encuadre que tiene en el producto
   useEffect(() => {
@@ -332,10 +352,12 @@ function Publicar() {
           {acomodando ? (
             <div className="adm-pub__acomodar">
               <label className="adm-rango">
-                <span>Acercar</span>
+                <span>
+                  {modelo === "poster" ? "Alejar · Acercar" : "Acercar"}
+                </span>
                 <input
                   type="range"
-                  min="1"
+                  min={modelo === "poster" ? ZOOM_MIN_PUBLICACION : 1}
                   max="3"
                   step="0.01"
                   value={ajuste.zoom}
@@ -426,6 +448,17 @@ function Publicar() {
               { id: "chocolate", nombre: "Chocolate" },
             ]}
           />
+          {modelo === "poster" && (
+            <Opciones
+              titulo="Fondo del texto"
+              valor={fondoTexto}
+              onCambio={setFondoTexto}
+              opciones={[
+                { id: "marcado", nombre: "Marcado" },
+                { id: "suave", nombre: "Suave (se ve la foto)" },
+              ]}
+            />
+          )}
           <Opciones
             titulo="Formato"
             valor={formato}

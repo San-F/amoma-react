@@ -656,7 +656,7 @@ function atender(db) {
     const lienzo = panel.locator(".adm-pub__lienzo canvas");
     const antesMover = await lienzo.evaluate((c) => c.toDataURL().length);
     await panel.getByRole("button", { name: /Mover y agrandar/ }).click();
-    await panel.getByRole("slider", { name: "Acercar" }).fill("1.8");
+    await panel.getByRole("slider", { name: /Acercar/ }).fill("1.8");
     const caja = await lienzo.boundingBox();
     await panel.mouse.move(caja.x + caja.width / 2, caja.y + caja.height / 3);
     await panel.mouse.down();
