@@ -201,15 +201,48 @@ function dibujarVitrina(ctx, { w, h }, c, img, logo, t, enc, circulo = 1) {
   ctx.fillRect(0, 0, w, h);
 
   const logoD = historia ? 130 : 104;
-  dibujarLogo(ctx, logo, w / 2, historia ? 170 : 92, logoD, false);
+  const logoY = historia ? 170 : 92;
+  dibujarLogo(ctx, logo, w / 2, logoY, logoD, false);
 
-  const d = (historia ? 800 : 560) * circulo;
+  // 1) medir el texto (cuánto alto ocupa)
   const cx = w / 2;
-  // el círculo más grande sube un poco; el texto siempre va debajo
-  const arriba = historia
-    ? 330 - (circulo - 1) * 200
-    : 186 - (circulo - 1) * 120;
-  const cy = arriba + d / 2;
+  const max = w - 140;
+  const base = historia ? 108 : 76;
+  const s1 = t.linea1
+    ? letraQueEntra(ctx, t.linea1, (n) => `500 ${n}px ${DISPLAY}`, base, max)
+    : 0;
+  const s2 = t.linea2
+    ? letraQueEntra(
+        ctx,
+        t.linea2,
+        (n) => `italic 500 ${n}px ${DISPLAY}`,
+        base + 6,
+        max,
+      )
+    : 0;
+  const grande = historia ? 66 : 50;
+  const chico = historia ? 40 : 30;
+  const separacion = historia ? 70 : 46; // entre el círculo y el nombre
+  // mismo recorrido que al dibujar: arriba de la letra → base de cada renglón
+  let altoTexto = 0;
+  if (s1) altoTexto += s1 * 0.78;
+  if (s2) altoTexto += s1 ? s1 * 1.02 : s2 * 0.78;
+  if (t.precio)
+    altoTexto += (historia ? 44 : 26) + grande * (s1 || s2 ? 0.95 : 0.78);
+
+  // 2) el círculo: el tamaño elegido, pero sin que el texto se salga
+  const arriba = logoY + logoD / 2 + (historia ? 70 : 34);
+  const abajo = h - (historia ? 120 : 52);
+  const lugar = abajo - arriba;
+  const elegido = (historia ? 800 : 560) * circulo;
+  const d = Math.max(
+    200,
+    Math.min(elegido, lugar - separacion - altoTexto, w - 120),
+  );
+  // 3) todo el conjunto centrado en el lugar que queda
+  const alto = d + separacion + altoTexto;
+  const cy = arriba + Math.max(0, (lugar - alto) / 2) + d / 2;
+
   // aro blanco con sombra suave
   ctx.save();
   ctx.shadowColor = "rgba(59,36,32,0.35)";
@@ -247,37 +280,21 @@ function dibujarVitrina(ctx, { w, h }, c, img, logo, t, enc, circulo = 1) {
   // texto
   ctx.textAlign = "center";
   ctx.textBaseline = "alphabetic";
-  const max = w - 140;
-  const base = historia ? 108 : 76;
-  let y = cy + d / 2 + (historia ? 190 : 120) - (circulo - 1) * 50;
-  if (t.linea1) {
-    const s1 = letraQueEntra(
-      ctx,
-      t.linea1,
-      (n) => `500 ${n}px ${DISPLAY}`,
-      base,
-      max,
-    );
+  let y = cy + d / 2 + separacion;
+  if (s1) {
+    y += s1 * 0.78;
+    ctx.font = `500 ${s1}px ${DISPLAY}`;
     ctx.fillStyle = c.texto;
     ctx.fillText(t.linea1, cx, y);
-    y += s1 * (t.linea2 ? 1.02 : 1.2);
   }
-  if (t.linea2) {
-    const s2 = letraQueEntra(
-      ctx,
-      t.linea2,
-      (n) => `italic 500 ${n}px ${DISPLAY}`,
-      base + 6,
-      max,
-    );
+  if (s2) {
+    y += s1 ? s1 * 1.02 : s2 * 0.78;
+    ctx.font = `italic 500 ${s2}px ${DISPLAY}`;
     ctx.fillStyle = c.cursiva;
     ctx.fillText(t.linea2, cx, y);
-    y += s2 * 0.95;
   }
   if (t.precio) {
-    y += historia ? 40 : 18;
-    const chico = historia ? 40 : 30;
-    const grande = historia ? 66 : 50;
+    y += (historia ? 44 : 26) + grande * (s1 || s2 ? 0.95 : 0.78);
     ctx.font = `500 ${chico}px ${TEXTO}`;
     const a = t.desde ? "desde  " : "";
     const wa = a ? ctx.measureText(a).width : 0;
@@ -462,7 +479,7 @@ function dibujarPoster(ctx, { w, h }, c, img, logo, t, enc) {
   const max = w - 140;
   const base = historia ? 124 : 82;
   let y = h * (historia ? 0.74 : 0.7);
-  if (!t.linea2) y += base * 0.5;
+  if (!t.linea2) y += base * 0.35;
   // etiqueta: mayúsculas espaciadas en bordó, arriba del nombre
   if (t.etiqueta) {
     const tam = historia ? 34 : 26;
@@ -488,7 +505,8 @@ function dibujarPoster(ctx, { w, h }, c, img, logo, t, enc) {
     );
     ctx.fillStyle = c.texto;
     ctx.fillText(t.linea1, cx, y);
-    y += s1 * 1.08;
+    // si no hay segundo renglón, la línea del corazón va más cerca
+    y += t.linea2 ? s1 * 1.08 : s1 * 0.25;
   }
   if (t.linea2) {
     const s2 = letraQueEntra(
