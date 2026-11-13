@@ -73,6 +73,15 @@ fotos también; la dueña cambia **solo el nombre** (máx. 30 letras) desde Prod
 categorías", y se ve en la tarjeta de la portada y en el filtro del catálogo. Migración
 `20261113001100_nombre_categorias.sql`.
 
+**Panel v2 programado (13/11):** 4 secciones (Inicio, Productos, Fotos, Publicar) + engranaje (Ajustes,
+Consultas, Salir); ingreso con logo y "Hola de nuevo"; pestaña "Panel Amoma"; ficha con una foto
+(elegir una ya cargada o subir), "Sumar a la galería", sin "Destacado"; Fotos como feed; Publicar con
+Vitrina/Portada × crema/chocolate × cuadrado/historia, descarga JPG 1080 px. Archivos compartidos: se
+borran solo si nadie más los usa. Prueba "un día de la dueña" ampliada. Pendiente: tercer modelo de
+publicación (opcional), "Sin stock", portada del sitio editable, códigos de respaldo del doble factor.
+
+**Galería en Safari: confirmado arreglado por Francisco (13/11).**
+
 **Para publicar todo junto (13/11, pedido de Francisco):**
 
 - Galería en Safari (Mac): la página seguía mucho más abajo del pie. Causa probable: grilla en columnas +

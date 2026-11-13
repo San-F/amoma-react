@@ -48,7 +48,7 @@ function Login() {
   return (
     <main className="adm-auth">
       <form className="adm-auth__caja" onSubmit={enviar}>
-        <p className="adm-auth__marca">Amoma · Panel</p>
+        <img className="adm-auth__logo" src="/logo.png" alt="Amoma" />
         {modo === "enviado" ? (
           <>
             <h1>Revisá tu email</h1>
@@ -66,7 +66,16 @@ function Login() {
           </>
         ) : (
           <>
-            <h1>{modo === "login" ? "Ingresar" : "Recuperar contraseña"}</h1>
+            {modo === "login" ? (
+              <>
+                <h1>
+                  Hola <em>de nuevo</em>
+                </h1>
+                <p className="adm-auth__sub">Tu panel de Amoma</p>
+              </>
+            ) : (
+              <h1>Recuperar contraseña</h1>
+            )}
             <div className="campo">
               <label htmlFor="adm-email">Email</label>
               <input
@@ -99,25 +108,21 @@ function Login() {
             )}
             <button
               type="submit"
-              className="btn"
+              className="btn btn--rosa"
               disabled={!puedeEnviar || enviando}
             >
               {enviando
                 ? "Un momento…"
                 : modo === "login"
-                  ? "Ingresar"
+                  ? "Entrar"
                   : "Enviar link"}
             </button>
-            <button
-              type="button"
-              className="adm-link"
-              onClick={() => {
-                setError("");
-                setModo(modo === "login" ? "olvido" : "login");
-              }}
-            >
-              {modo === "login" ? "Olvidé mi contraseña" : "Volver a ingresar"}
-            </button>
+            {/* "Olvidé mi contraseña" vuelve cuando esté el servicio de mail
+                (hoy el link del mail no abre el panel: ver PENDIENTES) */}
+            <p className="adm-auth__nota">
+              Después te pedimos el código de tu celular, una sola vez por
+              dispositivo.
+            </p>
           </>
         )}
       </form>

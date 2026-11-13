@@ -2,7 +2,7 @@
 // con un mensaje entendible (nunca el detalle técnico al usuario).
 import { BUCKET, supabase, urlPublica } from "../../lib/supabase";
 import { comprimirImagen, rutaNueva } from "./images";
-import { aFila } from "../../lib/encuadre";
+import { aFila, desdeFila } from "../../lib/encuadre";
 
 function fallar(error, texto) {
   // el detalle técnico queda en la consola del admin para diagnosticar
@@ -47,20 +47,23 @@ export async function listarProductos() {
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, slug, name, short_description, is_published, is_featured, sort_order, category:categories(name), variants:product_variants(label, servings, price_cents, sort_order), images:product_images(storage_path, is_cover)",
+      "id, slug, name, short_description, is_published, sort_order, category_id, category:categories(name), variants:product_variants(label, servings, price_cents, sort_order), images:product_images(storage_path, is_cover, width, height, focus_x, focus_y, zoom)",
     )
     .order("sort_order");
   if (error) fallar(error, "No se pudieron cargar los productos.");
-  return data.map((p) => ({
-    ...p,
-    variants: [...p.variants].sort((a, b) => a.sort_order - b.sort_order),
-    portada: urlPublica(
-      (p.images.find((i) => i.is_cover) ?? p.images[0])?.storage_path,
-    ),
-    desde: p.variants.length
-      ? Math.min(...p.variants.map((v) => v.price_cents))
-      : null,
-  }));
+  return data.map((p) => {
+    const cover = p.images.find((i) => i.is_cover) ?? p.images[0];
+    return {
+      ...p,
+      variants: [...p.variants].sort((a, b) => a.sort_order - b.sort_order),
+      portada: urlPublica(cover?.storage_path),
+      fotoPortada: cover ?? null,
+      encuadre: cover ? desdeFila(cover) : null,
+      desde: p.variants.length
+        ? Math.min(...p.variants.map((v) => v.price_cents))
+        : null,
+    };
+  });
 }
 
 export async function obtenerProducto(id) {
@@ -114,8 +117,28 @@ export async function borrarProducto(id) {
     await supabase.from("products").delete().eq("id", id).select("id"),
     "No se pudo borrar el producto.",
   );
-  if (imgs?.length)
-    await supabase.storage.from(BUCKET).remove(imgs.map((i) => i.storage_path));
+  if (imgs?.length) await borrarSiNoSeUsa(imgs.map((i) => i.storage_path));
+}
+
+// Un mismo archivo puede usarse en un producto y en la galería (o en dos
+// productos). Se borra del almacenamiento solo cuando ya nadie lo usa.
+async function borrarSiNoSeUsa(paths) {
+  const libres = [];
+  for (const path of new Set(paths)) {
+    const [a, b] = await Promise.all([
+      supabase
+        .from("product_images")
+        .select("id", { count: "exact", head: true })
+        .eq("storage_path", path),
+      supabase
+        .from("gallery_items")
+        .select("id", { count: "exact", head: true })
+        .eq("storage_path", path),
+    ]);
+    // ante la duda (error al consultar), no se borra
+    if (!a.error && !b.error && !a.count && !b.count) libres.push(path);
+  }
+  if (libres.length) await supabase.storage.from(BUCKET).remove(libres);
 }
 
 export async function subirFoto(file, carpeta) {
@@ -197,7 +220,7 @@ export async function borrarImagen(imagen) {
       .select("id"),
     "No se pudo borrar la foto.",
   );
-  await supabase.storage.from(BUCKET).remove([imagen.storage_path]);
+  await borrarSiNoSeUsa([imagen.storage_path]);
 }
 
 export async function importarCatalogo(productos) {
@@ -347,5 +370,133 @@ export async function borrarFotoGaleria(item) {
       .select("id"),
     "No se pudo borrar la foto.",
   );
-  await supabase.storage.from(BUCKET).remove([item.storage_path]);
+  await borrarSiNoSeUsa([item.storage_path]);
+}
+
+// ---------- fotos compartidas ----------
+
+// Todas las fotos ya cargadas (galería + productos), sin repetir, para
+// elegir una al armar un producto o una publicación.
+export async function listarFotosCargadas() {
+  const [g, p] = await Promise.all([
+    supabase
+      .from("gallery_items")
+      .select("storage_path, alt_text, width, height")
+      .order("sort_order"),
+    supabase
+      .from("product_images")
+      .select("storage_path, alt_text, width, height, product:products(name)"),
+  ]);
+  if (g.error || p.error)
+    fallar(g.error ?? p.error, "No se pudieron cargar las fotos.");
+  const vistas = new Map();
+  for (const f of [...g.data, ...p.data])
+    if (!vistas.has(f.storage_path))
+      vistas.set(f.storage_path, {
+        ...f,
+        url: urlPublica(f.storage_path),
+        etiqueta: f.product?.name ?? "Galería",
+      });
+  return [...vistas.values()];
+}
+
+// Pone como portada del producto una foto que ya está cargada (no se sube de
+// nuevo). La portada anterior se quita; su archivo se borra solo si no se usa.
+export async function usarFotoCargada(productoId, foto, alt) {
+  const { data: antes } = await supabase
+    .from("product_images")
+    .select("id, storage_path")
+    .eq("product_id", productoId)
+    .eq("is_cover", true);
+  if (antes?.some((a) => a.storage_path === foto.storage_path)) return;
+  if (antes?.length) {
+    confirmar(
+      await supabase
+        .from("product_images")
+        .delete()
+        .in(
+          "id",
+          antes.map((a) => a.id),
+        )
+        .select("id"),
+      "No se pudo cambiar la foto.",
+    );
+  }
+  const { error } = await supabase.from("product_images").insert({
+    product_id: productoId,
+    storage_path: foto.storage_path,
+    alt_text: (alt || foto.alt_text || "").slice(0, 200),
+    width: foto.width,
+    height: foto.height,
+    is_cover: true,
+  });
+  if (error) fallar(error, "No se pudo cambiar la foto.");
+  if (antes?.length) await borrarSiNoSeUsa(antes.map((a) => a.storage_path));
+}
+
+// Sube una foto nueva como portada (reemplaza la anterior).
+export async function cambiarFotoProducto(productoId, file, alt) {
+  const { data: antes } = await supabase
+    .from("product_images")
+    .select("id, storage_path")
+    .eq("product_id", productoId);
+  const { path, width, height } = await subirFoto(
+    file,
+    `productos/${productoId}`,
+  );
+  try {
+    await usarFotoCargada(
+      productoId,
+      { storage_path: path, width, height, alt_text: alt },
+      alt,
+    );
+  } catch (err) {
+    await borrarSiNoSeUsa([path]);
+    throw err;
+  }
+  // fotos extra viejas (el panel nuevo usa una sola por producto)
+  const extras = (antes ?? []).filter((a) => a.storage_path !== path);
+  if (extras.length) {
+    await supabase
+      .from("product_images")
+      .delete()
+      .in(
+        "id",
+        extras.map((a) => a.id),
+      );
+    await borrarSiNoSeUsa(extras.map((a) => a.storage_path));
+  }
+}
+
+// Suma a la galería una foto que ya está cargada (sin subirla de nuevo).
+// Devuelve false si ya estaba.
+export async function sumarAGaleria(foto, alt) {
+  const { count } = await supabase
+    .from("gallery_items")
+    .select("id", { count: "exact", head: true })
+    .eq("storage_path", foto.storage_path);
+  if (count) return false;
+  const { data: ultimo } = await supabase
+    .from("gallery_items")
+    .select("sort_order")
+    .order("sort_order", { ascending: false })
+    .limit(1);
+  const { error } = await supabase.from("gallery_items").insert({
+    storage_path: foto.storage_path,
+    alt_text: (alt || foto.alt_text || "Torta de Amoma").slice(0, 200),
+    width: foto.width,
+    height: foto.height,
+    sort_order: (ultimo?.[0]?.sort_order ?? -1) + 1,
+    is_published: true,
+  });
+  if (error) fallar(error, "No se pudo sumar a la galería.");
+  return true;
+}
+
+export async function estaEnGaleria(storagePath) {
+  const { count } = await supabase
+    .from("gallery_items")
+    .select("id", { count: "exact", head: true })
+    .eq("storage_path", storagePath);
+  return Boolean(count);
 }

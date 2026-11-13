@@ -78,8 +78,9 @@ function Encuadre({ src, inicial, onGuardar, onCerrar }) {
     >
       <h2 id={`${uid}-t`}>Acomodá la foto</h2>
       <p className="adm-ayuda">
-        Arrastrá la foto para moverla y usá la barra para acercarla. Así se va a
-        ver en la página.
+        La foto ya está guardada. Si querés, arrastrala para moverla y usá la
+        barra para acercarla: así se va a ver en la página. Si está bien, tocá
+        “Cancelar”.
       </p>
 
       <div className="adm-encuadre__vistas">

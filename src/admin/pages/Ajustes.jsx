@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import { guardarAjustes, obtenerAjustes } from "../lib/api";
+import { useAuth } from "../auth";
 
 const CAMPOS = [
   {
@@ -37,6 +39,7 @@ const CAMPOS = [
 ];
 
 function Ajustes() {
+  const { session, salir } = useAuth();
   const [datos, setDatos] = useState(null);
   const [error, setError] = useState("");
   const [ok, setOk] = useState("");
@@ -94,7 +97,31 @@ function Ajustes() {
 
   return (
     <>
-      <h1 className="adm-titulo">Ajustes del negocio</h1>
+      <h1 className="adm-titulo">Ajustes</h1>
+      <section className="adm-bloque">
+        <h2>Tu cuenta</h2>
+        <p className="adm-ayuda">
+          Entraste como <b>{session?.user?.email}</b>. En este dispositivo la
+          sesión queda abierta hasta que toques “Salir”.
+        </p>
+        <div className="adm-acciones">
+          <a
+            className="btn btn--borde"
+            href="/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Ver la página ↗
+          </a>
+          <Link className="btn btn--borde" to="/admin/consultas">
+            Consultas
+          </Link>
+          <button type="button" className="btn" onClick={salir}>
+            Salir
+          </button>
+        </div>
+      </section>
+      <h2 className="adm-ficha__sub">Datos del negocio</h2>
       <form className="adm-form adm-bloque" onSubmit={guardar}>
         {CAMPOS.map((c) => (
           <div className="campo" key={c.name}>

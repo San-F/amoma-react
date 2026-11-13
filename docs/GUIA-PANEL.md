@@ -31,34 +31,31 @@ Si te olvidaste la contraseña, tocá **"Olvidé mi contraseña"** y te llega un
 
 Por seguridad, si dejás el panel abierto **30 minutos sin usar**, se cierra solo.
 
-## 3. Resumen
+## 3. Inicio
 
-Lo primero que ves: cuántos productos están publicados, cuántos ocultos y **cuántas consultas
-nuevas** llegaron por el formulario de la página.
+El panel tiene **4 secciones** (abajo en el celular, a la izquierda en la compu): **Inicio, Productos,
+Fotos y Publicar**. El engranaje de arriba a la derecha es para los datos del negocio y para **Salir**.
 
-<img src="guia/03-resumen.jpg" width="300" alt="Resumen del panel">
+En **Inicio** ves cuántos productos están a la vista, dos accesos grandes (**Cambiar precios** y
+**Crear publicación**) y las **consultas nuevas**, con un botón verde para responder por WhatsApp.
 
 ## 4. Productos
 
-- **Visible / Oculto**: con el tilde decidís si se ve en la página (sin borrarlo).
-- Tocá el nombre para **editarlo**. **"+ Nuevo"** para crear uno.
-
-<img src="guia/04-productos.jpg" width="300" alt="Lista de productos">
+- Las tortas aparecen como en la página, agrupadas por categoría. **Tocá una para editarla.**
+- **"Cambiar nombre"** al lado de cada categoría cambia el título de esa tarjeta en la página (máx. 30
+  letras). Las 4 categorías son fijas: no se agregan ni se borran.
+- **"+ Agregar"** crea un producto nuevo: primero nombre y precios, después la foto.
+- Un producto **sin foto** muestra el círculo **"+ Foto"**: hasta que tenga foto no aparece en la página.
 
 ### Editar un producto
 
-- **Nombre**, **categoría** y **descripción corta** (la que se ve en la tarjeta).
-- **Tamaños y precios**: una fila por tamaño (ej. _Mediana · 15 porciones · 35000_).
-  El precio va en pesos, sin puntos ni signo $ (igual los entiende).
-- **Fotos**: tocá **"+ Agregar fotos"**. Se achican solas para que la página cargue rápido.
-  La que tiene la **★** es la portada; tocá la estrella de otra para cambiarla.
-- **Acomodar la foto**: apenas subís una foto se abre **"Acomodá la foto"**. Arrastrala con el dedo
-  para que la torta quede al centro del círculo y usá la barra **"Acercar"** si querés que se vea más
-  grande. El circulito de al lado muestra cómo va a quedar **en la tarjeta**. Tocá **Guardar**.
-  Para cambiarla después, tocá la foto (dice **"Acomodar"**). **"Centrar"** la deja como estaba.
-- Para que se vea en la página tiene que tener **al menos un precio y una foto**.
-
-<img src="guia/05-editar-producto.jpg" width="300" alt="Editar producto">
+- **La foto**: "Cambiar foto" te deja **elegir una que ya cargaste** (de la galería o de otro producto) o
+  **subir una nueva**. Se guarda sola apenas la elegís. "Acomodar" es opcional (mover y acercar dentro
+  del círculo). "Sumar a la galería" la agrega a la galería sin subirla de nuevo.
+- **Nombre, descripción, categoría y etiqueta** ("Más pedido", "Nuevo", "De temporada").
+- **Tamaños y precios**: uno por renglón. "+ Agregar tamaño" para sumar otro.
+- **Mostrar en la página**: apagado, los clientes no lo ven (queda guardado en el panel).
+- **Guardar cambios** guarda todo junto. Si algo falla, no se cambia nada.
 
 ## 5. Cambiar muchos precios juntos con Excel
 
@@ -81,13 +78,23 @@ tocá el círculo **"+ Foto"** de cada uno. Hasta que no tenga foto, un producto
 
 <img src="guia/06-excel.jpg" width="300" alt="Cargar desde Excel">
 
-## 6. Galería
+## 6. Fotos (la galería de la página)
 
-Las fotos de trabajos que se ven en la página "Galería". Las **3 primeras** aparecen también en
-"Tortas personalizadas". Con las flechas **↑ ↓** cambiás el orden. Escribí una descripción corta de
-cada foto: la usan Google y las personas que no ven bien.
+- **"+ Subir"** para agregar varias fotos juntas.
+- El **ojito** muestra u oculta cada foto (la oculta queda en gris y sigue guardada).
+- Las **flechas** cambian el orden. Las primeras 3 visibles salen también en "Tortas personalizadas".
+- La **✕** la borra de la galería (si la usa un producto, ahí sigue).
 
-<img src="guia/07-galeria.jpg" width="300" alt="Galería">
+## 6b. Publicar (imágenes para Instagram)
+
+1. Elegí la torta (trae foto, nombre y precio) o **"Otra foto"** (una cargada o del celular).
+2. Elegí **modelo** (Vitrina o Portada), **color** (crema o chocolate) y **formato** (cuadrado para el
+   feed o historia).
+3. Revisá el texto: el segundo renglón va en cursiva rosa; el precio se puede dejar vacío.
+4. **"Descargar imagen"** (o "Compartir" en el celular) y subila a Instagram como siempre.
+
+La imagen se arma en tu celular: no se conecta a Instagram ni se guarda en la página. Si marcás "Sumar
+también la foto a la galería", la foto original (sin textos) se agrega a Fotos.
 
 ## 7. Consultas
 

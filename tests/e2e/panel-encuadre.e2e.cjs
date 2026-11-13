@@ -188,7 +188,7 @@ const ok = (c, m) => {
       "guarda en la base el punto y el zoom",
     );
     const mini = await p
-      .locator(".adm-fotos__ver img")
+      .locator(".adm-ficha-foto__circulo img")
       .first()
       .getAttribute("style");
     ok(
@@ -213,9 +213,10 @@ const ok = (c, m) => {
     );
     await p.keyboard.press("Escape");
     await d.waitFor({ state: "detached" });
-    // 9. subir una foto nueva abre la ventana sola
+    // 9. subir una foto nueva ("Cambiar foto") abre la ventana sola
+    await p.getByRole("button", { name: "Cambiar foto" }).click();
     await p
-      .locator('input[type=file][accept="image/*"]')
+      .locator('.adm-elegir input[type=file][accept="image/*"]')
       .setInputFiles(
         require("path").join(__dirname, "../../src/assets/img/chipa.jpg"),
       );

@@ -1,18 +1,21 @@
+// Ficha de un producto: foto, nombre, descripción, tamaños y precios, y si
+// se muestra en la página. Todo se guarda junto (la base lo hace "todo o nada").
 import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { z } from "zod";
 import {
-  agregarImagen,
-  borrarImagen,
   borrarProducto,
+  cambiarFotoProducto,
+  estaEnGaleria,
   guardarEncuadre,
   guardarProducto,
   listarCategorias,
-  marcarPortada,
   obtenerProducto,
+  sumarAGaleria,
+  usarFotoCargada,
 } from "../lib/api";
-import { validarImagen } from "../lib/images";
 import Encuadre from "../Encuadre";
+import ElegirFoto from "../ElegirFoto";
 import { desdeFila, estiloEncuadre } from "../../lib/encuadre";
 import { urlPublica } from "../../lib/supabase";
 import { pesosACentavos } from "../../lib/money";
@@ -25,10 +28,7 @@ const esquema = z.object({
     .trim()
     .min(1, "Poné un nombre.")
     .max(120, "Nombre muy largo."),
-  short_description: z
-    .string()
-    .max(200, "Descripción corta: máx. 200 caracteres."),
-  description: z.string().max(3000, "Descripción: máx. 3000 caracteres."),
+  short_description: z.string().max(200, "Descripción: máx. 200 caracteres."),
 });
 
 const VARIANTE_VACIA = { label: "", servings: "", precio: "" };
@@ -43,66 +43,83 @@ function ProductoEditar() {
     name: "",
     category_id: "",
     short_description: "",
-    description: "",
-    is_published: false,
-    is_featured: false,
+    is_published: true,
     badge: "",
   });
+  // se conservan tal cual (este formulario no los muestra)
+  const [ocultos, setOcultos] = useState({
+    description: null,
+    is_featured: false,
+  });
   const [variantes, setVariantes] = useState([{ ...VARIANTE_VACIA }]);
-  const [imagenes, setImagenes] = useState([]);
-  // foto que se está acomodando (ventana de encuadre abierta)
-  const [encuadrando, setEncuadrando] = useState(null);
+  const [portada, setPortada] = useState(null);
+  const [enGaleria, setEnGaleria] = useState(false);
+  const [eligiendo, setEligiendo] = useState(false);
+  const [encuadrando, setEncuadrando] = useState(false);
   const [cargando, setCargando] = useState(!nuevo);
   const [error, setError] = useState("");
   const [ok, setOk] = useState("");
+  const [avisoFoto, setAvisoFoto] = useState("");
   const [guardando, setGuardando] = useState(false);
   const [subiendo, setSubiendo] = useState(false);
 
-  const cargar = async () => {
-    try {
-      setCategorias(await listarCategorias());
-      if (!nuevo) {
-        const p = await obtenerProducto(id);
-        setForm({
-          name: p.name,
-          category_id: p.category_id ?? "",
-          short_description: p.short_description ?? "",
-          description: p.description ?? "",
-          is_published: p.is_published,
-          is_featured: p.is_featured,
-          badge: p.badge ?? "",
-        });
-        setVariantes(
-          p.variants.length
-            ? p.variants.map((v) => ({
-                label: v.label,
-                servings: v.servings ?? "",
-                precio: String(v.price_cents / 100),
-              }))
-            : [{ ...VARIANTE_VACIA }],
-        );
-        setImagenes(p.images);
-      }
-    } catch (e) {
-      setError(e.message);
-    } finally {
-      setCargando(false);
-    }
+  const recargarFoto = async () => {
+    const p = await obtenerProducto(id);
+    const img = p.images.find((i) => i.is_cover) ?? p.images[0] ?? null;
+    setPortada(img);
+    setEnGaleria(img ? await estaEnGaleria(img.storage_path) : false);
+    return img;
   };
 
   useEffect(() => {
-    cargar();
+    (async () => {
+      try {
+        setCategorias(await listarCategorias());
+        if (!nuevo) {
+          const p = await obtenerProducto(id);
+          setForm({
+            name: p.name,
+            category_id: p.category_id ?? "",
+            short_description: p.short_description ?? "",
+            is_published: p.is_published,
+            badge: p.badge ?? "",
+          });
+          setOcultos({
+            description: p.description,
+            is_featured: p.is_featured,
+          });
+          setVariantes(
+            p.variants.length
+              ? p.variants.map((v) => ({
+                  label: v.label,
+                  servings: v.servings ?? "",
+                  precio: String(v.price_cents / 100),
+                }))
+              : [{ ...VARIANTE_VACIA }],
+          );
+          await recargarFoto();
+        }
+      } catch (e) {
+        setError(e.message);
+      } finally {
+        setCargando(false);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const cambiar = (e) => {
     const { name, value, type, checked } = e.target;
+    setOk("");
     setForm({ ...form, [name]: type === "checkbox" ? checked : value });
   };
 
-  const cambiarVariante = (i, campo, valor) =>
+  const cambiarVariante = (i, campo, valor) => {
+    setOk("");
     setVariantes(
       variantes.map((v, j) => (j === i ? { ...v, [campo]: valor } : v)),
     );
+  };
 
   const guardar = async (e) => {
     e.preventDefault();
@@ -132,7 +149,7 @@ function ProductoEditar() {
       });
     }
     if (form.is_published && !listas.length)
-      return setError("Para publicarlo, cargá al menos un precio.");
+      return setError("Para mostrarlo en la página, cargá al menos un precio.");
     if (nuevo && !slugify(r.data.name))
       return setError("El nombre tiene que tener letras o números.");
 
@@ -145,15 +162,21 @@ function ProductoEditar() {
           name: r.data.name,
           category_id: form.category_id || null,
           short_description: r.data.short_description || null,
-          description: r.data.description || null,
+          description: ocultos.description,
           is_published: form.is_published,
-          is_featured: form.is_featured,
+          is_featured: ocultos.is_featured,
           badge: form.badge || null,
         },
         listas,
       );
+      if (nuevo) {
+        navigate(`/admin/productos/${productoId}`, {
+          replace: true,
+          state: { recienCreado: true },
+        });
+        return;
+      }
       setOk("Guardado ✓");
-      if (nuevo) navigate(`/admin/productos/${productoId}`, { replace: true });
     } catch (err) {
       setError(err.message);
     } finally {
@@ -161,27 +184,22 @@ function ProductoEditar() {
     }
   };
 
-  const subir = async (e) => {
-    const archivos = [...e.target.files];
-    e.target.value = "";
+  // ---------- foto ----------
+  const despuesDeFoto = async () => {
+    const img = await recargarFoto();
+    setAvisoFoto("Foto guardada ✓");
+    // recién puesta: se ofrece acomodarla (es opcional)
+    if (img) setEncuadrando(true);
+  };
+
+  const fotoNueva = async (file) => {
+    setEligiendo(false);
     setError("");
-    for (const f of archivos) {
-      const problema = validarImagen(f);
-      if (problema) return setError(problema);
-    }
+    setAvisoFoto("");
     setSubiendo(true);
     try {
-      let hayPortada = imagenes.some((i) => i.is_cover);
-      let primera = null;
-      for (const f of archivos) {
-        const nueva = await agregarImagen(id, f, form.name, !hayPortada);
-        primera ??= nueva;
-        hayPortada = true;
-      }
-      const lista = (await obtenerProducto(id)).images;
-      setImagenes(lista);
-      // recién subida: se abre para acomodarla dentro del círculo
-      setEncuadrando(lista.find((i) => i.id === primera) ?? null);
+      await cambiarFotoProducto(id, file, form.name);
+      await despuesDeFoto();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -189,11 +207,27 @@ function ProductoEditar() {
     }
   };
 
-  const accionImagen = async (fn) => {
+  const fotoCargada = async (foto) => {
+    setEligiendo(false);
+    setError("");
+    setAvisoFoto("");
+    setSubiendo(true);
+    try {
+      await usarFotoCargada(id, foto, form.name);
+      await despuesDeFoto();
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setSubiendo(false);
+    }
+  };
+
+  const aGaleria = async () => {
     setError("");
     try {
-      await fn();
-      setImagenes((await obtenerProducto(id)).images);
+      await sumarAGaleria(portada, form.name);
+      setEnGaleria(true);
+      setAvisoFoto("Sumada a la galería ✓");
     } catch (err) {
       setError(err.message);
     }
@@ -202,7 +236,7 @@ function ProductoEditar() {
   const eliminar = async () => {
     if (
       !window.confirm(
-        `¿Borrar "${form.name}" y sus fotos? No se puede deshacer.`,
+        `¿Borrar "${form.name}"? Deja de verse en la página y no se puede deshacer. (Si su foto está en la galería, ahí sigue.)`,
       )
     )
       return;
@@ -225,19 +259,101 @@ function ProductoEditar() {
         {nuevo ? "Nuevo producto" : form.name || "Producto"}
       </h1>
 
-      <form className="adm-form" onSubmit={guardar}>
-        <section className="adm-bloque">
-          <div className="campo">
-            <label htmlFor="name">Nombre</label>
-            <input
-              id="name"
-              name="name"
-              maxLength={120}
-              value={form.name}
-              onChange={cambiar}
-              required
-            />
-          </div>
+      {!nuevo && (
+        <section className="adm-ficha-foto" aria-label="Foto">
+          <button
+            type="button"
+            className="adm-ficha-foto__circulo"
+            onClick={() =>
+              portada ? setEncuadrando(true) : setEligiendo(true)
+            }
+            aria-label={portada ? "Acomodar esta foto" : "Poner una foto"}
+            disabled={subiendo}
+          >
+            {portada ? (
+              <img
+                src={urlPublica(portada.storage_path)}
+                alt=""
+                style={estiloEncuadre(desdeFila(portada))}
+              />
+            ) : (
+              <span>{subiendo ? "Subiendo…" : "+ Foto"}</span>
+            )}
+          </button>
+          {!portada && !subiendo && (
+            <p className="adm-aviso">
+              Sin foto no aparece en la página. Tocá el círculo para ponerle
+              una.
+            </p>
+          )}
+          {subiendo && portada && <p className="adm-ayuda">Subiendo…</p>}
+          {avisoFoto && (
+            <p className="adm-ok" role="status">
+              {avisoFoto}
+            </p>
+          )}
+          {portada && (
+            <div className="adm-ficha-foto__botones">
+              <button
+                type="button"
+                className="adm-pildora"
+                onClick={() => setEligiendo(true)}
+                disabled={subiendo}
+              >
+                Cambiar foto
+              </button>
+              <button
+                type="button"
+                className="adm-pildora"
+                onClick={() => setEncuadrando(true)}
+              >
+                Acomodar
+              </button>
+              {enGaleria ? (
+                <span className="adm-pildora adm-pildora--lista">
+                  ✓ En la galería
+                </span>
+              ) : (
+                <button
+                  type="button"
+                  className="adm-pildora"
+                  onClick={aGaleria}
+                >
+                  Sumar a la galería
+                </button>
+              )}
+            </div>
+          )}
+        </section>
+      )}
+
+      <form className="adm-ficha" onSubmit={guardar}>
+        <div className="campo">
+          <label htmlFor="name">Nombre</label>
+          <input
+            id="name"
+            name="name"
+            className="adm-input-grande"
+            maxLength={120}
+            value={form.name}
+            onChange={cambiar}
+            required
+          />
+        </div>
+        <div className="campo">
+          <label htmlFor="short_description">
+            Descripción <small>(se ve en la tarjeta)</small>
+          </label>
+          <textarea
+            id="short_description"
+            name="short_description"
+            rows="2"
+            maxLength={200}
+            value={form.short_description}
+            onChange={cambiar}
+          />
+        </div>
+        <div className="adm-ficha__dos">
           <div className="campo">
             <label htmlFor="category_id">Categoría</label>
             <select
@@ -256,9 +372,8 @@ function ProductoEditar() {
           </div>
           <div className="campo">
             <label htmlFor="badge">
-              Etiqueta <small>(opcional, se ve en la tarjeta)</small>
+              Etiqueta <small>(opcional)</small>
             </label>
-
             <select
               id="badge"
               name="badge"
@@ -266,70 +381,39 @@ function ProductoEditar() {
               onChange={cambiar}
             >
               <option value="">Sin etiqueta</option>
-
               <option value="mas-pedido">Más pedido</option>
-
               <option value="nuevo">Nuevo</option>
-
               <option value="temporada">De temporada</option>
             </select>
           </div>
-          <div className="campo">
-            <label htmlFor="short_description">
-              Descripción corta <small>(se ve en la tarjeta)</small>
-            </label>
-            <input
-              id="short_description"
-              name="short_description"
-              maxLength={200}
-              value={form.short_description}
-              onChange={cambiar}
-            />
-          </div>
-          <div className="campo">
-            <label htmlFor="description">
-              Descripción larga <small>(opcional)</small>
-            </label>
-            <textarea
-              id="description"
-              name="description"
-              rows="4"
-              maxLength={3000}
-              value={form.description}
-              onChange={cambiar}
-            />
-          </div>
-        </section>
+        </div>
 
-        <section className="adm-bloque">
-          <h2>Tamaños y precios</h2>
-          <div className="adm-variantes">
-            <span>Tamaño</span>
-            <span>Porciones</span>
-            <span>Precio ($)</span>
-            <span />
-            {variantes.map((v, i) => (
-              <div className="adm-variante" key={i}>
-                <input
-                  aria-label={`Tamaño ${i + 1}`}
-                  placeholder="Mediana"
-                  value={v.label}
-                  maxLength={60}
-                  onChange={(e) => cambiarVariante(i, "label", e.target.value)}
-                />
-                <input
-                  aria-label={`Porciones ${i + 1}`}
-                  placeholder="15"
-                  inputMode="numeric"
-                  value={v.servings}
-                  onChange={(e) =>
-                    cambiarVariante(
-                      i,
-                      "servings",
-                      e.target.value.replace(/\D/g, ""),
-                    )
-                  }
-                />
+        <h2 className="adm-ficha__sub">Tamaños y precios</h2>
+        <ul className="adm-tamanos">
+          {variantes.map((v, i) => (
+            <li className="adm-tamano" key={i}>
+              <input
+                aria-label={`Tamaño ${i + 1}`}
+                placeholder="Tamaño (ej. Mediana)"
+                value={v.label}
+                maxLength={60}
+                onChange={(e) => cambiarVariante(i, "label", e.target.value)}
+              />
+              <input
+                aria-label={`Porciones ${i + 1}`}
+                placeholder="Porciones"
+                inputMode="numeric"
+                value={v.servings}
+                onChange={(e) =>
+                  cambiarVariante(
+                    i,
+                    "servings",
+                    e.target.value.replace(/\D/g, ""),
+                  )
+                }
+              />
+              <span className="adm-tamano__precio">
+                <span aria-hidden="true">$</span>
                 <input
                   aria-label={`Precio ${i + 1}`}
                   placeholder="35000"
@@ -337,159 +421,96 @@ function ProductoEditar() {
                   value={v.precio}
                   onChange={(e) => cambiarVariante(i, "precio", e.target.value)}
                 />
-                <button
-                  type="button"
-                  className="adm-x"
-                  aria-label={`Quitar precio ${i + 1}`}
-                  onClick={() =>
-                    setVariantes(variantes.filter((_, j) => j !== i))
-                  }
-                >
-                  ×
-                </button>
-              </div>
-            ))}
-          </div>
-          <button
-            type="button"
-            className="adm-link"
-            onClick={() => setVariantes([...variantes, { ...VARIANTE_VACIA }])}
-          >
-            + Agregar tamaño
-          </button>
-        </section>
+              </span>
+              <button
+                type="button"
+                className="adm-icono-btn"
+                aria-label={`Quitar tamaño ${i + 1}`}
+                onClick={() => {
+                  setOk("");
+                  setVariantes(
+                    variantes.length > 1
+                      ? variantes.filter((_, j) => j !== i)
+                      : [{ ...VARIANTE_VACIA }],
+                  );
+                }}
+              >
+                ×
+              </button>
+            </li>
+          ))}
+        </ul>
+        <button
+          type="button"
+          className="adm-link-fuerte"
+          onClick={() => setVariantes([...variantes, { ...VARIANTE_VACIA }])}
+        >
+          + Agregar tamaño
+        </button>
 
-        <section className="adm-bloque adm-bloque--fila">
-          <label className="adm-switch">
-            <input
-              type="checkbox"
-              name="is_published"
-              checked={form.is_published}
-              onChange={cambiar}
-            />
-            <span>Visible en la página</span>
-          </label>
-          <label className="adm-switch">
-            <input
-              type="checkbox"
-              name="is_featured"
-              checked={form.is_featured}
-              onChange={cambiar}
-            />
-            <span>Destacado</span>
-          </label>
-        </section>
+        <label className="adm-interruptor">
+          <span>
+            <b>Mostrar en la página</b>
+            <small>Apagado, los clientes no lo ven (queda guardado acá).</small>
+          </span>
+          <input
+            type="checkbox"
+            role="switch"
+            name="is_published"
+            checked={form.is_published}
+            onChange={cambiar}
+          />
+        </label>
 
         {error && (
           <p className="adm-error" role="alert">
             {error}
           </p>
         )}
-        {ok && <p className="adm-ok">{ok}</p>}
-        <div className="adm-acciones">
-          <button className="btn" disabled={guardando}>
-            {guardando ? "Guardando…" : "Guardar"}
-          </button>
-          {!nuevo && (
-            <button
-              type="button"
-              className="btn btn--borde adm-peligro"
-              onClick={eliminar}
-            >
-              Borrar producto
-            </button>
-          )}
-        </div>
-      </form>
-
-      {!nuevo && (
-        <section className="adm-bloque">
-          <h2>Fotos</h2>
-          {!imagenes.length && (
-            <p className="adm-aviso">
-              Todavía no tiene foto: hasta que le pongas una, no aparece en la
-              página.
+        <div className="adm-ficha__pie">
+          {ok && (
+            <p className="adm-ok" role="status">
+              {ok}
             </p>
           )}
-          <p className="adm-ayuda">
-            Se achican solas antes de subir. La marcada con ★ es la portada.
-            Tocá una foto para acomodarla dentro del círculo.
-          </p>
-          <ul className="adm-fotos">
-            {imagenes.map((img) => (
-              <li key={img.id}>
-                <button
-                  type="button"
-                  className="adm-fotos__ver"
-                  onClick={() => setEncuadrando(img)}
-                  aria-label="Acomodar esta foto"
-                >
-                  <img
-                    src={urlPublica(img.storage_path)}
-                    alt={img.alt_text}
-                    style={estiloEncuadre(desdeFila(img))}
-                  />
-                  <span className="adm-fotos__acomodar">Acomodar</span>
-                </button>
-                <div>
-                  <button
-                    type="button"
-                    className={
-                      img.is_cover ? "adm-estrella is-on" : "adm-estrella"
-                    }
-                    aria-label={
-                      img.is_cover ? "Es la portada" : "Usar como portada"
-                    }
-                    onClick={() =>
-                      accionImagen(() => marcarPortada(id, img.id))
-                    }
-                  >
-                    ★
-                  </button>
-                  <button
-                    type="button"
-                    className="adm-x"
-                    aria-label="Borrar foto"
-                    onClick={() =>
-                      window.confirm("¿Borrar esta foto?") &&
-                      accionImagen(() => borrarImagen(img))
-                    }
-                  >
-                    ×
-                  </button>
-                </div>
-              </li>
-            ))}
-          </ul>
-          <label className="btn btn--borde adm-subir">
-            {subiendo ? "Subiendo…" : "+ Agregar fotos"}
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              onChange={subir}
-              disabled={subiendo}
-              hidden
-            />
-          </label>
-        </section>
-      )}
-      {encuadrando && (
-        <Encuadre
-          src={urlPublica(encuadrando.storage_path)}
-          inicial={desdeFila(encuadrando)}
-          onCerrar={() => setEncuadrando(null)}
-          onGuardar={async (enc) => {
-            await guardarEncuadre(encuadrando.id, enc);
-            setImagenes((await obtenerProducto(id)).images);
-            setEncuadrando(null);
-          }}
+          <button className="btn btn--rosa" disabled={guardando}>
+            {guardando
+              ? "Guardando…"
+              : nuevo
+                ? "Crear producto"
+                : "Guardar cambios"}
+          </button>
+        </div>
+        {nuevo && (
+          <p className="adm-ayuda">Después de crearlo le ponés la foto.</p>
+        )}
+        {!nuevo && (
+          <button type="button" className="adm-borrar" onClick={eliminar}>
+            Borrar producto
+          </button>
+        )}
+      </form>
+
+      {eligiendo && (
+        <ElegirFoto
+          titulo="Foto del producto"
+          onElegir={fotoCargada}
+          onArchivo={fotoNueva}
+          onCerrar={() => setEligiendo(false)}
         />
       )}
-      {nuevo && (
-        <p className="adm-ayuda">
-          Guardá el producto para poder agregarle fotos.
-        </p>
+      {encuadrando && portada && (
+        <Encuadre
+          src={urlPublica(portada.storage_path)}
+          inicial={desdeFila(portada)}
+          onCerrar={() => setEncuadrando(false)}
+          onGuardar={async (enc) => {
+            await guardarEncuadre(portada.id, enc);
+            await recargarFoto();
+            setEncuadrando(false);
+            setAvisoFoto("Foto acomodada ✓");
+          }}
+        />
       )}
     </>
   );

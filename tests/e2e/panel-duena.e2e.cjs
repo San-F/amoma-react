@@ -82,6 +82,26 @@ function baseNueva() {
         images: [], // sin foto
       },
     ],
+    galeria: [
+      {
+        id: "g1",
+        storage_path: "galeria/g1.webp",
+        alt_text: "Torta arcoíris",
+        width: 800,
+        height: 800,
+        sort_order: 0,
+        is_published: true,
+      },
+      {
+        id: "g2",
+        storage_path: "galeria/g2.webp",
+        alt_text: "Torta de surf",
+        width: 800,
+        height: 800,
+        sort_order: 1,
+        is_published: true,
+      },
+    ],
     llamadas: [],
     rechazarCambios: false, // simula "la base no cambió nada" (0 filas)
   };
@@ -127,7 +147,49 @@ function atender(db) {
     }
     if (u.pathname === "/rest/v1/site_settings")
       return L.json(r, { id: 1, whatsapp: "5491136362466" });
-    if (u.pathname === "/rest/v1/gallery_items") return L.json(r, []);
+    // conteos (HEAD … count=exact): ¿cuántas filas usan este archivo?
+    const filtroRuta = (q.get("storage_path") || "").replace("eq.", "");
+    if (m === "HEAD") {
+      const n =
+        u.pathname === "/rest/v1/gallery_items"
+          ? db.galeria.filter(
+              (g) => !filtroRuta || g.storage_path === filtroRuta,
+            ).length
+          : db.productos
+              .flatMap((p) => p.images)
+              .filter((i) => !filtroRuta || i.storage_path === filtroRuta)
+              .length;
+      return r.fulfill({
+        status: 200,
+        headers: {
+          "access-control-allow-origin": "*",
+          "access-control-expose-headers": "content-range",
+          "content-range": `*/${n}`,
+        },
+      });
+    }
+    if (u.pathname === "/rest/v1/gallery_items") {
+      if (m === "PATCH") {
+        db.llamadas.push(["galeria", id, cuerpo()]);
+        if (db.rechazarCambios) return L.json(r, []);
+        Object.assign(
+          db.galeria.find((g) => g.id === id),
+          cuerpo(),
+        );
+        return L.json(r, [{ id }]);
+      }
+      if (m === "POST") {
+        const b = cuerpo();
+        db.llamadas.push(["galeria-nueva", b]);
+        db.galeria.push({ id: "g" + Date.now(), ...b });
+        return L.json(r, {});
+      }
+      let lista = [...db.galeria].sort((a, b) => a.sort_order - b.sort_order);
+      if (q.get("is_published") === "eq.true")
+        lista = lista.filter((g) => g.is_published);
+      if (q.get("order")?.startsWith("sort_order.desc")) lista.reverse();
+      return L.json(r, lista);
+    }
     if (u.pathname === "/rest/v1/inquiries")
       return L.json(r, [], 200, { "content-range": "*/0" });
 
@@ -236,7 +298,28 @@ function atender(db) {
         p.images.push(nueva);
         return L.json(r, { id: nueva.id });
       }
-      return L.json(r, []);
+      if (m === "DELETE") {
+        const ids = (q.get("id") || "").replace(/^in\.\(|\)$/g, "").split(",");
+        for (const p of db.productos)
+          p.images = p.images.filter((i) => !ids.includes(i.id));
+        return L.json(
+          r,
+          ids.map((x) => ({ id: x })),
+        );
+      }
+      // fotos de productos (para elegir una ya cargada / ver la portada)
+      const pid = (q.get("product_id") || "").replace("eq.", "");
+      let imgs = db.productos.flatMap((p) =>
+        p.images.map((i) => ({
+          ...i,
+          product_id: p.id,
+          product: { name: p.name },
+        })),
+      );
+      if (pid) imgs = imgs.filter((i) => i.product_id === pid);
+      if (q.get("is_cover") === "eq.true")
+        imgs = imgs.filter((i) => i.is_cover);
+      return L.json(r, imgs);
     }
     return L.json(r, []);
   };
@@ -309,14 +392,16 @@ function atender(db) {
     );
 
     // 1b. cambiar el nombre de una categoría (no se pueden agregar)
-    await panel.getByText("Nombres de las categorías").click();
     ok(
       !(await panel.getByText(/Nueva categoría|Agregar categoría/).count()),
       "categorías: no hay forma de agregar una nueva",
     );
-    await panel.getByLabel("Tarjeta 1").fill("Tortas de la casa");
-    await panel.getByRole("button", { name: "Guardar nombres" }).click();
-    await panel.getByText("Guardado ✓ Ya se ve en la página.").waitFor();
+    await panel.getByRole("button", { name: "Cambiar nombre" }).first().click();
+    await panel
+      .getByLabel("Nombre de la categoría Tortas")
+      .fill("Tortas de la casa");
+    await panel.getByRole("button", { name: "Guardar", exact: true }).click();
+    await panel.getByRole("heading", { name: "Tortas de la casa" }).waitFor();
     const renombre = db.llamadas.find((l) => l[0] === "categoria");
     ok(
       renombre && Object.keys(renombre[2]).join() === "name",
@@ -337,9 +422,9 @@ function atender(db) {
     await panel.goto(PANEL + "/admin/productos", { waitUntil: "networkidle" });
 
     // 2. cambiar un precio
-    await panel.getByRole("link", { name: "Lemon pie" }).click();
+    await panel.getByRole("link", { name: /Lemon pie/ }).click();
     await panel.getByRole("textbox", { name: "Precio 1" }).fill("21.000");
-    await panel.getByRole("button", { name: "Guardar" }).click();
+    await panel.getByRole("button", { name: "Guardar cambios" }).click();
     await panel.getByText("Guardado ✓").waitFor();
     const guardado = db.llamadas.filter((l) => l[0] === "guardar").at(-1)[1];
     ok(
@@ -375,11 +460,20 @@ function atender(db) {
       "con foto, el producto ya aparece en la página",
     );
 
-    // 4. ocultar desde la lista
+    // 4. ocultar desde la ficha ("Mostrar en la página")
     await captura(panel, "lista");
-    const filaLemon = panel.locator("li.adm-fila", { hasText: "Lemon pie" });
-    await filaLemon.locator("input[type=checkbox]").click();
-    await filaLemon.getByText("Oculto").waitFor();
+    await panel.getByRole("link", { name: /Lemon pie/ }).click();
+    await panel.getByRole("switch", { name: /Mostrar en la página/ }).uncheck();
+    await panel.getByRole("button", { name: "Guardar cambios" }).click();
+    await panel.getByText("Guardado ✓").waitFor();
+    await panel.goto(PANEL + "/admin/productos", { waitUntil: "networkidle" });
+    ok(
+      await panel
+        .locator(".adm-prod", { hasText: "Lemon pie" })
+        .getByText("Oculto")
+        .isVisible(),
+      "la lista marca el producto como Oculto",
+    );
     pagina = await enLaPagina();
     ok(!pagina.includes("Lemon pie"), "ocultar: el cliente deja de verlo");
     ok(
@@ -436,34 +530,102 @@ function atender(db) {
       "después de importar, lleva a ponerle foto a los nuevos",
     );
 
-    // 6. mostrar algo sin precio: la base dice que no y el panel lo cuenta
+    // 6. mostrar algo sin precio: no deja y explica por qué
     db.productos.find((p) => p.slug === "torta-nueva").variants = [];
     db.productos.find((p) => p.slug === "torta-nueva").is_published = false;
-    await panel.goto(PANEL + "/admin/productos", { waitUntil: "networkidle" });
-    await panel
-      .locator("li.adm-fila", { hasText: "Torta nueva" })
-      .locator("input[type=checkbox]")
-      .click();
-    await panel
-      .getByText("Para publicarlo, cargá al menos un precio.")
-      .waitFor({ timeout: 5000 })
-      .catch(() => {});
+    await panel.goto(
+      PANEL +
+        "/admin/productos/" +
+        db.productos.find((p) => p.slug === "torta-nueva").id,
+      { waitUntil: "networkidle" },
+    );
+    await panel.getByRole("switch", { name: /Mostrar en la página/ }).check();
+    await panel.getByRole("button", { name: "Guardar cambios" }).click();
     ok(
       await panel
-        .getByText("Para publicarlo, cargá al menos un precio.")
+        .getByText("Para mostrarlo en la página, cargá al menos un precio.")
         .isVisible(),
       "no deja mostrar un producto sin precio y explica por qué",
     );
 
-    // 7. si la base no cambió nada, el panel no dice que guardó
+    // 7. Fotos (feed): ocultar; y si la base no cambió nada, el panel avisa
+    await panel.goto(PANEL + "/admin/galeria", { waitUntil: "networkidle" });
+    await captura(panel, "fotos");
     db.rechazarCambios = true;
-    await panel
-      .locator("li.adm-fila", { hasText: "Charlotte" })
-      .locator("input[type=checkbox]")
-      .click();
-    await panel.getByText(/No se pudo cambiar la visibilidad/).waitFor();
+    await panel.getByRole("button", { name: "Ocultar foto 1" }).click();
+    await panel.getByText(/No se pudo actualizar la foto/).waitFor();
     ok(true, "si la base rechaza el cambio en silencio, el panel avisa");
     db.rechazarCambios = false;
+    await panel.getByRole("button", { name: "Ocultar foto 1" }).click();
+    await panel.getByText("Foto oculta ✓ (sigue guardada acá)").waitFor();
+    pagina = await (async () => {
+      await cliente.goto(PANEL + "/galeria", { waitUntil: "networkidle" });
+      return cliente.locator(".galeria__grid img").count();
+    })();
+    ok(
+      pagina === 1,
+      "Fotos: la oculta deja de verse en la galería de la página",
+    );
+
+    // 7b. foto de un producto: elegir una ya cargada (sin subir de nuevo)
+    await panel.goto(PANEL + "/admin/productos/p2", {
+      waitUntil: "networkidle",
+    });
+    await panel.getByRole("button", { name: "Cambiar foto" }).click();
+    await panel
+      .getByRole("button", { name: "Usar la foto de Galería" })
+      .first()
+      .click();
+    await panel.getByText("Foto guardada ✓").waitFor();
+    ok(
+      db.productos
+        .find((p) => p.id === "p2")
+        .images.some((i) => i.storage_path === "galeria/g1.webp" && i.is_cover),
+      "elegir una foto ya cargada la usa como portada (mismo archivo)",
+    );
+    // la ventana de acomodar se abre sola: es opcional
+    await panel.getByRole("button", { name: "Cancelar" }).click();
+    ok(
+      await panel.getByText("✓ En la galería").isVisible(),
+      "si la foto ya está en la galería, lo dice (no la duplica)",
+    );
+
+    // 7c. Publicar: arma la imagen y la descarga
+    await panel.goto(PANEL + "/admin/publicar", { waitUntil: "networkidle" });
+    await panel.waitForFunction(() => {
+      const c = document.querySelector(".adm-pub__lienzo canvas");
+      return (
+        c && c.width === 1080 && !document.querySelector(".adm-pub__cargando")
+      );
+    });
+    await captura(panel, "publicar");
+    const [img] = await Promise.all([
+      panel.waitForEvent("download"),
+      panel.getByRole("button", { name: /Descargar imagen/ }).click(),
+    ]);
+    const bytes = fs.readFileSync(await img.path());
+    ok(
+      bytes[0] === 0xff && bytes[1] === 0xd8 && bytes.length > 20000,
+      `Publicar: descarga una imagen JPG (${Math.round(bytes.length / 1024)} KB)`,
+    );
+    await panel.getByRole("button", { name: "Portada" }).click();
+    await panel.getByRole("button", { name: "Historia" }).click();
+    await panel.getByRole("button", { name: "Chocolate" }).click();
+    const dim = await panel.evaluate(() => {
+      const c = document.querySelector(".adm-pub__lienzo canvas");
+      return `${c.width}x${c.height}`;
+    });
+    ok(dim === "1080x1920", "Publicar: la historia sale en 1080×1920");
+    await captura(panel, "publicar-historia");
+    // el logo se dibuja redondo y sin deformar (mismo ancho y alto)
+    ok(
+      await panel.evaluate(() => {
+        const c = document.querySelector(".adm-pub__lienzo canvas");
+        const d = c.getContext("2d").getImageData(540, 150, 1, 1).data;
+        return d[3] === 255;
+      }),
+      "Publicar: el logo está en su lugar",
+    );
 
     // 8. todo oculto: la página queda vacía, no vuelve a los de muestra
     db.productos.forEach((p) => (p.is_published = false));

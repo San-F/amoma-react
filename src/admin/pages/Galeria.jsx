@@ -1,3 +1,6 @@
+// Fotos: la galería de la página, como un feed. Se muestra u oculta cada
+// foto, se cambia el orden y se suben varias juntas. Las primeras 3 visibles
+// aparecen también en "Tortas personalizadas".
 import { useState } from "react";
 import {
   agregarFotoGaleria,
@@ -9,19 +12,30 @@ import {
 import { validarImagen } from "../lib/images";
 import { useCarga } from "../lib/useCarga";
 import { Estado } from "../Estado";
+import { Icono } from "../Iconos";
 
 function Galeria() {
   const { cargando, error, datos, recargar } = useCarga(listarGaleria);
   const [aviso, setAviso] = useState("");
+  const [ok, setOk] = useState("");
   const [subiendo, setSubiendo] = useState("");
+  const [ocupado, setOcupado] = useState(false);
 
-  const accion = async (fn) => {
+  const fotos = datos ?? [];
+  const visibles = fotos.filter((g) => g.is_published).length;
+
+  const accion = async (fn, mensaje = "") => {
     setAviso("");
+    setOk("");
+    setOcupado(true);
     try {
       await fn();
       await recargar();
+      setOk(mensaje);
     } catch (e) {
       setAviso(e.message);
+    } finally {
+      setOcupado(false);
     }
   };
 
@@ -32,18 +46,25 @@ function Galeria() {
       const problema = validarImagen(f);
       if (problema) return setAviso(problema);
     }
-    let orden = datos?.length ?? 0;
-    await accion(async () => {
-      for (const [i, f] of archivos.entries()) {
-        setSubiendo(`Subiendo ${i + 1} de ${archivos.length}…`);
-        await agregarFotoGaleria(f, "Torta de Amoma", orden++);
-      }
-    });
+    let orden = fotos.length
+      ? Math.max(...fotos.map((g) => g.sort_order)) + 1
+      : 0;
+    await accion(
+      async () => {
+        for (const [i, f] of archivos.entries()) {
+          setSubiendo(`Subiendo ${i + 1} de ${archivos.length}…`);
+          await agregarFotoGaleria(f, "Torta de Amoma", orden++);
+        }
+      },
+      archivos.length === 1
+        ? "Foto subida ✓"
+        : `${archivos.length} fotos subidas ✓`,
+    );
     setSubiendo("");
   };
 
   const mover = (i, paso) => {
-    const lista = [...datos];
+    const lista = [...fotos];
     const j = i + paso;
     if (j < 0 || j >= lista.length) return;
     [lista[i], lista[j]] = [lista[j], lista[i]];
@@ -52,101 +73,112 @@ function Galeria() {
 
   return (
     <>
-      <h1 className="adm-titulo">Galería</h1>
+      <div className="adm-cabecera">
+        <h1 className="adm-titulo">Fotos</h1>
+        <label className="btn btn--rosa" aria-busy={Boolean(subiendo)}>
+          <Icono nombre="mas" width={18} height={18} /> {subiendo || "Subir"}
+          <input
+            type="file"
+            accept="image/*"
+            multiple
+            onChange={subir}
+            disabled={Boolean(subiendo) || ocupado}
+            hidden
+          />
+        </label>
+      </div>
       <p className="adm-ayuda">
-        Trabajos que aparecen en la página “Galería”. Las primeras 3 se muestran
-        también en “Tortas personalizadas”. Escribí una descripción corta de
-        cada foto: la leen Google y las personas con lectores de pantalla.
+        Es la galería de la página: fotos grandes y completas, ideal para tortas
+        personalizadas. Elegí cuáles se ven con el ojito y cambiá el orden con
+        las flechas. Las primeras 3 visibles salen también en “Tortas
+        personalizadas”.
       </p>
       {aviso && (
         <p className="adm-error" role="alert">
           {aviso}
         </p>
       )}
-      <label className="btn adm-subir adm-acciones">
-        {subiendo || "+ Agregar fotos"}
-        <input
-          type="file"
-          accept="image/*"
-          multiple
-          hidden
-          onChange={subir}
-          disabled={Boolean(subiendo)}
-        />
-      </label>
+      {ok && (
+        <p className="adm-ok" role="status">
+          {ok}
+        </p>
+      )}
       <Estado
         cargando={cargando}
         error={error}
         onReintentar={recargar}
         vacio={
           datos &&
-          !datos.length &&
-          "Todavía no hay fotos. Mientras tanto la página muestra las de ejemplo."
+          !fotos.length &&
+          "Todavía no hay fotos. Tocá “Subir” para agregar las primeras."
         }
       >
-        <ul className="adm-lista">
-          {datos?.map((g, i) => (
-            <li key={g.id} className="adm-fila adm-fila--galeria">
-              <img src={g.url} alt="" className="adm-mini adm-mini--cuadrada" />
-              <div className="adm-fila__info">
-                <input
-                  className="adm-inline"
-                  aria-label="Descripción de la foto"
-                  defaultValue={g.alt_text}
-                  maxLength={200}
-                  onBlur={(e) =>
-                    e.target.value.trim() !== g.alt_text &&
-                    accion(() =>
-                      cambiarFotoGaleria(g.id, {
-                        alt_text: e.target.value.trim(),
-                      }),
+        <p className="adm-estado">
+          {visibles} de {fotos.length} a la vista en la página
+        </p>
+        <ul className="adm-feed">
+          {fotos.map((g, i) => (
+            <li key={g.id} className={g.is_published ? "" : "adm-feed__oculta"}>
+              <img src={g.url} alt={g.alt_text} loading="lazy" />
+              {!g.is_published && (
+                <span className="adm-etiqueta adm-feed__etiqueta">Oculta</span>
+              )}
+              <div className="adm-feed__botones">
+                <button
+                  type="button"
+                  className="adm-icono-btn"
+                  aria-label={
+                    g.is_published
+                      ? `Ocultar foto ${i + 1}`
+                      : `Mostrar foto ${i + 1}`
+                  }
+                  aria-pressed={!g.is_published}
+                  disabled={ocupado}
+                  onClick={() =>
+                    accion(
+                      () =>
+                        cambiarFotoGaleria(g.id, {
+                          is_published: !g.is_published,
+                        }),
+                      g.is_published
+                        ? "Foto oculta ✓ (sigue guardada acá)"
+                        : "Foto visible ✓",
                     )
                   }
-                />
-                <div className="adm-fila__botones">
-                  <button
-                    type="button"
-                    className="adm-x"
-                    aria-label="Subir"
-                    disabled={i === 0}
-                    onClick={() => mover(i, -1)}
-                  >
-                    ↑
-                  </button>
-                  <button
-                    type="button"
-                    className="adm-x"
-                    aria-label="Bajar"
-                    disabled={i === datos.length - 1}
-                    onClick={() => mover(i, 1)}
-                  >
-                    ↓
-                  </button>
-                  <label className="adm-switch">
-                    <input
-                      type="checkbox"
-                      checked={g.is_published}
-                      onChange={() =>
-                        accion(() =>
-                          cambiarFotoGaleria(g.id, {
-                            is_published: !g.is_published,
-                          }),
-                        )
-                      }
-                    />
-                    <span>{g.is_published ? "Visible" : "Oculta"}</span>
-                  </label>
-                  <button
-                    type="button"
-                    className="adm-link adm-peligro-texto"
-                    onClick={() =>
-                      window.confirm("¿Borrar esta foto?") &&
-                      accion(() => borrarFotoGaleria(g))
-                    }
-                  >
-                    Borrar
-                  </button>
-                </div>
+                >
+                  <Icono nombre={g.is_published ? "ojo" : "ojoTachado"} />
+                </button>
+                <button
+                  type="button"
+                  className="adm-icono-btn"
+                  aria-label={`Mover foto ${i + 1} antes`}
+                  disabled={i === 0 || ocupado}
+                  onClick={() => mover(i, -1)}
+                >
+                  <Icono nombre="izq" />
+                </button>
+                <button
+                  type="button"
+                  className="adm-icono-btn"
+                  aria-label={`Mover foto ${i + 1} después`}
+                  disabled={i === fotos.length - 1 || ocupado}
+                  onClick={() => mover(i, 1)}
+                >
+                  <Icono nombre="der" />
+                </button>
+                <button
+                  type="button"
+                  className="adm-icono-btn adm-icono-btn--peligro"
+                  aria-label={`Borrar foto ${i + 1}`}
+                  disabled={ocupado}
+                  onClick={() =>
+                    window.confirm(
+                      "¿Borrar esta foto de la galería? Si la usa un producto, ahí sigue.",
+                    ) && accion(() => borrarFotoGaleria(g), "Foto borrada ✓")
+                  }
+                >
+                  <Icono nombre="cerrar" />
+                </button>
               </div>
             </li>
           ))}

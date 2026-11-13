@@ -57,7 +57,7 @@ function Acceso() {
   return (
     <main className="adm-auth">
       <div className="adm-auth__caja">
-        <p className="adm-auth__marca">Amoma · Panel</p>
+        <img className="adm-auth__logo" src="/logo.png" alt="Amoma" />
         {fase === "verificando" && <p>Verificando el link…</p>}
         {fase === "error" && (
           <>

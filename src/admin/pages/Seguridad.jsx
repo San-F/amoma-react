@@ -65,7 +65,7 @@ function Seguridad() {
   return (
     <main className="adm-auth">
       <form className="adm-auth__caja" onSubmit={verificar}>
-        <p className="adm-auth__marca">Amoma · Panel</p>
+        <img className="adm-auth__logo" src="/logo.png" alt="Amoma" />
         {estado && !estado.is_member ? (
           <>
             <h1>Sin acceso</h1>

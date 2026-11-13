@@ -1,20 +1,106 @@
+// Productos: tarjetas como en la página, agrupadas por categoría. Tocar una
+// abre su ficha. Las sin foto tienen "+ Foto" (no se ven en la página).
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { agregarImagen, cambiarPublicado, listarProductos } from "../lib/api";
+import {
+  agregarImagen,
+  listarCategorias,
+  listarProductos,
+  renombrarCategoria,
+} from "../lib/api";
 import { validarImagen } from "../lib/images";
-import NombresCategorias from "../NombresCategorias";
 import { useCarga } from "../lib/useCarga";
 import { Estado } from "../Estado";
+import { Icono } from "../Iconos";
 import { formatearPrecio } from "../../lib/money";
 
+const TONOS = ["#f7e6dc", "#fbe3ea", "#e8efdc", "#f3e3cf"];
+const MAX_NOMBRE = 30;
+
+async function cargar() {
+  const [productos, categorias] = await Promise.all([
+    listarProductos(),
+    listarCategorias(),
+  ]);
+  return { productos, categorias };
+}
+
+// Título de una categoría: tocando "Cambiar nombre" se edita ahí mismo.
+// Las 4 categorías son fijas (no se agregan ni se borran; la foto no cambia).
+function TituloCategoria({ categoria, onGuardado, onError }) {
+  const [editando, setEditando] = useState(false);
+  const [nombre, setNombre] = useState(categoria.name);
+  const [guardando, setGuardando] = useState(false);
+
+  const guardar = async (e) => {
+    e.preventDefault();
+    const limpio = nombre.trim();
+    if (!limpio) return onError("El nombre no puede quedar vacío.");
+    setGuardando(true);
+    try {
+      if (limpio !== categoria.name)
+        await renombrarCategoria(categoria.id, limpio);
+      setEditando(false);
+      onGuardado();
+    } catch (err) {
+      onError(err.message);
+    } finally {
+      setGuardando(false);
+    }
+  };
+
+  if (!editando)
+    return (
+      <div className="adm-cat">
+        <h2>{categoria.name}</h2>
+        <button
+          type="button"
+          className="adm-link-fuerte"
+          onClick={() => {
+            setNombre(categoria.name);
+            setEditando(true);
+          }}
+        >
+          Cambiar nombre
+        </button>
+      </div>
+    );
+
+  return (
+    <form className="adm-cat adm-cat--editando" onSubmit={guardar}>
+      <input
+        aria-label={`Nombre de la categoría ${categoria.name}`}
+        value={nombre}
+        maxLength={MAX_NOMBRE}
+        autoFocus
+        onChange={(e) => setNombre(e.target.value)}
+      />
+      <button className="btn" disabled={guardando}>
+        {guardando ? "…" : "Guardar"}
+      </button>
+      <button
+        type="button"
+        className="adm-link"
+        onClick={() => setEditando(false)}
+      >
+        Cancelar
+      </button>
+      <small className="adm-ayuda">
+        Se ve en la tarjeta de la portada y en el filtro del catálogo.
+      </small>
+    </form>
+  );
+}
+
 function Productos() {
-  const { cargando, error, datos, recargar } = useCarga(listarProductos);
-  const [buscar, setBuscar] = useState("");
+  const { cargando, error, datos, recargar } = useCarga(cargar);
+  const [filtro, setFiltro] = useState("todas");
   const [aviso, setAviso] = useState("");
   const [subiendo, setSubiendo] = useState(null); // id del producto
 
-  // productos visibles que todavía no tienen foto: no aparecen en la página
-  const sinFoto = (datos ?? []).filter((p) => !p.portada);
+  const productos = datos?.productos ?? [];
+  const categorias = datos?.categorias ?? [];
+  const sinFoto = productos.filter((p) => !p.portada);
 
   // poner la foto tocando el producto (sin nombres de archivo ni planilla)
   const ponerFoto = async (p, e) => {
@@ -35,109 +121,141 @@ function Productos() {
     }
   };
 
-  const lista = (datos ?? []).filter((p) =>
-    p.name.toLowerCase().includes(buscar.trim().toLowerCase()),
+  // grupos en el orden de las categorías; lo que no tiene categoría, al final
+  const grupos = [
+    ...categorias.map((c) => ({
+      categoria: c,
+      productos: productos.filter((p) => p.category_id === c.id),
+    })),
+    {
+      categoria: null,
+      productos: productos.filter(
+        (p) => !categorias.some((c) => c.id === p.category_id),
+      ),
+    },
+  ].filter(
+    (g) =>
+      (filtro === "todas" || g.categoria?.id === filtro) &&
+      (g.categoria || g.productos.length),
   );
-
-  const alternar = async (p) => {
-    setAviso("");
-    try {
-      await cambiarPublicado(p.id, !p.is_published);
-      recargar();
-    } catch (e) {
-      setAviso(e.message);
-    }
-  };
 
   return (
     <>
       <div className="adm-cabecera">
         <h1 className="adm-titulo">Productos</h1>
-        <Link className="btn" to="/admin/productos/nuevo">
-          + Nuevo
+        <Link className="btn btn--rosa" to="/admin/productos/nuevo">
+          <Icono nombre="mas" width={18} height={18} /> Agregar
         </Link>
       </div>
-      <NombresCategorias />
-      <input
-        className="adm-buscar"
-        type="search"
-        placeholder="Buscar…"
-        aria-label="Buscar productos"
-        value={buscar}
-        onChange={(e) => setBuscar(e.target.value)}
-      />
+
       {aviso && (
         <p className="adm-error" role="alert">
           {aviso}
         </p>
       )}
-      {sinFoto.length > 0 && (
-        <p className="adm-aviso">
-          {sinFoto.length === 1
-            ? "Hay 1 producto sin foto"
-            : `Hay ${sinFoto.length} productos sin foto`}
-          : no se ven en la página hasta que les pongas una. Tocá “+ Foto”.
-        </p>
-      )}
+
       <Estado
         cargando={cargando}
         error={error}
         onReintentar={recargar}
         vacio={
           datos &&
-          !lista.length &&
-          (buscar
-            ? "Nada coincide con la búsqueda."
-            : "Todavía no hay productos. Creá uno o cargalos desde Excel.")
+          !productos.length &&
+          "Todavía no hay productos. Tocá “Agregar” o cargalos con la planilla de Excel."
         }
       >
-        <ul className="adm-lista">
-          {lista.map((p) => (
-            <li key={p.id} className="adm-fila">
-              {p.portada ? (
-                <img src={p.portada} alt="" className="adm-mini" />
-              ) : (
-                <label
-                  className="adm-mini adm-mini--vacia adm-mini--subir"
-                  aria-busy={subiendo === p.id}
-                >
-                  {subiendo === p.id ? "…" : "+ Foto"}
-                  <input
-                    type="file"
-                    accept="image/*"
-                    aria-label={`Poner foto a ${p.name}`}
-                    disabled={subiendo !== null}
-                    onChange={(e) => ponerFoto(p, e)}
-                    hidden
-                  />
-                </label>
-              )}
-              <div className="adm-fila__info">
-                <Link
-                  to={`/admin/productos/${p.id}`}
-                  className="adm-fila__nombre"
-                >
-                  {p.name}
-                </Link>
-                <span>
-                  {p.category?.name ?? "Sin categoría"}
-                  {p.desde != null
-                    ? ` · desde ${formatearPrecio(p.desde)}`
-                    : " · sin precio"}
-                  {!p.portada && " · sin foto"}
-                </span>
-              </div>
-              <label className="adm-switch">
-                <input
-                  type="checkbox"
-                  checked={p.is_published}
-                  onChange={() => alternar(p)}
-                />
-                <span>{p.is_published ? "Visible" : "Oculto"}</span>
-              </label>
-            </li>
+        <div className="adm-chips" role="group" aria-label="Ver categoría">
+          {[{ id: "todas", name: "Todos" }, ...categorias].map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              className="adm-chip"
+              aria-pressed={filtro === c.id}
+              onClick={() => setFiltro(c.id)}
+            >
+              {c.name}
+            </button>
           ))}
-        </ul>
+        </div>
+
+        {sinFoto.length > 0 && (
+          <p className="adm-aviso">
+            {sinFoto.length === 1
+              ? "Hay 1 producto sin foto"
+              : `Hay ${sinFoto.length} productos sin foto`}
+            : no se ven en la página hasta que les pongas una. Tocá “+ Foto”.
+          </p>
+        )}
+
+        {grupos.map((g) => (
+          <section key={g.categoria?.id ?? "sin"} className="adm-grupo">
+            {g.categoria ? (
+              <TituloCategoria
+                categoria={g.categoria}
+                onGuardado={recargar}
+                onError={setAviso}
+              />
+            ) : (
+              <div className="adm-cat">
+                <h2>Sin categoría</h2>
+              </div>
+            )}
+            {!g.productos.length ? (
+              <p className="adm-ayuda">Todavía no hay productos acá.</p>
+            ) : (
+              <ul className="adm-grilla">
+                {g.productos.map((p, i) => (
+                  <li
+                    key={p.id}
+                    className={`adm-prod ${p.is_published ? "" : "adm-prod--oculto"}`}
+                    style={{ "--tono": TONOS[i % TONOS.length] }}
+                  >
+                    <Link
+                      to={`/admin/productos/${p.id}`}
+                      className="adm-prod__link"
+                    >
+                      <span className="adm-prod__circulo">
+                        {p.portada ? <img src={p.portada} alt="" /> : null}
+                      </span>
+                      <span className="adm-prod__nombre">{p.name}</span>
+                      <span className="adm-prod__precio">
+                        {p.desde != null
+                          ? `desde ${formatearPrecio(p.desde)}`
+                          : "Sin precio"}
+                      </span>
+                    </Link>
+                    {!p.is_published && (
+                      <span className="adm-etiqueta adm-prod__etiqueta">
+                        Oculto
+                      </span>
+                    )}
+                    {!p.portada && (
+                      <label
+                        className="adm-prod__foto"
+                        aria-busy={subiendo === p.id}
+                      >
+                        {subiendo === p.id ? "Subiendo…" : "+ Foto"}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          aria-label={`Poner foto a ${p.name}`}
+                          disabled={subiendo !== null}
+                          onChange={(e) => ponerFoto(p, e)}
+                          hidden
+                        />
+                      </label>
+                    )}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        ))}
+
+        <p className="adm-excel">
+          ¿Muchos cambios juntos?{" "}
+          <Link to="/admin/importar">Usar la planilla de Excel</Link>
+        </p>
       </Estado>
     </>
   );
