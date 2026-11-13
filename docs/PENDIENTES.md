@@ -58,6 +58,11 @@ probado contra la base real. Ver su `PROGRESO.md`.
 Resultado completo y orden de arreglos: [`AUDITORIA-2026-11-13.md`](AUDITORIA-2026-11-13.md)
 (9 importantes, 10 medios). Nada grave de seguridad; lo importante es de funcionamiento.
 
+**Publicado el 13/11:** los arreglos de la auditoría (migración `20261113001000_guardar_e_importar.sql`
+aplicada en la base real con copia previa; página y panel en `main`). Comprobado desde afuera: 8 productos,
+10 fotos, base cerrada. **Falta la prueba de Francisco en el panel real** (cambiar un precio, "+ Foto",
+ocultar, Excel). **Próximo:** panel v2 desde las maquetas (ingreso → Inicio/Productos → Publicar → Fotos).
+
 **Maquetas del panel v2** (`docs/maquetas/panel-v2/`): aprobadas por Francisco el 13/11 con dos cambios:
 (1) en el **ingreso, sin la foto de la torta** (dejar logo + "Hola de nuevo"); (2) en **Publicar**, cuidar
 la proporción del logo (en una miniatura salió estirado). Mantener los dos modelos (Vitrina y Portada) y,
