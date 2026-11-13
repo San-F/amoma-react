@@ -10,44 +10,78 @@ export const COLUMNAS = [
   "tamaño",
   "porciones",
   "precio",
-  "foto",
   "publicado",
+  "codigo",
 ];
 
-// Planilla modelo. Separador ";" y BOM: así Excel en español la abre bien.
-export function plantillaCSV() {
-  const filas = [
-    COLUMNAS,
-    [
-      "Lemon pie",
-      "Tartas y postres",
-      "Masa sablé, crema de limón y merengue",
-      "Chica",
-      "8",
-      "18000",
-      "lemon-pie.jpg",
-      "sí",
-    ],
-    ["Lemon pie", "", "", "Grande", "16", "32000", "", ""],
-    [
-      "Torta de frutos rojos",
-      "Tortas",
-      "Chocolate, dulce de leche y frutillas",
-      "Mediana",
-      "15",
-      "35000",
-      "frutos-rojos.jpg",
-      "sí",
-    ],
-  ];
+const EJEMPLO = [
+  [
+    "Lemon pie",
+    "Tartas y postres",
+    "Masa sablé, crema de limón y merengue",
+    "Chica",
+    "8",
+    "18000",
+    "sí",
+    "",
+  ],
+  ["Lemon pie", "", "", "Grande", "16", "32000", "", ""],
+  [
+    "Torta de frutos rojos",
+    "Tortas",
+    "Chocolate, dulce de leche y frutillas",
+    "Mediana",
+    "15",
+    "35000",
+    "sí",
+    "",
+  ],
+];
+
+// Separador ";" y BOM: así Excel en español la abre bien.
+function aCSV(filas) {
   const csv = filas
     .map((f) =>
       f
+        .map((c) => String(c ?? ""))
+        // una celda que empieza con = + - @ se guarda como texto: Excel no
+        // la ejecuta como fórmula
+        .map((c) => (/^[=+\-@\t\r]/.test(c) ? `'${c}` : c))
         .map((c) => (/[;"\n]/.test(c) ? `"${c.replace(/"/g, '""')}"` : c))
         .join(";"),
     )
     .join("\r\n");
-  return "﻿" + csv;
+  return "\uFEFF" + csv;
+}
+
+// Planilla modelo (ejemplos), para cuando todavía no hay nada cargado.
+export function plantillaCSV() {
+  return aCSV([COLUMNAS, ...EJEMPLO]);
+}
+
+// Planilla con TODO lo que hay cargado: una fila por tamaño. La dueña cambia
+// precios o agrega filas y la vuelve a subir. "codigo" une cada fila con su
+// producto (así se puede cambiar el nombre sin crear un duplicado).
+export function catalogoCSV(productos) {
+  const filas = [COLUMNAS];
+  for (const p of productos) {
+    const vs = p.variants.length
+      ? p.variants
+      : [{ label: "", servings: "", price_cents: null }];
+    vs.forEach((v, i) =>
+      filas.push([
+        p.name,
+        i === 0 ? (p.category?.name ?? "") : "",
+        i === 0 ? (p.short_description ?? "") : "",
+        v.label,
+        v.servings ?? "",
+        v.price_cents == null ? "" : String(v.price_cents / 100),
+        i === 0 ? (p.is_published ? "sí" : "no") : "",
+        p.slug,
+      ]),
+    );
+  }
+  return aCSV(filas);
 }
 
 // CSV simple con comillas; detecta ";" o "," mirando la primera línea.
@@ -111,6 +145,7 @@ const ALIAS = {
   imagen: "foto",
   publicado: "publicado",
   visible: "publicado",
+  codigo: "codigo",
 };
 
 const SI = new Set([
@@ -138,6 +173,8 @@ function aBooleano(valor) {
 }
 
 const texto = (v) => (v == null ? "" : String(v).trim());
+// saca el apóstrofo que protege de fórmulas al exportar
+const sinGuarda = (t) => t.replace(/^'(?=[=+\-@])/, "");
 
 // nombre de archivo sin carpeta ni extensión, para unir con las fotos subidas
 export const claveFoto = (nombre) =>
@@ -178,7 +215,11 @@ export function interpretarPlanilla(filas, categorias) {
   filas.slice(1).forEach((fila, i) => {
     const n = i + 2; // número de fila como lo ve la persona en Excel
     const r = {};
-    encabezados.forEach((col, j) => col && (r[col] = fila[j]));
+    encabezados.forEach((col, j) => {
+      if (!col) return;
+      const v = fila[j];
+      r[col] = typeof v === "string" ? sinGuarda(v.trim()) : v;
+    });
     if (Object.values(r).every((v) => texto(v) === "")) return; // fila vacía
 
     const nombre = texto(r.nombre);
@@ -189,7 +230,14 @@ export function interpretarPlanilla(filas, categorias) {
     if (nombre.length > 120)
       errores.push(`Fila ${n}: el nombre es muy largo (máx. 120).`);
 
-    const slug = slugify(nombre);
+    // con "codigo" (planilla descargada) la fila se une a su producto aunque
+    // le hayan cambiado el nombre; sin código, se une por nombre
+    const codigo = slugify(texto(r.codigo));
+    const slug = codigo || slugify(nombre);
+    if (!slug) {
+      errores.push(`Fila ${n}: el nombre "${nombre}" no sirve (usá letras).`);
+      return;
+    }
     let p = productos.get(slug);
     if (!p) {
       p = {
@@ -197,7 +245,8 @@ export function interpretarPlanilla(filas, categorias) {
         name: nombre,
         category_slug: null,
         short_description: "",
-        is_published: true,
+        // null = "no dice": lo que ya existe queda como estaba
+        is_published: null,
         foto: "",
         variants: [],
         fila: n,

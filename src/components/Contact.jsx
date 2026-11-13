@@ -116,6 +116,15 @@ function Contact() {
                 Recibimos tu consulta. Te escribimos por {form.preferencia} muy
                 pronto.
               </p>
+              <p>¿Apuro? Mandanos lo mismo por WhatsApp y lo vemos antes.</p>
+              <a
+                className="btn btn--rosa"
+                href={wa(mensaje)}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <Icon name="whatsapp" /> Enviar por WhatsApp
+              </a>
               <button
                 type="button"
                 className="btn btn--borde"

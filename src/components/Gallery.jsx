@@ -80,6 +80,11 @@ function Gallery() {
           </p>
         </Reveal>
 
+        {!total && (
+          <p className="lead" role="status">
+            Pronto vas a ver acá nuestros trabajos.
+          </p>
+        )}
         <ul className="galeria__grid">
           {galeria.map((f, i) => (
             <Reveal as="li" key={f.src || f.alt} delay={(i % 3) * 80}>

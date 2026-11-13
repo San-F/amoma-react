@@ -1,6 +1,8 @@
 // Datos del sitio público: arranca con el contenido fijo (data/catalog.js) y,
 // si Supabase está configurado, lo reemplaza por lo que cargó la dueña.
-// Si la base falla o está vacía, la página sigue mostrando el contenido fijo.
+// El contenido fijo es solo un respaldo para cuando la base NO RESPONDE.
+// Si la base responde, manda ella aunque esté vacía: si la dueña oculta o
+// borra todo, la página no vuelve a mostrar productos ni precios de muestra.
 import { useSyncExternalStore } from "react";
 import {
   galeria as galeriaBase,
@@ -53,10 +55,14 @@ async function iniciar() {
         .select(
           "slug, name, badge, short_description, description, sort_order, category:categories(slug), variants:product_variants(label, servings, price_cents, is_available, sort_order), images:product_images(storage_path, alt_text, width, height, is_cover, sort_order, focus_x, focus_y, zoom)",
         )
+        // filtro explícito: la dueña, con su sesión abierta, puede leer lo
+        // oculto; en la página tiene que ver lo mismo que ve un cliente
+        .eq("is_published", true)
         .order("sort_order"),
       supabase
         .from("gallery_items")
         .select("storage_path, alt_text, width, height, sort_order")
+        .eq("is_published", true)
         .order("sort_order"),
     ]);
 
@@ -110,11 +116,11 @@ async function iniciar() {
         };
       })
       .filter((p) => p.foto); // sin foto no se muestra en la grilla
-    if (conFoto.length) {
+    if (!productos.error) {
       cambios.productos = conFoto;
       cambios.desdeBase = true;
     }
-    if (galeria.data?.length) {
+    if (!galeria.error) {
       cambios.galeria = galeria.data.map((g) => ({
         src: urlPublica(g.storage_path),
         alt: g.alt_text || "Torta de Amoma",

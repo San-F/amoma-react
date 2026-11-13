@@ -50,12 +50,28 @@ function Ajustes() {
     e.preventDefault();
     setError("");
     setOk("");
-    if (datos.whatsapp && !/^\d{8,15}$/.test(datos.whatsapp))
+    // se acepta pegado de cualquier forma: "@amoma", la dirección completa…
+    const whatsapp = (datos.whatsapp ?? "").replace(/\D/g, "");
+    const instagram = (datos.instagram ?? "")
+      .trim()
+      .replace(/^https?:\/\/(www\.)?instagram\.com\//i, "")
+      .replace(/^@/, "")
+      .replace(/[/?#].*$/, "");
+    const email = (datos.email ?? "").trim();
+    if (whatsapp && !/^\d{8,15}$/.test(whatsapp))
       return setError("El WhatsApp va solo con números (8 a 15).");
+    if (instagram && !/^[a-zA-Z0-9._]{1,30}$/.test(instagram))
+      return setError(
+        "Revisá el Instagram: va solo el usuario (ej. amoma.cakeshop).",
+      );
+    if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email))
+      return setError("Revisá el email: parece tener un error.");
     setGuardando(true);
     try {
+      const corregido = { ...datos, whatsapp, instagram, email };
+      setDatos(corregido);
       const limpio = Object.fromEntries(
-        Object.entries(datos).map(([k, v]) => [
+        Object.entries(corregido).map(([k, v]) => [
           k,
           typeof v === "string" ? v.trim() || null : v,
         ]),

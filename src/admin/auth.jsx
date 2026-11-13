@@ -12,7 +12,9 @@ import { supabase } from "../lib/supabase";
 
 const AuthContext = createContext(null);
 
-const INACTIVIDAD_MS = 30 * 60 * 1000; // cierre de sesión tras 30 min sin uso
+// La sesión queda abierta en el dispositivo hasta tocar "Salir" (decisión del
+// 12/11/2026): contraseña + código se piden una vez por dispositivo. Por eso
+// el celular o la compu tienen que tener bloqueo de pantalla.
 
 export function AuthProvider({ children }) {
   const [session, setSession] = useState(undefined); // undefined = cargando
@@ -41,25 +43,6 @@ export function AuthProvider({ children }) {
     if (session) refrescarEstado();
     else setEstado(null);
   }, [session, refrescarEstado]);
-
-  // cierre automático por inactividad
-  useEffect(() => {
-    if (!session) return;
-    let timer;
-    const reiniciar = () => {
-      clearTimeout(timer);
-      timer = setTimeout(() => supabase.auth.signOut(), INACTIVIDAD_MS);
-    };
-    const eventos = ["pointerdown", "keydown", "scroll"];
-    eventos.forEach((e) =>
-      window.addEventListener(e, reiniciar, { passive: true }),
-    );
-    reiniciar();
-    return () => {
-      clearTimeout(timer);
-      eventos.forEach((e) => window.removeEventListener(e, reiniciar));
-    };
-  }, [session]);
 
   const salir = () => supabase.auth.signOut();
 

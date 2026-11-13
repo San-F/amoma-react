@@ -133,14 +133,16 @@ function ProductoEditar() {
     }
     if (form.is_published && !listas.length)
       return setError("Para publicarlo, cargá al menos un precio.");
+    if (nuevo && !slugify(r.data.name))
+      return setError("El nombre tiene que tener letras o números.");
 
     setGuardando(true);
     try {
       const productoId = await guardarProducto(
         {
-          ...(nuevo ? {} : { id }),
+          // el identificador (slug) se fija al crear y no cambia al renombrar
+          ...(nuevo ? { slug: slugify(r.data.name) } : { id }),
           name: r.data.name,
-          slug: slugify(r.data.name),
           category_id: form.category_id || null,
           short_description: r.data.short_description || null,
           description: r.data.description || null,
@@ -403,6 +405,12 @@ function ProductoEditar() {
       {!nuevo && (
         <section className="adm-bloque">
           <h2>Fotos</h2>
+          {!imagenes.length && (
+            <p className="adm-aviso">
+              Todavía no tiene foto: hasta que le pongas una, no aparece en la
+              página.
+            </p>
+          )}
           <p className="adm-ayuda">
             Se achican solas antes de subir. La marcada con ★ es la portada.
             Tocá una foto para acomodarla dentro del círculo.

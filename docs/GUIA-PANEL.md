@@ -60,27 +60,26 @@ nuevas** llegaron por el formulario de la página.
 
 <img src="guia/05-editar-producto.jpg" width="300" alt="Editar producto">
 
-## 5. Cargar todo desde Excel (lo más rápido)
+## 5. Cambiar muchos precios juntos con Excel
 
-1. Tocá **"Descargar planilla modelo"** y abrila con Excel.
-2. Completá **una fila por tamaño**. Si una torta tiene 2 tamaños, van 2 filas con el mismo nombre.
-
-   | nombre    | categoria        | descripcion           | tamaño | porciones | precio | foto          | publicado |
-   | --------- | ---------------- | --------------------- | ------ | --------- | ------ | ------------- | --------- |
-   | Lemon pie | Tartas y postres | Masa sablé y merengue | Chica  | 8         | 18000  | lemon-pie.jpg | sí        |
-   | Lemon pie |                  |                       | Grande | 16        | 32000  |               |           |
-
+1. Tocá **"Descargar mi catálogo"**: baja una planilla con **todo lo que tenés cargado**, una fila por
+   tamaño.
+2. Abrila con Excel y cambiá lo que necesites:
+   - **Precios**: escribí el número nuevo.
+   - **Producto nuevo**: agregá una fila al final (si tiene 2 tamaños, 2 filas con el mismo nombre).
+     La columna "codigo" dejala vacía.
+   - La columna **"codigo" no se toca** en las filas que ya vinieron: es lo que une cada fila con su
+     producto (así podés cambiarle el nombre sin que se duplique).
+   - Lo que borres de la planilla **no** se borra de la página.
 3. Guardala y subila en **"Elegir planilla"**.
-4. En **"Elegir fotos"** elegí todas las fotos juntas. Cada foto tiene que llamarse **igual** que lo que
-   escribiste en la columna "foto".
-5. Revisá la **vista previa**. Si hay algo mal, te dice en qué fila (ej. _"Fila 4: el precio no es
+4. Revisá la **vista previa**. Si hay algo mal, te dice en qué fila (ej. _"Fila 4: el precio no es
    válido"_). Corregilo en el Excel y volvé a subirlo.
-6. Tocá **"Importar"**. Si algo falla, **no se guarda nada** (no queda a medias).
+5. Tocá **"Importar"**. Si algo falla, **no se guarda nada** (no queda a medias).
+
+**Las fotos no van en la planilla.** A los productos nuevos se las ponés después: en **Productos**,
+tocá el círculo **"+ Foto"** de cada uno. Hasta que no tenga foto, un producto no aparece en la página.
 
 <img src="guia/06-excel.jpg" width="300" alt="Cargar desde Excel">
-
-**Para actualizar precios** (por ejemplo, por inflación): cambiá los precios en el mismo Excel y
-volvé a subirlo. Las tortas que ya existen se actualizan, no se duplican.
 
 ## 6. Galería
 
@@ -117,3 +116,10 @@ responder, y después **"Marcar respondida"** para no perderle el rastro.
   entregar. Las capturas y PDFs se falsifican fácil.
 - Para tortas grandes o personalizadas, pedí **seña**.
 - Si cambiás de celular, avisá antes para pasar el doble factor al nuevo.
+
+## Si perdés o cambiás el celular
+
+El código de 6 números vive en la app de tu celular. Si lo perdés o cambiás de teléfono, **no podés
+entrar** hasta que Francisco te lo reinicie (en Supabase → Authentication → Users → tu usuario →
+borrar el factor de doble factor). Después entrás con tu contraseña y escaneás un código QR nuevo.
+Si cambiás de celular y todavía tenés el viejo, avisá **antes** de deshacerte de él.

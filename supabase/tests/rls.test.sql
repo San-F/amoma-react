@@ -259,6 +259,69 @@ select tests.expect_error('import: precio negativo cancela todo',
 select tests.expect_count('import: lo que falló no dejó nada a medias', $q$ select count(*) from public.products where slug in ('x-1','x-2') $q$, 0);
 rollback;
 
+-- importación: no pisa lo que la dueña no tocó
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated","aal":"aal2"}', true);
+select public.admin_import_catalog('{"products":[
+  {"slug":"borrador","name":"Borrador","variants":[{"label":"Única","price_cents":1000000}]},
+  {"slug":"recien-llegada","name":"Recién llegada","variants":[{"label":"Única","price_cents":1000000}]}
+]}'::jsonb);
+select tests.expect_count('import: sin "publicado", lo oculto sigue oculto',
+  $q$ select count(*) from public.products where slug = 'borrador' and not is_published $q$, 1);
+select tests.expect_count('import: sin categoría, el existente conserva la suya',
+  $q$ select count(*) from public.products where slug = 'borrador' and category_id is not null $q$, 1);
+select tests.expect_count('import: el existente no cambia de lugar',
+  $q$ select count(*) from public.products a, public.products b
+      where a.slug = 'borrador' and b.slug = 'recien-llegada' and b.sort_order > a.sort_order $q$, 1);
+select tests.expect_count('import: uno nuevo sin "publicado" nace visible y va al final',
+  $q$ select count(*) from public.products where slug = 'recien-llegada' and is_published
+      and sort_order = (select max(sort_order) from public.products) $q$, 1);
+rollback;
+
+-- ---------------------------------------------------------------------
+-- GUARDAR PRODUCTO (todo o nada)
+-- ---------------------------------------------------------------------
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated","aal":"aal2"}', true);
+select public.admin_save_product('{"slug":"torta-nueva","name":"Torta nueva","is_published":true,
+  "variants":[{"label":"Chica","servings":10,"price_cents":2800000},{"label":"Grande","price_cents":5600000}]}'::jsonb);
+select tests.expect_count('guardar: crea el producto con sus 2 precios',
+  $q$ select count(*) from public.product_variants v join public.products p on p.id = v.product_id where p.slug = 'torta-nueva' $q$, 2);
+select public.admin_save_product(jsonb_build_object('id', (select id from public.products where slug = 'torta-nueva'),
+  'slug', 'otro-slug', 'name', 'Torta renombrada', 'is_published', true,
+  'variants', '[{"label":"Única","price_cents":3000000}]'::jsonb));
+select tests.expect_count('guardar: renombrar no cambia el identificador y reemplaza precios',
+  $q$ select count(*) from public.products p where p.slug = 'torta-nueva' and p.name = 'Torta renombrada'
+      and (select count(*) from public.product_variants v where v.product_id = p.id) = 1 $q$, 1);
+select tests.expect_error('guardar: un precio inválido cancela todo',
+  $q$ select public.admin_save_product(jsonb_build_object('id', (select id from public.products where slug = 'torta-nueva'),
+      'name', 'Rota', 'is_published', true, 'variants', '[{"label":"a","price_cents":-5}]'::jsonb)) $q$, '23514');
+select tests.expect_count('guardar: lo que falló no cambió nombre ni precios',
+  $q$ select count(*) from public.products p where p.slug = 'torta-nueva' and p.name = 'Torta renombrada'
+      and (select count(*) from public.product_variants v where v.product_id = p.id) = 1 $q$, 1);
+select tests.expect_error('guardar: no se publica sin precios',
+  $q$ select public.admin_save_product('{"slug":"sin-precio","name":"Sin precio","is_published":true,"variants":[]}'::jsonb) $q$, '22023');
+-- mostrar desde la lista algo sin precio: la base lo frena
+select public.admin_save_product('{"slug":"sin-precio","name":"Sin precio","is_published":false,"variants":[]}'::jsonb);
+set constraints all immediate;
+select tests.expect_error('la lista no deja mostrar un producto sin precio',
+  $q$ update public.products set is_published = true where slug = 'sin-precio' $q$, '22023');
+rollback;
+
+begin;
+set local role authenticated;
+select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated","aal":"aal1"}', true);
+select tests.expect_error('admin sin MFA no guarda productos',
+  $q$ select public.admin_save_product('{"slug":"x","name":"X","variants":[]}'::jsonb) $q$);
+rollback;
+begin;
+set local role anon;
+select tests.expect_error('anon no guarda productos',
+  $q$ select public.admin_save_product('{"slug":"x","name":"X","variants":[]}'::jsonb) $q$);
+rollback;
+
 begin;
 set local role authenticated;
 select set_config('request.jwt.claims', '{"sub":"00000000-0000-0000-0000-00000000000a","role":"authenticated","aal":"aal1"}', true);

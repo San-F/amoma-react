@@ -63,3 +63,22 @@ modo lectura. La auditoría anterior (código, OWASP) está en [`AUDITORIA.md`](
 1. A1, A2, A3, A5, M1, M3 (datos correctos siempre) → 2. A4 (Excel con lo publicado) →
 2. M6 + ingreso nuevo → 4. A8 (backups) → 5. A6, A7, A9 con el servicio de mail →
 3. M7, M9 y el resto junto con el panel nuevo.
+
+## Estado al 13/11/2026 (después de los arreglos)
+
+Hecho en la rama, con pruebas (base: `supabase/tests/rls.test.sql`; navegador: `tests/e2e/panel-duena.e2e.cjs`,
+"un día de la dueña" en celular y compu):
+
+- ✅ A1 respaldo solo si la base no responde · ✅ A2 aviso y botón "+ Foto" en la lista
+- ✅ A3 Excel no vuelve a mostrar lo oculto ni reordena · ✅ A4 "Descargar mi catálogo"
+- ✅ A5 guardar producto todo o nada (`admin_save_product`) · ✅ M1 "Guardado" solo si se guardó
+- ✅ M2 el identificador no cambia al renombrar (columna "codigo" en la planilla)
+- ✅ M3 no se muestra un producto sin precio (lo frena la base) · ✅ M4 Instagram y mail validados
+- ✅ M6 sesión: una vez por dispositivo, hasta tocar "Salir"
+- ✅ Nuevo (encontrado al probar): la dueña, con su sesión abierta, veía en la página los productos ocultos
+- 🟡 A7 paliativo: después de enviar la consulta se ofrece mandarla también por WhatsApp
+- 🟡 A9 procedimiento escrito en `GUIA-PANEL.md` (sin códigos de respaldo todavía)
+- 🔲 A6 (recuperar contraseña) y aviso por mail de A7: necesitan el servicio de mail
+- 🔲 A8 backups: falta que Francisco cargue las variables en GitHub
+- 🔲 M5, M7, M8, M9, M10 y menores: junto con el panel nuevo
+- Fotos: la planilla ya no lleva fotos; se ponen tocando cada producto (idea de Francisco).

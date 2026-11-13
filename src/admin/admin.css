@@ -383,6 +383,25 @@
   background: var(--crema-2);
 }
 
+/* producto sin foto: el círculo es el botón para ponerla */
+.adm-mini--subir {
+  display: grid;
+  place-items: center;
+  border: 2px dashed var(--rosa-oscuro);
+  background: var(--rosa-claro);
+  color: var(--rosa-oscuro);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1;
+  text-align: center;
+  cursor: pointer;
+}
+
+.adm-mini--subir:focus-within {
+  outline: 3px solid var(--cacao);
+  outline-offset: 2px;
+}
+
 .adm-switch {
   display: inline-flex;
   align-items: center;

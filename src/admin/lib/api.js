@@ -10,6 +10,18 @@ function fallar(error, texto) {
   throw new Error(texto);
 }
 
+// Para cambios (update/delete): si la base no cambió ninguna fila, no avisa
+// con un error (así funcionan los permisos por fila). Lo detectamos acá para
+// no decir "Guardado" cuando no se guardó nada. Usar con .select("id").
+function confirmar({ data, error }, texto) {
+  if (error) fallar(error, texto);
+  if (!data?.length)
+    fallar(
+      new Error("0 filas"),
+      `${texto} Si sigue pasando, salí y volvé a entrar.`,
+    );
+}
+
 export async function listarCategorias() {
   const { data, error } = await supabase
     .from("categories")
@@ -21,23 +33,27 @@ export async function listarCategorias() {
 
 // Las 4 categorías son fijas: solo se cambia el texto (la base no deja más).
 export async function renombrarCategoria(id, { name, description }) {
-  const { error } = await supabase
-    .from("categories")
-    .update({ name, description })
-    .eq("id", id);
-  if (error) fallar(error, "No se pudo guardar la categoría.");
+  confirmar(
+    await supabase
+      .from("categories")
+      .update({ name, description })
+      .eq("id", id)
+      .select("id"),
+    "No se pudo guardar la categoría.",
+  );
 }
 
 export async function listarProductos() {
   const { data, error } = await supabase
     .from("products")
     .select(
-      "id, slug, name, is_published, is_featured, sort_order, category:categories(name), variants:product_variants(price_cents), images:product_images(storage_path, is_cover)",
+      "id, slug, name, short_description, is_published, is_featured, sort_order, category:categories(name), variants:product_variants(label, servings, price_cents, sort_order), images:product_images(storage_path, is_cover)",
     )
     .order("sort_order");
   if (error) fallar(error, "No se pudieron cargar los productos.");
   return data.map((p) => ({
     ...p,
+    variants: [...p.variants].sort((a, b) => a.sort_order - b.sort_order),
     portada: urlPublica(
       (p.images.find((i) => i.is_cover) ?? p.images[0])?.storage_path,
     ),
@@ -62,60 +78,31 @@ export async function obtenerProducto(id) {
   return data;
 }
 
+// Producto + precios en UNA operación de la base (todo o nada).
 export async function guardarProducto(producto, variantes) {
-  const { id, ...campos } = producto;
-  let productoId = id;
-  if (id) {
-    const { error } = await supabase
-      .from("products")
-      .update(campos)
-      .eq("id", id);
-    if (error)
-      fallar(
-        error,
-        error.code === "23505"
-          ? "Ya existe un producto con ese nombre."
-          : "No se pudo guardar el producto.",
-      );
-  } else {
-    const { data, error } = await supabase
-      .from("products")
-      .insert(campos)
-      .select("id")
-      .single();
-    if (error)
-      fallar(
-        error,
-        error.code === "23505"
-          ? "Ya existe un producto con ese nombre."
-          : "No se pudo crear el producto.",
-      );
-    productoId = data.id;
-  }
-  // precios: se reemplazan por los del formulario
-  const del = await supabase
-    .from("product_variants")
-    .delete()
-    .eq("product_id", productoId);
-  if (del.error) fallar(del.error, "No se pudieron actualizar los precios.");
-  if (variantes.length) {
-    const filas = variantes.map((v, i) => ({
-      ...v,
-      product_id: productoId,
-      sort_order: i,
-    }));
-    const ins = await supabase.from("product_variants").insert(filas);
-    if (ins.error) fallar(ins.error, "No se pudieron guardar los precios.");
-  }
-  return productoId;
+  const { data, error } = await supabase.rpc("admin_save_product", {
+    payload: { ...producto, variants: variantes },
+  });
+  if (error)
+    fallar(
+      error,
+      error.code === "23505"
+        ? "Ya existe un producto con ese nombre."
+        : error.code === "22023"
+          ? error.message
+          : "No se pudo guardar el producto. No se cambió nada.",
+    );
+  return data;
 }
 
 export async function cambiarPublicado(id, is_published) {
-  const { error } = await supabase
+  const r = await supabase
     .from("products")
     .update({ is_published })
-    .eq("id", id);
-  if (error) fallar(error, "No se pudo cambiar la visibilidad.");
+    .eq("id", id)
+    .select("id");
+  if (r.error?.code === "22023") fallar(r.error, r.error.message);
+  confirmar(r, "No se pudo cambiar la visibilidad.");
 }
 
 export async function borrarProducto(id) {
@@ -123,8 +110,10 @@ export async function borrarProducto(id) {
     .from("product_images")
     .select("storage_path")
     .eq("product_id", id);
-  const { error } = await supabase.from("products").delete().eq("id", id);
-  if (error) fallar(error, "No se pudo borrar el producto.");
+  confirmar(
+    await supabase.from("products").delete().eq("id", id).select("id"),
+    "No se pudo borrar el producto.",
+  );
   if (imgs?.length)
     await supabase.storage.from(BUCKET).remove(imgs.map((i) => i.storage_path));
 }
@@ -189,19 +178,25 @@ export async function marcarPortada(productoId, imagenId) {
     .from("product_images")
     .update({ is_cover: false })
     .eq("product_id", productoId);
-  const { error } = await supabase
-    .from("product_images")
-    .update({ is_cover: true })
-    .eq("id", imagenId);
-  if (error) fallar(error, "No se pudo marcar la portada.");
+  confirmar(
+    await supabase
+      .from("product_images")
+      .update({ is_cover: true })
+      .eq("id", imagenId)
+      .select("id"),
+    "No se pudo marcar la portada.",
+  );
 }
 
 export async function borrarImagen(imagen) {
-  const { error } = await supabase
-    .from("product_images")
-    .delete()
-    .eq("id", imagen.id);
-  if (error) fallar(error, "No se pudo borrar la foto.");
+  confirmar(
+    await supabase
+      .from("product_images")
+      .delete()
+      .eq("id", imagen.id)
+      .select("id"),
+    "No se pudo borrar la foto.",
+  );
   await supabase.storage.from(BUCKET).remove([imagen.storage_path]);
 }
 
@@ -236,11 +231,14 @@ export async function listarConsultas(estado) {
 }
 
 export async function cambiarEstadoConsulta(id, status) {
-  const { error } = await supabase
-    .from("inquiries")
-    .update({ status })
-    .eq("id", id);
-  if (error) fallar(error, "No se pudo actualizar la consulta.");
+  confirmar(
+    await supabase
+      .from("inquiries")
+      .update({ status })
+      .eq("id", id)
+      .select("id"),
+    "No se pudo actualizar la consulta.",
+  );
 }
 
 export async function obtenerAjustes() {
@@ -255,17 +253,17 @@ export async function obtenerAjustes() {
 
 export async function guardarAjustes(ajustes) {
   const { id: _id, updated_at: _u, ...campos } = ajustes;
-  const { error } = await supabase
+  const r = await supabase
     .from("site_settings")
     .update(campos)
-    .eq("id", 1);
-  if (error)
+    .eq("id", 1)
+    .select("id");
+  if (r.error?.code === "23514")
     fallar(
-      error,
-      error.code === "23514"
-        ? "Revisá los datos: el WhatsApp va solo con números (ej. 5491112345678)."
-        : "No se pudieron guardar los ajustes.",
+      r.error,
+      "Revisá los datos: el WhatsApp va solo con números (ej. 5491112345678).",
     );
+  confirmar(r, "No se pudieron guardar los ajustes.");
 }
 
 export async function resumen() {
@@ -313,11 +311,14 @@ export async function agregarFotoGaleria(file, alt, orden) {
 }
 
 export async function cambiarFotoGaleria(id, campos) {
-  const { error } = await supabase
-    .from("gallery_items")
-    .update(campos)
-    .eq("id", id);
-  if (error) fallar(error, "No se pudo actualizar la foto.");
+  confirmar(
+    await supabase
+      .from("gallery_items")
+      .update(campos)
+      .eq("id", id)
+      .select("id"),
+    "No se pudo actualizar la foto.",
+  );
 }
 
 // guarda el orden según la posición en la lista (solo actualiza lo que cambió)
@@ -326,19 +327,25 @@ export async function reordenarGaleria(lista) {
     .map((g, i) => ({ id: g.id, antes: g.sort_order, ahora: i }))
     .filter((c) => c.antes !== c.ahora);
   for (const c of cambios) {
-    const { error } = await supabase
-      .from("gallery_items")
-      .update({ sort_order: c.ahora })
-      .eq("id", c.id);
-    if (error) fallar(error, "No se pudo cambiar el orden.");
+    confirmar(
+      await supabase
+        .from("gallery_items")
+        .update({ sort_order: c.ahora })
+        .eq("id", c.id)
+        .select("id"),
+      "No se pudo cambiar el orden.",
+    );
   }
 }
 
 export async function borrarFotoGaleria(item) {
-  const { error } = await supabase
-    .from("gallery_items")
-    .delete()
-    .eq("id", item.id);
-  if (error) fallar(error, "No se pudo borrar la foto.");
+  confirmar(
+    await supabase
+      .from("gallery_items")
+      .delete()
+      .eq("id", item.id)
+      .select("id"),
+    "No se pudo borrar la foto.",
+  );
   await supabase.storage.from(BUCKET).remove([item.storage_path]);
 }
