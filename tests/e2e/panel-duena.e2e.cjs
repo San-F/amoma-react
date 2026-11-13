@@ -116,7 +116,15 @@ function atender(db) {
       return L.json(r, L.session.user);
     if (u.pathname === "/rest/v1/rpc/admin_status")
       return L.json(r, [{ is_member: true, has_mfa: true }]);
-    if (u.pathname === "/rest/v1/categories") return L.json(r, db.categorias);
+    if (u.pathname === "/rest/v1/categories") {
+      if (m === "PATCH") {
+        const c = db.categorias.find((x) => x.id === id);
+        Object.assign(c, cuerpo());
+        db.llamadas.push(["categoria", id, cuerpo()]);
+        return L.json(r, [{ id }]);
+      }
+      return L.json(r, db.categorias);
+    }
     if (u.pathname === "/rest/v1/site_settings")
       return L.json(r, { id: 1, whatsapp: "5491136362466" });
     if (u.pathname === "/rest/v1/gallery_items") return L.json(r, []);
@@ -299,6 +307,34 @@ function atender(db) {
       !pagina.includes("frutos rojos"),
       "la página no mezcla productos de muestra con los de la base",
     );
+
+    // 1b. cambiar el nombre de una categoría (no se pueden agregar)
+    await panel.getByText("Nombres de las categorías").click();
+    ok(
+      !(await panel.getByText(/Nueva categoría|Agregar categoría/).count()),
+      "categorías: no hay forma de agregar una nueva",
+    );
+    await panel.getByLabel("Tarjeta 1").fill("Tortas de la casa");
+    await panel.getByRole("button", { name: "Guardar nombres" }).click();
+    await panel.getByText("Guardado ✓ Ya se ve en la página.").waitFor();
+    const renombre = db.llamadas.find((l) => l[0] === "categoria");
+    ok(
+      renombre && Object.keys(renombre[2]).join() === "name",
+      "categorías: se guarda solo el nombre",
+    );
+    pagina = await enLaPagina();
+    ok(
+      pagina.includes("Tortas de la casa"),
+      "el nombre nuevo aparece en el filtro del catálogo",
+    );
+    await cliente.goto(PANEL + "/", { waitUntil: "networkidle" });
+    ok(
+      (await cliente.locator("#categorias").innerText()).includes(
+        "Tortas de la casa",
+      ),
+      "el nombre nuevo aparece en la tarjeta de la portada",
+    );
+    await panel.goto(PANEL + "/admin/productos", { waitUntil: "networkidle" });
 
     // 2. cambiar un precio
     await panel.getByRole("link", { name: "Lemon pie" }).click();

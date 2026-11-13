@@ -31,12 +31,12 @@ export async function listarCategorias() {
   return data;
 }
 
-// Las 4 categorías son fijas: solo se cambia el texto (la base no deja más).
-export async function renombrarCategoria(id, { name, description }) {
+// Las 4 categorías son fijas: solo se cambia el nombre (la base no deja más).
+export async function renombrarCategoria(id, name) {
   confirmar(
     await supabase
       .from("categories")
-      .update({ name, description })
+      .update({ name })
       .eq("id", id)
       .select("id"),
     "No se pudo guardar la categoría.",

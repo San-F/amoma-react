@@ -68,6 +68,11 @@ ocultar, Excel). **Próximo:** panel v2 desde las maquetas (ingreso → Inicio/P
 la proporción del logo (en una miniatura salió estirado). Mantener los dos modelos (Vitrina y Portada) y,
 a lo sumo, **sumar un tercero**; no sacar ninguno.
 
+**Categorías (decisión de Francisco, 13/11, reemplaza lo anterior):** las 4 tarjetas son fijas y sus
+fotos también; la dueña cambia **solo el nombre** (máx. 30 letras) desde Productos → "Nombres de las
+categorías", y se ve en la tarjeta de la portada y en el filtro del catálogo. Migración
+`20261113001100_nombre_categorias.sql`.
+
 **Galería (decisión de Francisco, 13/11):** se queda como está (fotos completas y grandes; ahí van también
 las tortas personalizadas). En el panel nuevo, "Fotos" se maneja como un feed: grilla, tocar una foto para
 **mostrarla u ocultarla**, ordenar y borrar (mostrar/ocultar y ordenar ya existen hoy). En "Publicar", la

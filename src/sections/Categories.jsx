@@ -7,11 +7,15 @@ import Picture from "../components/Picture";
 import Reveal from "../components/Reveal";
 import Icon from "../components/Icon";
 import { categorias } from "../data/catalog";
+import { useSitio } from "../lib/sitio";
 import "../styles/Categories.css";
 
 // Al pasar por una tarjeta (mouse/teclado) o deslizar hasta ella (celular),
 // el fondo de toda la sección toma el tono de esa foto.
 function Categories() {
+  // el nombre lo elige la dueña en el panel; la foto y el diseño son fijos
+  const { nombresCategorias } = useSitio();
+  const nombre = (c) => nombresCategorias[c.id] ?? c.nombre;
   const [activa, setActiva] = useState(null);
   // celular: la tarjeta que quedó al frente del carrusel (arranca la primera)
   const [centrada, setCentrada] = useState(0);
@@ -183,7 +187,7 @@ function Categories() {
                 <Picture foto={c.foto} sizes="(min-width: 64rem) 18rem, 80vw" />
               </div>
               <div className="categoria__texto">
-                <h3>{c.nombre}</h3>
+                <h3>{nombre(c)}</h3>
                 <p>{c.descripcion}</p>
                 <span className="categoria__ver">
                   Ver <Icon name="arrow" />
@@ -208,7 +212,7 @@ function Categories() {
           <div className="portal__foto">
             <Picture foto={portal.c.foto} sizes="100vw" loading="eager" />
           </div>
-          <p className="portal__titulo">{portal.c.nombre}</p>
+          <p className="portal__titulo">{nombre(portal.c)}</p>
         </div>
       )}
     </section>

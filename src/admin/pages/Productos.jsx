@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { agregarImagen, cambiarPublicado, listarProductos } from "../lib/api";
 import { validarImagen } from "../lib/images";
+import NombresCategorias from "../NombresCategorias";
 import { useCarga } from "../lib/useCarga";
 import { Estado } from "../Estado";
 import { formatearPrecio } from "../../lib/money";
@@ -56,6 +57,7 @@ function Productos() {
           + Nuevo
         </Link>
       </div>
+      <NombresCategorias />
       <input
         className="adm-buscar"
         type="search"

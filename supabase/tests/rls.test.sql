@@ -181,6 +181,9 @@ select tests.expect_error('admin no borra categorías', $q$ delete from public.c
 select tests.expect_error('admin no oculta categorías', $q$ update public.categories set is_published = false $q$);
 select tests.expect_error('admin no cambia el slug de una categoría', $q$ update public.categories set slug = 'otra' $q$);
 select tests.expect_rows('admin cambia el nombre de una categoría', $q$ update public.categories set name = 'Tortas clásicas' where slug = 'visible' $q$, 1);
+select tests.expect_error('admin no cambia la descripción de una categoría', $q$ update public.categories set description = 'x' $q$);
+select tests.expect_error('nombre de categoría de más de 30 letras rechazado', $q$ update public.categories set name = repeat('a', 31) where slug = 'visible' $q$, '23514');
+select tests.expect_error('nombre de categoría vacío rechazado', $q$ update public.categories set name = '   ' where slug = 'visible' $q$, '23514');
 select tests.expect_rows('admin cambia precio', $q$ update public.product_variants set price_cents = 3500000 where label = '1 kg' $q$, 3);
 select tests.expect_rows('admin publica borrador', $q$ update public.products set is_published = true where slug = 'borrador' $q$, 1);
 select tests.expect_rows('admin cambia el aviso del negocio', $q$ update public.site_settings set notice = 'Agenda de diciembre completa' $q$, 1);

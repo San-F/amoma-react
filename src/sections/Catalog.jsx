@@ -43,7 +43,9 @@ const masChica = (p) => {
 
 function Catalog() {
   const [params] = useSearchParams();
-  const { negocio, productos: productosSitio } = useSitio();
+  const { negocio, productos: productosSitio, nombresCategorias } = useSitio();
+  // nombre que eligió la dueña para cada categoría ("Todas" queda fijo)
+  const nombreFiltro = (id) => nombresCategorias[id] ?? NOMBRE_FILTRO[id];
   const productos = productosSitio;
   const wa = (mensaje) => linkWhatsApp(mensaje, negocio.whatsapp);
   const pedido = params.get("categoria");
@@ -167,7 +169,7 @@ function Catalog() {
                 aria-pressed={filtro === f.id}
                 onClick={() => elegirFiltro(f.id)}
               >
-                {f.nombre}
+                {nombreFiltro(f.id)}
               </button>
             ))}
           </div>
@@ -179,7 +181,7 @@ function Catalog() {
             <a
               href={wa(
                 "¡Hola Amoma! Quería consultar por: " +
-                  NOMBRE_FILTRO[filtro] +
+                  nombreFiltro(filtro) +
                   ".",
               )}
 
@@ -254,7 +256,7 @@ function Catalog() {
               />
             </div>
             <div className="detalle__info">
-              <p className="eyebrow">{NOMBRE_FILTRO[abierto.categoria]}</p>
+              <p className="eyebrow">{nombreFiltro(abierto.categoria)}</p>
               <h3 id="detalle-titulo">{abierto.nombre}</h3>
               <p className="detalle__desc">{abierto.descripcion}</p>
 

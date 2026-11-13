@@ -21,6 +21,8 @@ let estado = {
   productos: productosBase,
   galeria: galeriaBase,
   tematicas: tematicasBase,
+  // nombres de las 4 categorías que eligió la dueña (slug → nombre)
+  nombresCategorias: {},
   desdeBase: false,
   // false mientras se espera a la base (si hay base configurada)
   listo: !import.meta.env.VITE_SUPABASE_URL,
@@ -48,7 +50,7 @@ async function iniciar() {
   if (!import.meta.env.VITE_SUPABASE_URL) return;
   try {
     const { supabase, urlPublica } = await import("./supabase");
-    const [ajustes, productos, galeria] = await Promise.all([
+    const [ajustes, productos, galeria, categorias] = await Promise.all([
       supabase.from("site_settings").select("*").eq("id", 1).maybeSingle(),
       supabase
         .from("products")
@@ -64,6 +66,7 @@ async function iniciar() {
         .select("storage_path, alt_text, width, height, sort_order")
         .eq("is_published", true)
         .order("sort_order"),
+      supabase.from("categories").select("slug, name"),
     ]);
 
     const cambios = {};
@@ -130,6 +133,10 @@ async function iniciar() {
       if (cambios.galeria.length >= 3)
         cambios.tematicas = cambios.galeria.slice(0, 3);
     }
+    if (categorias.data?.length)
+      cambios.nombresCategorias = Object.fromEntries(
+        categorias.data.map((c) => [c.slug, c.name]),
+      );
     const problema = ajustes.error ?? productos.error ?? galeria.error;
     if (problema) console.warn("Supabase:", problema);
     emitir({ ...cambios, listo: true });

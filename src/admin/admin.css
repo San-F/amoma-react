@@ -686,3 +686,16 @@
   min-height: 2.9rem;
   padding: 0.6rem 1.1rem;
 }
+
+/* nombres de las categorías: plegado para no ocupar lugar */
+.adm-categorias summary {
+  cursor: pointer;
+  font-weight: 700;
+  min-height: 2.75rem;
+  display: flex;
+  align-items: center;
+}
+
+.adm-categorias[open] summary {
+  margin-bottom: 0.5rem;
+}
