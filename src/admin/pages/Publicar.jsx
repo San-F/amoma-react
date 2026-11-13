@@ -7,7 +7,9 @@ import {
   cargarImagen,
   cargarLetras,
   dibujarPublicacion,
+  moverFoto,
   partirNombre,
+  zonaFoto,
 } from "../lib/publicacion";
 import ElegirFoto from "../ElegirFoto";
 import { Icono } from "../Iconos";
@@ -17,7 +19,9 @@ import { slugify } from "../../lib/slug";
 const MODELOS = [
   { id: "vitrina", nombre: "Vitrina" },
   { id: "portada", nombre: "Portada" },
+  { id: "poster", nombre: "Póster" },
 ];
+const CENTRO = { x: 50, y: 50, zoom: 1 };
 
 // Botones de a dos (como un interruptor con texto)
 function Opciones({ titulo, valor, opciones, onCambio }) {
@@ -58,6 +62,11 @@ function Publicar() {
     precio: "",
     desde: true,
   });
+  // cómo se acomoda la foto en ESTA publicación (no cambia la del producto)
+  const [ajuste, setAjuste] = useState(CENTRO);
+  const [circulo, setCirculo] = useState(1);
+  const [acomodando, setAcomodando] = useState(false);
+  const arrastre = useRef(null);
   const [aGaleria, setAGaleria] = useState(false);
   const [eligiendo, setEligiendo] = useState(false);
   const [error, setError] = useState("");
@@ -112,7 +121,8 @@ function Publicar() {
     formato,
     foto,
     logo,
-    encuadre: fuente?.encuadre ?? undefined,
+    encuadre: ajuste,
+    circulo,
     textos,
   };
 
@@ -125,7 +135,34 @@ function Publicar() {
       if (c) dibujarPublicacion(c, { ...opciones, modelo: m.id });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [listo, modelo, color, formato, foto, logo, textos, fuente]);
+  }, [listo, modelo, color, formato, foto, logo, textos, ajuste, circulo]);
+
+  // cada foto nueva arranca con el encuadre que tiene en el producto
+  useEffect(() => {
+    setAjuste(fuente?.encuadre ?? CENTRO);
+  }, [fuente]);
+
+  // ---------- mover la foto arrastrando sobre la vista previa ----------
+  const empezarArrastre = (e) => {
+    if (!acomodando || !foto) return;
+    e.preventDefault();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    arrastre.current = { x: e.clientX, y: e.clientY };
+  };
+  const arrastrarFoto = (e) => {
+    if (!arrastre.current) return;
+    const c = canvasRef.current;
+    const factor = c.width / c.clientWidth; // pantalla → lienzo
+    const dx = (e.clientX - arrastre.current.x) * factor;
+    const dy = (e.clientY - arrastre.current.y) * factor;
+    arrastre.current = { x: e.clientX, y: e.clientY };
+    setAjuste((a) =>
+      moverFoto(a, dx, dy, foto, zonaFoto({ modelo, formato, circulo })),
+    );
+  };
+  const soltarFoto = () => {
+    arrastre.current = null;
+  };
 
   function elegirProducto(p) {
     setError("");
@@ -266,18 +303,95 @@ function Publicar() {
           </ul>
 
           <div
-            className={`adm-pub__lienzo adm-pub__lienzo--${formato}`}
+            className={`adm-pub__lienzo adm-pub__lienzo--${formato} ${acomodando ? "adm-pub__lienzo--acomodando" : ""}`}
             aria-busy={!fotoLista}
           >
             <canvas
               ref={canvasRef}
               role="img"
               aria-label={`Vista previa: ${textos.linea1} ${textos.linea2}`}
+              onPointerDown={empezarArrastre}
+              onPointerMove={arrastrarFoto}
+              onPointerUp={soltarFoto}
+              onPointerCancel={soltarFoto}
             />
             {!fotoLista && fuente && (
               <span className="adm-pub__cargando">Cargando la foto…</span>
             )}
+            {acomodando && fotoLista && (
+              <span className="adm-pub__pista" aria-hidden="true">
+                <Icono nombre="mover" width={18} height={18} /> Arrastrá la foto
+              </span>
+            )}
           </div>
+
+          {acomodando ? (
+            <div className="adm-pub__acomodar">
+              <label className="adm-rango">
+                <span>Acercar</span>
+                <input
+                  type="range"
+                  min="1"
+                  max="3"
+                  step="0.01"
+                  value={ajuste.zoom}
+                  onChange={(e) =>
+                    setAjuste((a) =>
+                      moverFoto(
+                        { ...a, zoom: Number(e.target.value) },
+                        0,
+                        0,
+                        foto,
+                        zonaFoto({ modelo, formato, circulo }),
+                      ),
+                    )
+                  }
+                />
+              </label>
+              {modelo === "vitrina" && (
+                <label className="adm-rango">
+                  <span>Tamaño del círculo</span>
+                  <input
+                    type="range"
+                    min="0.8"
+                    max="1.2"
+                    step="0.01"
+                    value={circulo}
+                    onChange={(e) => setCirculo(Number(e.target.value))}
+                  />
+                </label>
+              )}
+              <div className="adm-pub__acomodar-botones">
+                <button
+                  type="button"
+                  className="btn btn--borde"
+                  onClick={() => {
+                    setAjuste(CENTRO);
+                    setCirculo(1);
+                  }}
+                >
+                  Centrar
+                </button>
+                <button
+                  type="button"
+                  className="btn"
+                  onClick={() => setAcomodando(false)}
+                >
+                  Listo
+                </button>
+              </div>
+            </div>
+          ) : (
+            <button
+              type="button"
+              className="adm-pildora adm-pub__mover"
+              disabled={!fotoLista}
+              onClick={() => setAcomodando(true)}
+            >
+              <Icono nombre="mover" width={16} height={16} /> Mover y agrandar
+              la foto
+            </button>
+          )}
         </div>
 
         <div className="adm-pub__opciones">

@@ -58,6 +58,25 @@ const TRAZOS = {
       <path d="M9.9 9.9a3 3 0 0 0 4.2 4.2" />
     </>
   ),
+  lapiz: (
+    <>
+      <path d="M12 20h9" />
+      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" />
+    </>
+  ),
+  arrastrar: (
+    <>
+      <circle cx="9" cy="6" r="1" fill="currentColor" />
+      <circle cx="15" cy="6" r="1" fill="currentColor" />
+      <circle cx="9" cy="12" r="1" fill="currentColor" />
+      <circle cx="15" cy="12" r="1" fill="currentColor" />
+      <circle cx="9" cy="18" r="1" fill="currentColor" />
+      <circle cx="15" cy="18" r="1" fill="currentColor" />
+    </>
+  ),
+  mover: (
+    <path d="M5 9l-3 3 3 3M9 5l3-3 3 3M15 19l-3 3-3-3M19 9l3 3-3 3M2 12h20M12 2v20" />
+  ),
   izq: <path d="M15 18l-6-6 6-6" />,
   der: <path d="M9 18l6-6-6-6" />,
   cerrar: <path d="M18 6L6 18M6 6l12 12" />,

@@ -198,12 +198,6 @@
   gap: 1rem;
 }
 
-.adm-auth__marca {
-  font-family: var(--font-display);
-  font-style: italic;
-  color: var(--rosa-oscuro);
-}
-
 .adm-auth h1 {
   font-size: 2.3rem;
 }
@@ -253,12 +247,6 @@
 
 .adm-bloque h2 {
   font-size: 1.3rem;
-}
-
-.adm-bloque--fila {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1.5rem;
 }
 
 .adm-form {
@@ -350,233 +338,6 @@
   cursor: pointer;
 }
 
-.adm-peligro {
-  color: #a32020;
-  border-color: #e7b4b4;
-}
-
-.adm-peligro:hover {
-  background: #a32020;
-  border-color: #a32020;
-  color: var(--blanco);
-}
-
-/* ---------- resumen ---------- */
-
-.adm-tarjetas {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
-  gap: 1rem;
-}
-
-.adm-tarjeta {
-  padding: 1.25rem;
-  border-radius: var(--radio);
-  background: var(--blanco);
-  text-decoration: none;
-  box-shadow: 0 1px 2px rgb(59 36 32 / 6%);
-}
-
-.adm-tarjeta strong {
-  display: block;
-  font-family: var(--font-display);
-  font-size: 2.4rem;
-  line-height: 1;
-}
-
-/* ---------- listas ---------- */
-
-.adm-buscar,
-.adm-inline {
-  width: 100%;
-  min-height: 2.9rem;
-  padding: 0.6rem 1rem;
-  border: 1.5px solid rgb(59 36 32 / 14%);
-  border-radius: var(--radio);
-  background: var(--blanco);
-  margin-bottom: 1rem;
-}
-
-.adm-inline {
-  margin: 0;
-}
-
-.adm-lista {
-  display: grid;
-  gap: 0.6rem;
-  list-style: none;
-}
-
-.adm-fila {
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  padding: 0.75rem;
-  border-radius: var(--radio);
-  background: var(--blanco);
-}
-
-.adm-fila__info {
-  flex: 1;
-  display: grid;
-  gap: 0.15rem;
-  min-width: 0;
-}
-
-.adm-fila__info span {
-  font-size: 0.85rem;
-  color: var(--cacao-suave);
-}
-
-.adm-fila__nombre {
-  font-weight: 700;
-  text-decoration: none;
-}
-
-.adm-mini {
-  width: 3.5rem;
-  height: 3.5rem;
-  flex-shrink: 0;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.adm-mini--vacia {
-  display: block;
-  background: var(--crema-2);
-}
-
-/* producto sin foto: el círculo es el botón para ponerla */
-.adm-mini--subir {
-  display: grid;
-  place-items: center;
-  border: 2px dashed var(--rosa-oscuro);
-  background: var(--rosa-claro);
-  color: var(--rosa-oscuro);
-  font-size: 0.72rem;
-  font-weight: 800;
-  line-height: 1;
-  text-align: center;
-  cursor: pointer;
-}
-
-.adm-mini--subir:focus-within {
-  outline: 3px solid var(--cacao);
-  outline-offset: 2px;
-}
-
-.adm-switch {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 600;
-  font-size: 0.9rem;
-  cursor: pointer;
-}
-
-.adm-switch input {
-  width: 1.25rem;
-  height: 1.25rem;
-  accent-color: var(--cacao);
-}
-
-/* ---------- precios ---------- */
-
-.adm-variantes {
-  display: grid;
-  grid-template-columns: 1.4fr 0.8fr 1fr auto;
-  gap: 0.5rem;
-  align-items: center;
-  font-size: 0.85rem;
-  font-weight: 700;
-}
-
-.adm-variante {
-  display: contents;
-}
-
-.adm-variante input {
-  width: 100%;
-  min-height: 2.75rem;
-  padding: 0.5rem 0.7rem;
-  border: 1.5px solid rgb(59 36 32 / 14%);
-  border-radius: 0.6rem;
-  font-weight: 500;
-}
-
-.adm-x,
-.adm-estrella {
-  width: 2.5rem;
-  height: 2.5rem;
-  border: 0;
-  border-radius: 50%;
-  background: var(--crema-2);
-  font-size: 1.2rem;
-  cursor: pointer;
-}
-
-.adm-estrella {
-  color: rgb(59 36 32 / 30%);
-}
-
-.adm-estrella.is-on {
-  background: var(--cacao);
-  color: #f5c84c;
-}
-
-/* ---------- fotos ---------- */
-
-.adm-fotos {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(8rem, 1fr));
-  gap: 0.75rem;
-  list-style: none;
-}
-
-.adm-fotos li {
-  position: relative;
-}
-
-/* miniaturas redondas, con el mismo encuadre que en la página */
-.adm-fotos__ver {
-  position: relative;
-  display: block;
-  width: 100%;
-  aspect-ratio: 1;
-  padding: 0;
-  border: 0;
-  border-radius: 50%;
-  overflow: hidden;
-  background: var(--crema-2);
-  cursor: pointer;
-}
-
-.adm-fotos img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.adm-fotos__acomodar {
-  position: absolute;
-  left: 50%;
-  bottom: 0.6rem;
-  padding: 0.15rem 0.6rem;
-  border-radius: 999px;
-  background: rgb(255 255 255 / 90%);
-  color: var(--cacao);
-  font-size: 0.75rem;
-  font-weight: 700;
-  transform: translateX(-50%);
-}
-
-.adm-fotos li > div {
-  position: absolute;
-  inset: 0.4rem 0.4rem auto;
-  display: flex;
-  justify-content: space-between;
-}
-
 /* ---------- importar ---------- */
 
 .adm-tabla-scroll {
@@ -611,35 +372,6 @@
 .adm-consulta__datos {
   font-size: 0.9rem;
   color: var(--cacao-suave);
-}
-
-/* ---------- galería ---------- */
-
-.adm-fila--galeria {
-  align-items: flex-start;
-}
-
-.adm-mini--cuadrada {
-  width: 5rem;
-  height: 5rem;
-  border-radius: 0.75rem;
-}
-
-.adm-fila__botones {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.5rem;
-  margin-top: 0.5rem;
-}
-
-.adm-fila__botones .adm-x:disabled {
-  opacity: 0.3;
-  cursor: default;
-}
-
-.adm-peligro-texto {
-  color: #a32020;
 }
 
 /* ---------- acomodar foto (encuadre) ---------- */
@@ -748,19 +480,6 @@
 .adm-encuadre__acciones .btn {
   min-height: 2.9rem;
   padding: 0.6rem 1.1rem;
-}
-
-/* nombres de las categorías: plegado para no ocupar lugar */
-.adm-categorias summary {
-  cursor: pointer;
-  font-weight: 700;
-  min-height: 2.75rem;
-  display: flex;
-  align-items: center;
-}
-
-.adm-categorias[open] summary {
-  margin-bottom: 0.5rem;
 }
 
 /* =====================================================================
@@ -1058,21 +777,103 @@
   box-shadow: none;
 }
 
+/* cada categoría es un bloque con el color de su tarjeta en la portada */
 .adm-grupo {
-  margin-bottom: 1.5rem;
+  margin-bottom: 1.25rem;
+  border-radius: var(--radio-grande);
+  overflow: hidden;
+  background: var(--blanco);
+  box-shadow: var(--sombra);
+}
+
+.adm-grupo__cabecera {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 0.9rem 0.75rem 0.75rem;
+  background: var(--cat-fondo);
+  color: var(--cat-texto);
+}
+
+.adm-grupo__foto {
+  flex-shrink: 0;
+  width: 2.9rem;
+  height: 2.9rem;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 2px solid rgb(255 255 255 / 70%);
+}
+
+.adm-grupo__foto picture,
+.adm-grupo__foto img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.adm-grupo__cabecera .adm-cat {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+}
+
+.adm-grupo__cuerpo {
+  padding: 0.9rem;
+}
+
+.adm-cat__lapiz {
+  display: grid;
+  place-items: center;
+  width: 2.6rem;
+  height: 2.6rem;
+  flex-shrink: 0;
+  border: 0;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 22%);
+  color: inherit;
+  cursor: pointer;
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 45%);
+}
+
+.adm-cat__lapiz:hover {
+  background: rgb(255 255 255 / 38%);
+}
+
+.adm-cat__lapiz:focus-visible {
+  outline: 3px solid currentColor;
+  outline-offset: 2px;
+}
+
+.adm-cat__cancelar {
+  padding: 0.4rem 0.3rem;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 700;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.adm-cat--editando small {
+  opacity: 0.85;
+  font-size: 0.8rem;
 }
 
 .adm-cat {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 0.5rem 1rem;
   margin: 1rem 0 0.75rem;
 }
 
 .adm-cat h2 {
-  font-size: 1.55rem;
+  overflow: hidden;
+  font-size: 1.45rem;
+  text-overflow: ellipsis;
 }
 
 .adm-cat--editando {
@@ -1118,7 +919,7 @@
 .adm-prod {
   position: relative;
   border-radius: var(--radio-grande);
-  background: var(--tono, #f7e6dc);
+  background: var(--cat-claro, #f7e6dc);
   transition: transform 0.25s var(--ease);
 }
 
@@ -1772,4 +1573,235 @@
   .adm-pub__acciones {
     grid-template-columns: 1fr auto;
   }
+}
+
+/* ---------- Fotos: ordenar y avisos flotantes ---------- */
+
+.adm-feed__barra {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.adm-feed__barra .adm-estado {
+  margin: 0;
+}
+
+.adm-feed__barra .adm-pildora {
+  gap: 0.35rem;
+}
+
+.adm-ordenar {
+  display: grid;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  padding: 1rem;
+  border-radius: var(--radio);
+  background: var(--rosa-claro);
+}
+
+.adm-ordenar svg {
+  vertical-align: -3px;
+}
+
+.adm-ordenar__botones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+.adm-feed li {
+  transition:
+    transform 0.25s var(--ease),
+    box-shadow 0.25s var(--ease);
+}
+
+.adm-feed--ordenando li {
+  outline: 2px dashed rgb(59 36 32 / 25%);
+  outline-offset: -2px;
+}
+
+.adm-feed__arrastrada {
+  z-index: 2;
+  transform: scale(1.05);
+  box-shadow: 0 18px 36px -12px rgb(59 36 32 / 55%);
+}
+
+.adm-feed__orden {
+  position: absolute;
+  inset: 0.45rem;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  pointer-events: none;
+}
+
+.adm-feed__orden > * {
+  pointer-events: auto;
+}
+
+.adm-feed__numero {
+  display: grid;
+  place-items: center;
+  min-width: 2rem;
+  height: 2rem;
+  border-radius: 99px;
+  background: var(--cacao);
+  color: var(--crema);
+  font-weight: 800;
+  font-size: 0.85rem;
+}
+
+.adm-feed__manija {
+  touch-action: none;
+  cursor: grab;
+}
+
+.adm-feed__manija:active {
+  cursor: grabbing;
+}
+
+/* aviso chico que aparece abajo y se va solo */
+.adm-toast {
+  position: fixed;
+  left: 50%;
+  bottom: 6.6rem;
+  z-index: 40;
+  transform: translateX(-50%);
+  padding: 0.6rem 1.1rem;
+  border-radius: 99px;
+  background: var(--cacao);
+  color: var(--crema);
+  font-weight: 700;
+  font-size: 0.9rem;
+  white-space: nowrap;
+  box-shadow: 0 12px 28px -12px rgb(30 18 16 / 60%);
+  animation: adm-toast 0.25s var(--ease);
+}
+
+@media (min-width: 56rem) {
+  .adm-toast {
+    bottom: 1.5rem;
+  }
+}
+
+@keyframes adm-toast {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 0.5rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .adm-feed li,
+  .adm-toast {
+    transition: none;
+    animation: none;
+  }
+}
+
+/* ---------- Publicar: panel de opciones, tira de fotos y acomodar ---------- */
+
+/* las opciones en una tarjeta propia, por encima del resto */
+.adm-pub__opciones {
+  padding: 1.1rem;
+  border-radius: var(--radio-grande);
+  background: var(--blanco);
+  box-shadow: var(--sombra);
+}
+
+/* celular: la tira se desliza y un degradé avisa que hay más */
+.adm-pub__fotos {
+  mask-image: linear-gradient(90deg, #000 85%, transparent);
+}
+
+@media (min-width: 64rem) {
+  /* compu: todas las tortas a la vista, en filas, sin cortes */
+  .adm-pub__fotos {
+    flex-wrap: wrap;
+    margin: 0 0 0.9rem;
+    padding: 0.2rem 0 0.4rem;
+    overflow: visible;
+    mask-image: none;
+  }
+}
+
+.adm-modelos {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.adm-pub__mover {
+  justify-self: center;
+  gap: 0.4rem;
+  margin: 0.9rem auto 0;
+  display: flex;
+}
+
+.adm-pub__lienzo--acomodando canvas {
+  touch-action: none;
+  cursor: grab;
+}
+
+.adm-pub__lienzo--acomodando {
+  outline: 3px solid var(--rosa-boton);
+  outline-offset: 3px;
+}
+
+.adm-pub__pista {
+  position: absolute;
+  top: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.4rem 0.8rem;
+  border-radius: 99px;
+  background: rgb(30 18 16 / 70%);
+  color: var(--crema);
+  font-size: 0.8rem;
+  font-weight: 700;
+  pointer-events: none;
+}
+
+.adm-pub__acomodar {
+  display: grid;
+  gap: 0.6rem;
+  margin-top: 0.9rem;
+  padding: 1rem;
+  border-radius: var(--radio);
+  background: var(--blanco);
+  box-shadow: var(--sombra);
+}
+
+.adm-rango {
+  display: grid;
+  gap: 0.25rem;
+  font-weight: 700;
+  font-size: 0.88rem;
+}
+
+.adm-rango input {
+  width: 100%;
+  min-height: 2.75rem;
+  accent-color: var(--rosa-boton);
+}
+
+.adm-pub__acomodar-botones {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+}
+
+/* en modo ordenar, "Oculta" baja para no pisar el número */
+.adm-feed--ordenando .adm-feed__etiqueta {
+  top: auto;
+  bottom: 0.5rem;
+}
+
+.adm-ordenar__botones .btn {
+  padding-inline: 0.75rem;
+  white-space: nowrap;
 }

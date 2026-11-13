@@ -24,12 +24,12 @@ nada de la página. Es la misma protección que usan los bancos.
 
 ## 2. Entrar
 
-Email + contraseña, y después los 6 números de la app (cambian cada 30 segundos).
-Si te olvidaste la contraseña, tocá **"Olvidé mi contraseña"** y te llega un mail.
+Email + contraseña, y después los 6 números de la app (cambian cada 30 segundos). Esto se pide **una
+sola vez por dispositivo**: después el panel queda abierto en ese celular o compu hasta que toques
+**Salir** (en el engranaje). Por eso el celular tiene que tener bloqueo (huella, cara o PIN).
+Si te olvidaste la contraseña, avisale a quien administra la página (todavía no se recupera por mail).
 
 <img src="guia/01-ingresar.jpg" width="300" alt="Pantalla para ingresar">
-
-Por seguridad, si dejás el panel abierto **30 minutos sin usar**, se cierra solo.
 
 ## 3. Inicio
 
@@ -39,6 +39,8 @@ Fotos y Publicar**. El engranaje de arriba a la derecha es para los datos del ne
 En **Inicio** ves cuántos productos están a la vista, dos accesos grandes (**Cambiar precios** y
 **Crear publicación**) y las **consultas nuevas**, con un botón verde para responder por WhatsApp.
 
+<img src="guia/03-inicio.jpg" width="300" alt="Inicio del panel">
+
 ## 4. Productos
 
 - Las tortas aparecen como en la página, agrupadas por categoría. **Tocá una para editarla.**
@@ -46,6 +48,8 @@ En **Inicio** ves cuántos productos están a la vista, dos accesos grandes (**C
   letras). Las 4 categorías son fijas: no se agregan ni se borran.
 - **"+ Agregar"** crea un producto nuevo: primero nombre y precios, después la foto.
 - Un producto **sin foto** muestra el círculo **"+ Foto"**: hasta que tenga foto no aparece en la página.
+
+<img src="guia/04-productos.jpg" width="300" alt="Productos agrupados por categoría">
 
 ### Editar un producto
 
@@ -56,6 +60,8 @@ En **Inicio** ves cuántos productos están a la vista, dos accesos grandes (**C
 - **Tamaños y precios**: uno por renglón. "+ Agregar tamaño" para sumar otro.
 - **Mostrar en la página**: apagado, los clientes no lo ven (queda guardado en el panel).
 - **Guardar cambios** guarda todo junto. Si algo falla, no se cambia nada.
+
+<img src="guia/05-editar-producto.jpg" width="300" alt="Editar un producto">
 
 ## 5. Cambiar muchos precios juntos con Excel
 
@@ -81,29 +87,38 @@ tocá el círculo **"+ Foto"** de cada uno. Hasta que no tenga foto, un producto
 ## 6. Fotos (la galería de la página)
 
 - **"+ Subir"** para agregar varias fotos juntas.
-- El **ojito** muestra u oculta cada foto (la oculta queda en gris y sigue guardada).
-- Las **flechas** cambian el orden. Las primeras 3 visibles salen también en "Tortas personalizadas".
+- El **ojito** muestra u oculta cada foto al instante (la oculta queda en gris y sigue guardada).
+- **"Ordenar"**: arrastrá cada foto desde su manija (los puntitos) y tocá **"Guardar orden"**. Las
+  primeras 3 visibles salen también en "Tortas personalizadas".
 - La **✕** la borra de la galería (si la usa un producto, ahí sigue).
+
+<img src="guia/07-fotos.jpg" width="300" alt="Fotos de la galería">
 
 ## 6b. Publicar (imágenes para Instagram)
 
 1. Elegí la torta (trae foto, nombre y precio) o **"Otra foto"** (una cargada o del celular).
-2. Elegí **modelo** (Vitrina o Portada), **color** (crema o chocolate) y **formato** (cuadrado para el
-   feed o historia).
+2. Elegí **modelo** (Vitrina, Portada o Póster), **color** (crema o chocolate) y **formato** (cuadrado
+   para el feed o historia). Con **"Mover y agrandar la foto"** la acomodás arrastrándola y con la
+   barrita; en Vitrina también podés cambiar el tamaño del círculo.
 3. Revisá el texto: el segundo renglón va en cursiva rosa; el precio se puede dejar vacío.
 4. **"Descargar imagen"** (o "Compartir" en el celular) y subila a Instagram como siempre.
+
+<img src="guia/10-publicar.jpg" width="300" alt="Crear publicación">
 
 La imagen se arma en tu celular: no se conecta a Instagram ni se guarda en la página. Si marcás "Sumar
 también la foto a la galería", la foto original (sin textos) se agrega a Fotos.
 
 ## 7. Consultas
 
-Lo que la gente manda desde el formulario de **Contacto**. Tocá el WhatsApp o el email para
+Las nuevas aparecen en **Inicio**; todas están en el engranaje → **Consultas**. Es lo que la gente
+manda desde el formulario de **Contacto**. Tocá el WhatsApp o el email para
 responder, y después **"Marcar respondida"** para no perderle el rastro.
 
 <img src="guia/08-consultas.jpg" width="300" alt="Consultas">
 
-## 8. Ajustes
+## 8. Ajustes (el engranaje)
+
+- **Tu cuenta**: ver la página, ir a Consultas y **Salir**.
 
 - **WhatsApp**: el número al que llegan todos los pedidos (con 549 adelante, ej. 5491136362466).
 - **Instagram**, **zona**, **horarios**.

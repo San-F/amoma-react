@@ -557,7 +557,7 @@ function atender(db) {
     ok(true, "si la base rechaza el cambio en silencio, el panel avisa");
     db.rechazarCambios = false;
     await panel.getByRole("button", { name: "Ocultar foto 1" }).click();
-    await panel.getByText("Foto oculta ✓ (sigue guardada acá)").waitFor();
+    await panel.getByText("Oculta ✓ (sigue guardada acá)").waitFor();
     pagina = await (async () => {
       await cliente.goto(PANEL + "/galeria", { waitUntil: "networkidle" });
       return cliente.locator(".galeria__grid img").count();
@@ -565,6 +565,35 @@ function atender(db) {
     ok(
       pagina === 1,
       "Fotos: la oculta deja de verse en la galería de la página",
+    );
+
+    // 7a. ordenar: se arrastra y recién "Guardar orden" guarda
+    const ordenAntes = db.galeria.map((g) => g.id).join();
+    await panel.getByRole("button", { name: "Ordenar" }).click();
+    const manija = panel.getByRole("button", { name: "Arrastrar foto 2" });
+    const destino = panel.locator(".adm-feed li").first();
+    const a = await manija.boundingBox();
+    const d0 = await destino.boundingBox();
+    await panel.mouse.move(a.x + a.width / 2, a.y + a.height / 2);
+    await panel.mouse.down();
+    await panel.mouse.move(d0.x + d0.width / 2, d0.y + d0.height / 2, {
+      steps: 8,
+    });
+    await panel.mouse.up();
+    ok(
+      db.galeria.map((g) => g.id).join() === ordenAntes &&
+        (
+          await panel.locator(".adm-feed li img").first().getAttribute("src")
+        ).includes("g2"),
+      "Ordenar: arrastrar cambia el orden en pantalla sin guardar todavía",
+    );
+    await captura(panel, "fotos-ordenar");
+    await panel.getByRole("button", { name: "Guardar orden" }).click();
+    await panel.getByText("Orden guardado ✓").waitFor();
+    ok(
+      db.galeria.find((g) => g.id === "g2").sort_order === 0 &&
+        db.galeria.find((g) => g.id === "g1").sort_order === 1,
+      "Ordenar: 'Guardar orden' guarda el orden nuevo",
     );
 
     // 7b. foto de un producto: elegir una ya cargada (sin subir de nuevo)
@@ -580,7 +609,12 @@ function atender(db) {
     ok(
       db.productos
         .find((p) => p.id === "p2")
-        .images.some((i) => i.storage_path === "galeria/g1.webp" && i.is_cover),
+        .images.some(
+          (i) =>
+            i.storage_path ===
+              db.galeria.find((g) => g.sort_order === 0).storage_path &&
+            i.is_cover,
+        ),
       "elegir una foto ya cargada la usa como portada (mismo archivo)",
     );
     // la ventana de acomodar se abre sola: es opcional
@@ -617,6 +651,37 @@ function atender(db) {
     });
     ok(dim === "1080x1920", "Publicar: la historia sale en 1080×1920");
     await captura(panel, "publicar-historia");
+    await panel.getByRole("button", { name: "Póster" }).click();
+    await panel.getByRole("button", { name: "Crema" }).click();
+    const lienzo = panel.locator(".adm-pub__lienzo canvas");
+    const antesMover = await lienzo.evaluate((c) => c.toDataURL().length);
+    await panel.getByRole("button", { name: /Mover y agrandar/ }).click();
+    await panel.getByRole("slider", { name: "Acercar" }).fill("1.8");
+    const caja = await lienzo.boundingBox();
+    await panel.mouse.move(caja.x + caja.width / 2, caja.y + caja.height / 3);
+    await panel.mouse.down();
+    await panel.mouse.move(
+      caja.x + caja.width / 2 + 60,
+      caja.y + caja.height / 3 + 40,
+      { steps: 6 },
+    );
+    await panel.mouse.up();
+    ok(
+      (await lienzo.evaluate((c) => c.toDataURL().length)) !== antesMover,
+      "Publicar: la foto se puede agrandar y mover sobre la vista previa",
+    );
+    await captura(panel, "publicar-poster");
+    await panel.getByRole("button", { name: "Listo" }).click();
+    await panel.getByRole("button", { name: "Vitrina" }).click();
+    await panel.getByRole("button", { name: /Mover y agrandar/ }).click();
+    ok(
+      await panel
+        .getByRole("slider", { name: "Tamaño del círculo" })
+        .isVisible(),
+      "Publicar: en Vitrina se puede cambiar el tamaño del círculo",
+    );
+    await panel.getByRole("button", { name: "Listo" }).click();
+
     // el logo se dibuja redondo y sin deformar (mismo ancho y alto)
     ok(
       await panel.evaluate(() => {

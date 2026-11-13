@@ -98,16 +98,6 @@ export async function guardarProducto(producto, variantes) {
   return data;
 }
 
-export async function cambiarPublicado(id, is_published) {
-  const r = await supabase
-    .from("products")
-    .update({ is_published })
-    .eq("id", id)
-    .select("id");
-  if (r.error?.code === "22023") fallar(r.error, r.error.message);
-  confirmar(r, "No se pudo cambiar la visibilidad.");
-}
-
 export async function borrarProducto(id) {
   const { data: imgs } = await supabase
     .from("product_images")
@@ -196,33 +186,6 @@ export async function guardarEncuadre(imagenId, encuadre) {
     fallar(new Error("0 filas"), "No se pudo guardar el encuadre.");
 }
 
-export async function marcarPortada(productoId, imagenId) {
-  await supabase
-    .from("product_images")
-    .update({ is_cover: false })
-    .eq("product_id", productoId);
-  confirmar(
-    await supabase
-      .from("product_images")
-      .update({ is_cover: true })
-      .eq("id", imagenId)
-      .select("id"),
-    "No se pudo marcar la portada.",
-  );
-}
-
-export async function borrarImagen(imagen) {
-  confirmar(
-    await supabase
-      .from("product_images")
-      .delete()
-      .eq("id", imagen.id)
-      .select("id"),
-    "No se pudo borrar la foto.",
-  );
-  await borrarSiNoSeUsa([imagen.storage_path]);
-}
-
 export async function importarCatalogo(productos) {
   const { data, error } = await supabase.rpc("admin_import_catalog", {
     payload: { products: productos },
@@ -235,10 +198,6 @@ export async function importarCatalogo(productos) {
         : "No se pudo importar. No se guardó nada.",
     );
   return data;
-}
-
-export async function borrarArchivos(paths) {
-  if (paths.length) await supabase.storage.from(BUCKET).remove(paths);
 }
 
 export async function listarConsultas(estado) {
@@ -289,22 +248,6 @@ export async function guardarAjustes(ajustes) {
   confirmar(r, "No se pudieron guardar los ajustes.");
 }
 
-export async function resumen() {
-  const [p, c] = await Promise.all([
-    supabase.from("products").select("is_published"),
-    supabase
-      .from("inquiries")
-      .select("id", { count: "exact", head: true })
-      .eq("status", "new"),
-  ]);
-  if (p.error) fallar(p.error, "No se pudo cargar el resumen.");
-  return {
-    publicados: p.data.filter((x) => x.is_published).length,
-    ocultos: p.data.filter((x) => !x.is_published).length,
-    consultasNuevas: c.count ?? 0,
-  };
-}
-
 // ---------- galería ----------
 
 export async function listarGaleria() {
@@ -349,16 +292,16 @@ export async function reordenarGaleria(lista) {
   const cambios = lista
     .map((g, i) => ({ id: g.id, antes: g.sort_order, ahora: i }))
     .filter((c) => c.antes !== c.ahora);
-  for (const c of cambios) {
-    confirmar(
-      await supabase
+  const resultados = await Promise.all(
+    cambios.map((c) =>
+      supabase
         .from("gallery_items")
         .update({ sort_order: c.ahora })
         .eq("id", c.id)
         .select("id"),
-      "No se pudo cambiar el orden.",
-    );
-  }
+    ),
+  );
+  for (const r of resultados) confirmar(r, "No se pudo cambiar el orden.");
 }
 
 export async function borrarFotoGaleria(item) {

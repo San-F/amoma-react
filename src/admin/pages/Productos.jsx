@@ -13,8 +13,29 @@ import { useCarga } from "../lib/useCarga";
 import { Estado } from "../Estado";
 import { Icono } from "../Iconos";
 import { formatearPrecio } from "../../lib/money";
+import Picture from "../../components/Picture";
+import { categorias as tarjetasFijas } from "../../data/catalog";
 
-const TONOS = ["#f7e6dc", "#fbe3ea", "#e8efdc", "#f3e3cf"];
+// Cada categoría con el color y la foto de su tarjeta en la portada.
+// `claro`: fondo de las tarjetas de productos de esa sección.
+const CLAROS = {
+  tortas: "#f7e6dc",
+  postres: "#fbe3ea",
+  salado: "#f6ecd2",
+  personalizadas: "#efe7e2",
+};
+const SIN_CATEGORIA = {
+  tono: { fondo: "#e9dfd6", texto: "#3b2420" },
+  claro: "#f4eadf",
+};
+const estiloDe = (slug) => {
+  const t = tarjetasFijas.find((c) => c.id === slug);
+  return {
+    tarjeta: t,
+    tono: t?.tono ?? SIN_CATEGORIA.tono,
+    claro: CLAROS[slug] ?? SIN_CATEGORIA.claro,
+  };
+};
 const MAX_NOMBRE = 30;
 
 async function cargar() {
@@ -55,13 +76,15 @@ function TituloCategoria({ categoria, onGuardado, onError }) {
         <h2>{categoria.name}</h2>
         <button
           type="button"
-          className="adm-link-fuerte"
+          className="adm-cat__lapiz"
+          aria-label={`Cambiar nombre de ${categoria.name}`}
+          title="Cambiar nombre"
           onClick={() => {
             setNombre(categoria.name);
             setEditando(true);
           }}
         >
-          Cambiar nombre
+          <Icono nombre="lapiz" width={18} height={18} />
         </button>
       </div>
     );
@@ -80,12 +103,12 @@ function TituloCategoria({ categoria, onGuardado, onError }) {
       </button>
       <button
         type="button"
-        className="adm-link"
+        className="adm-cat__cancelar"
         onClick={() => setEditando(false)}
       >
         Cancelar
       </button>
-      <small className="adm-ayuda">
+      <small>
         Se ve en la tarjeta de la portada y en el filtro del catálogo.
       </small>
     </form>
@@ -187,70 +210,89 @@ function Productos() {
           </p>
         )}
 
-        {grupos.map((g) => (
-          <section key={g.categoria?.id ?? "sin"} className="adm-grupo">
-            {g.categoria ? (
-              <TituloCategoria
-                categoria={g.categoria}
-                onGuardado={recargar}
-                onError={setAviso}
-              />
-            ) : (
-              <div className="adm-cat">
-                <h2>Sin categoría</h2>
-              </div>
-            )}
-            {!g.productos.length ? (
-              <p className="adm-ayuda">Todavía no hay productos acá.</p>
-            ) : (
-              <ul className="adm-grilla">
-                {g.productos.map((p, i) => (
-                  <li
-                    key={p.id}
-                    className={`adm-prod ${p.is_published ? "" : "adm-prod--oculto"}`}
-                    style={{ "--tono": TONOS[i % TONOS.length] }}
-                  >
-                    <Link
-                      to={`/admin/productos/${p.id}`}
-                      className="adm-prod__link"
-                    >
-                      <span className="adm-prod__circulo">
-                        {p.portada ? <img src={p.portada} alt="" /> : null}
-                      </span>
-                      <span className="adm-prod__nombre">{p.name}</span>
-                      <span className="adm-prod__precio">
-                        {p.desde != null
-                          ? `desde ${formatearPrecio(p.desde)}`
-                          : "Sin precio"}
-                      </span>
-                    </Link>
-                    {!p.is_published && (
-                      <span className="adm-etiqueta adm-prod__etiqueta">
-                        Oculto
-                      </span>
-                    )}
-                    {!p.portada && (
-                      <label
-                        className="adm-prod__foto"
-                        aria-busy={subiendo === p.id}
+        {grupos.map((g) => {
+          const { tarjeta, tono, claro } = estiloDe(g.categoria?.slug);
+          return (
+            <section
+              key={g.categoria?.id ?? "sin"}
+              className="adm-grupo"
+              style={{
+                "--cat-fondo": tono.fondo,
+                "--cat-texto": tono.texto,
+                "--cat-claro": claro,
+              }}
+            >
+              <header className="adm-grupo__cabecera">
+                {tarjeta && (
+                  <span className="adm-grupo__foto">
+                    <Picture foto={tarjeta.foto} sizes="3rem" />
+                  </span>
+                )}
+                {g.categoria ? (
+                  <TituloCategoria
+                    categoria={g.categoria}
+                    onGuardado={recargar}
+                    onError={setAviso}
+                  />
+                ) : (
+                  <div className="adm-cat">
+                    <h2>Sin categoría</h2>
+                  </div>
+                )}
+              </header>
+              <div className="adm-grupo__cuerpo">
+                {!g.productos.length ? (
+                  <p className="adm-ayuda">Todavía no hay productos acá.</p>
+                ) : (
+                  <ul className="adm-grilla">
+                    {g.productos.map((p) => (
+                      <li
+                        key={p.id}
+                        className={`adm-prod ${p.is_published ? "" : "adm-prod--oculto"}`}
                       >
-                        {subiendo === p.id ? "Subiendo…" : "+ Foto"}
-                        <input
-                          type="file"
-                          accept="image/*"
-                          aria-label={`Poner foto a ${p.name}`}
-                          disabled={subiendo !== null}
-                          onChange={(e) => ponerFoto(p, e)}
-                          hidden
-                        />
-                      </label>
-                    )}
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        ))}
+                        <Link
+                          to={`/admin/productos/${p.id}`}
+                          className="adm-prod__link"
+                        >
+                          <span className="adm-prod__circulo">
+                            {p.portada ? <img src={p.portada} alt="" /> : null}
+                          </span>
+                          <span className="adm-prod__nombre">{p.name}</span>
+                          <span className="adm-prod__precio">
+                            {p.desde != null
+                              ? `desde ${formatearPrecio(p.desde)}`
+                              : "Sin precio"}
+                          </span>
+                        </Link>
+                        {!p.is_published && (
+                          <span className="adm-etiqueta adm-prod__etiqueta">
+                            Oculto
+                          </span>
+                        )}
+                        {!p.portada && (
+                          <label
+                            className="adm-prod__foto"
+                            aria-busy={subiendo === p.id}
+                          >
+                            {subiendo === p.id ? "Subiendo…" : "+ Foto"}
+                            <input
+                              type="file"
+                              accept="image/*"
+                              aria-label={`Poner foto a ${p.name}`}
+                              disabled={subiendo !== null}
+                              onChange={(e) => ponerFoto(p, e)}
+                              hidden
+                            />
+                          </label>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+            </section>
+          );
+        })}
 
         <p className="adm-excel">
           ¿Muchos cambios juntos?{" "}
