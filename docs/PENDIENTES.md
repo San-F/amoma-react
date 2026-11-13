@@ -73,6 +73,15 @@ fotos también; la dueña cambia **solo el nombre** (máx. 30 letras) desde Prod
 categorías", y se ve en la tarjeta de la portada y en el filtro del catálogo. Migración
 `20261113001100_nombre_categorias.sql`.
 
+**Fotos de producto en el panel v2 (pedidos de Francisco, 13/11):**
+
+- Al poner la foto de un producto: **elegir una ya cargada** (de la galería o de otro producto) **o subir
+  una nueva**. Ojo al borrar: un archivo usado en dos lugares no se borra del almacenamiento mientras
+  algo lo siga usando (hoy borrar un producto borra sus archivos).
+- Botón **"Sumar también a la galería"** en la foto de un producto (sin subirla dos veces).
+- Al subir: aviso claro **"Foto subida ✓"**; acomodarla en el círculo es opcional.
+- Sacar **"Destacado"** (no se usa en la página); para resaltar está la Etiqueta.
+
 **Galería (decisión de Francisco, 13/11):** se queda como está (fotos completas y grandes; ahí van también
 las tortas personalizadas). En el panel nuevo, "Fotos" se maneja como un feed: grilla, tocar una foto para
 **mostrarla u ocultarla**, ordenar y borrar (mostrar/ocultar y ordenar ya existen hoy). En "Publicar", la
