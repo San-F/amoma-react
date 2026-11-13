@@ -73,6 +73,12 @@ fotos también; la dueña cambia **solo el nombre** (máx. 30 letras) desde Prod
 categorías", y se ve en la tarjeta de la portada y en el filtro del catálogo. Migración
 `20261113001100_nombre_categorias.sql`.
 
+**Para publicar todo junto (13/11, pedido de Francisco):**
+
+- Galería en Safari (Mac): la página seguía mucho más abajo del pie. Causa probable: grilla en columnas +
+  fotos agrandadas del efecto "descubrir". Arreglo en la rama (`overflow: hidden` + `contain: paint` en
+  `.galeria__grid`). **No se pudo probar en Safari acá**: confirmarlo en el Safari de Francisco al publicar.
+
 **Fotos de producto en el panel v2 (pedidos de Francisco, 13/11):**
 
 - Al poner la foto de un producto: **elegir una ya cargada** (de la galería o de otro producto) **o subir

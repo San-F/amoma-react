@@ -52,6 +52,7 @@ otro rubro): [`13-efectos-premium.md`](13-efectos-premium.md).
 | Sombra con esquinas cuadradas              | `clip-path` rectangular recortaba la sombra                                                    | Sombra con `filter: drop-shadow` en el contenedor + clip redondeado                       |
 | QR del doble factor invisible              | SVG crudo con `#` en un data URL                                                               | Re-codificar (`qrSeguro`) y simular con el formato real                                   |
 | Pruebas que mentían                        | Medir antes de que arranque la animación; `                                                    | head`que esconde fallos; detectar overflow con`innerWidth` en modo celular                | Esperar el estado real; mirar el código de salida; medir ancho del documento vs. 390 |
+| Página que sigue de largo en Safari (Mac)  | Grilla en `columns` con fotos agrandadas (`scale`) adentro                                     | `overflow: hidden` + `contain: paint` en la grilla; probar en Safari real                 |
 | Contraste bajo                             | Rosa de marca con texto blanco (2.96:1)                                                        | Medir siempre (AA ≥ 4.5) y tener un tono "botón" aparte                                   |
 
 ## Forma de trabajar que dio resultado

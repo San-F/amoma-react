@@ -15,6 +15,11 @@
   columns: 1;
   column-gap: 1rem;
   list-style: none;
+  /* Safari: con columnas, las fotos agrandadas del efecto "descubrir"
+     (scale) suman alto fantasma y la página sigue de largo debajo del pie.
+     Recortar acá lo que se sale de la grilla lo evita. */
+  overflow: hidden;
+  contain: paint;
 }
 
 .galeria__grid li {
