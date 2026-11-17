@@ -37,8 +37,7 @@ SMTP gratis o adaptar el panel al link por defecto. Con SMTP gratis (Brevo, Rese
 **Mudanza a Cloudflare** ✅ publicado el 12/11 en `https://amoma-1gq.pages.dev` (Pages, con las dos
 variables). Comprobado: rutas, cabeceras de seguridad, `/admin` sin indexar, lee productos de la base
 real, sin scroll lateral en 390/1366. Detalle: una fuente chica viene incrustada (`data:`) y la regla
-`font-src 'self'` la bloquea (pasaba igual en Vercel); arreglar aparte. Falta: actualizar la dirección en
-`index.html`, `sitemap.xml`, `robots.txt` y `llms.txt`, y bajar Vercel. Cómo se hizo:
+`font-src 'self'` la bloquea (pasaba igual en Vercel); arreglar aparte. **17/11: dirección actualizada (ahora sale de `src/data/direccion.js`) y Vercel dado de baja por Francisco.** Cómo se hizo:
 Francisco ya creó la cuenta y autorizó solo el repo `amoma-react`. Se usa **Pages** (el repo ya trae
 `public/_headers` y `public/_redirects`): Compute → Workers & Pages → Create → _Get started with Pages_ →
 **Import an existing Git repository**. Valores: rama `main` · preset Vite · build `npm run build` ·
@@ -115,6 +114,10 @@ caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
   (en realidad es `submit_inquiry`): esa migración ya está aplicada y sellada, no se edita.
 - **Pendiente de la lista de la plantilla, ya anotado antes:** letra chica incrustada que bloquea
   `font-src 'self'`; "Cambiar mi contraseña"; link de los mails (SMTP).
+- ✅ **Publicado el 17/11** (`main` = `fa49e10`, verificación de GitHub en verde). Comprobado desde afuera:
+  `comprobar-sitio.sh` pasa todo; la miniatura al compartir ya apunta a Cloudflare (antes apuntaba a
+  Vercel y, al bajarlo, WhatsApp no mostraba la foto). Sin scroll lateral en 390/1366. Sigue el aviso de
+  la letra incrustada (`font-src`), que ya estaba anotado. No hubo cambios en la base real.
 
 ## Auditoría del 13/11/2026
 
