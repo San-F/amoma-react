@@ -73,3 +73,12 @@ test("si existe vercel.json, sus cabeceras son las mismas que las de Cloudflare"
     "vercel.json tiene que cubrir todo, panel y assets",
   );
 });
+
+test("los paquetes están fijados a una versión exacta", () => {
+  const p = JSON.parse(leer("package.json"));
+  const flojos = Object.entries({
+    ...p.dependencies,
+    ...p.devDependencies,
+  }).filter(([, v]) => !/^\d+\.\d+\.\d+$/.test(v));
+  assert.deepEqual(flojos, [], "sin ^ ni ~: se instala con npm i -E");
+});
