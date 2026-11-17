@@ -660,11 +660,15 @@ function atender(db) {
       await guardarComoXlsx(completada),
       "amoma-planilla-vacia.xlsx",
     );
-    await panel.getByText("Vista previa").waitFor();
+    // la "Vista previa" de la planilla anterior sigue en pantalla: se espera
+    // el botón de ESTA planilla (si no aparece, la prueba falla por tiempo)
+    await panel.getByRole("button", { name: /Importar 1 producto/ }).waitFor();
     ok(
-      await panel
-        .getByRole("button", { name: /Importar 1 producto/ })
-        .isVisible(),
+      !(await panel.locator(".adm-bloque .adm-error").count()) &&
+        (await panel.locator(".adm-tabla tbody tr").count()) === 1 &&
+        (await panel
+          .locator(".adm-tabla tbody tr", { hasText: "Budín de limón" })
+          .count()) === 1,
       "la planilla vacía completada: los ejemplos se ignoran, entra solo lo nuevo",
     );
 

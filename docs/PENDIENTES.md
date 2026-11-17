@@ -98,6 +98,9 @@ caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
   tenga las mismas cabeceras que `public/_headers` (casos malos: CSP distinta, panel sin `noindex` → fallan).
   **Falta (Francisco):** bajar el proyecto de Vercel; recién después se borra `vercel.json` (y la línea
   "hoy también Vercel" de `CLAUDE.md`).
+- ✅ **Prueba que fallaba de a ratos** (`panel-duena.e2e.cjs`, planilla vacía): esperaba "Vista previa",
+  que ya estaba en pantalla; ahora espera el botón "Importar 1 producto" y comprueba que no haya errores
+  y que la vista previa tenga una sola fila. Caso malo: los ejemplos dejan de ignorarse → falla.
 
 ## Auditoría del 13/11/2026
 
