@@ -54,7 +54,7 @@ Necesita un Postgres local (variables `PGHOST`, `PGPORT`, `PGUSER`). En GitHub c
    ```
 10. Ella abre el mail, crea su contraseña y escanea el QR con Google/Microsoft Authenticator.
 
-### 4. Variables en el hosting (Vercel o Cloudflare Pages → Settings → Environment variables)
+### 4. Variables en el hosting (Cloudflare Pages → el proyecto → Settings → Variables and Secrets)
 
 | Variable                        | Valor                            |
 | ------------------------------- | -------------------------------- |

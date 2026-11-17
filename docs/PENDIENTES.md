@@ -92,6 +92,12 @@ caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
   blanco sobre el botón; crema y rosas sobre cacao) y vigila que el rosa de marca (2,96 sobre blanco)
   solo se use como texto sobre cacao. Casos malos: botón más claro, rosa en una sección clara, cacao
   más claro → fallan. Hoy todo pasa (el más justo: rosa oscuro sobre rosa claro, 4,91).
+- ⏳ **7. Solo Cloudflare** (en la rama): guías (`supabase/README.md`, `README.md`) hablan solo de
+  Cloudflare Pages. **`vercel.json` queda a propósito** mientras el sitio siga también en Vercel: sin él,
+  esa copia quedaría sin cabeceras de seguridad. Mientras exista, `tests/blindaje.test.js` exige que
+  tenga las mismas cabeceras que `public/_headers` (casos malos: CSP distinta, panel sin `noindex` → fallan).
+  **Falta (Francisco):** bajar el proyecto de Vercel; recién después se borra `vercel.json` (y la línea
+  "hoy también Vercel" de `CLAUDE.md`).
 
 ## Auditoría del 13/11/2026
 

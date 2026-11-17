@@ -16,7 +16,7 @@ Página web y panel de administración de **Amoma**, pastelería casera en Villa
 
 ## Tecnologías
 
-React 19 · Vite · React Router 7 · Supabase (Postgres + Auth + Storage) · Cloudflare Pages / Vercel ·
+React 19 · Vite · React Router 7 · Supabase (Postgres + Auth + Storage) · Cloudflare Pages ·
 GitHub Actions. Todo funciona con planes **gratis**.
 
 ## Desarrollo
