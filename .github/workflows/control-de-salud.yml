@@ -1,0 +1,52 @@
+# Control de salud mensual. Mira DESDE AFUERA que todo siga vivo:
+#   1. el sitio responde, con sus cabeceras de seguridad
+#   2. la base no está pausada y sigue cerrada (scripts/comprobar-base.sh)
+#   3. el último backup tiene menos de 10 días
+#   4. los paquetes no tienen vulnerabilidades altas o críticas
+# Si algo falla, abre (o actualiza) un aviso en GitHub → Issues: GitHub manda
+# el mail a quien sigue el repo. No hay que acordarse de nada.
+#
+# Variables (Settings → Secrets and variables → Actions → Variables):
+#   SITIO_URL                  dirección publicada del sitio (https://…)
+#   SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, BACKUPS_ENABLED   (si el sitio tiene panel)
+# Probar el aviso: Actions → Control de salud → Run workflow → "forzar_falla".
+name: Control de salud
+
+on:
+  schedule:
+    - cron: "23 12 3 * *"
+  workflow_dispatch:
+    inputs:
+      forzar_falla:
+        description: "Simular una falla para probar que llega el aviso"
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+  issues: write # solo para abrir el aviso
+
+jobs:
+  control:
+    runs-on: ubuntu-latest
+    if: ${{ vars.SITIO_URL != '' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+      - name: Controles
+        id: controles
+        env:
+          SITIO_URL: ${{ vars.SITIO_URL }}
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+          BACKUPS_ENABLED: ${{ vars.BACKUPS_ENABLED }}
+          FORZAR_FALLA: ${{ inputs.forzar_falla }}
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/control-de-salud.sh | tee informe.txt; exit "${PIPESTATUS[0]}"
+      - name: Avisar (abre o actualiza un aviso; GitHub manda el mail)
+        if: failure()
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: bash scripts/avisar.sh informe.txt

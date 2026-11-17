@@ -1,4 +1,4 @@
-# Cabeceras de seguridad para Cloudflare Pages (equivalente a vercel.json)
+# Cabeceras de seguridad (Cloudflare Pages). Las comprueba tests/scripts.test.js y scripts/comprobar-sitio.sh
 /*
   Content-Security-Policy: default-src 'self'; script-src 'self' https://challenges.cloudflare.com; style-src 'self'; img-src 'self' data: blob: https://*.supabase.co; font-src 'self'; connect-src 'self' https://*.supabase.co; object-src 'none'; base-uri 'self'; form-action 'self'; frame-src https://challenges.cloudflare.com; frame-ancestors 'none'; upgrade-insecure-requests
   Strict-Transport-Security: max-age=63072000; includeSubDomains; preload

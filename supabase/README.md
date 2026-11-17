@@ -66,15 +66,18 @@ Después de cargarlas, volver a publicar (redeploy).
 
 ## Mantenimiento automático (GitHub → Settings → Secrets and variables → Actions)
 
-| Tipo     | Nombre                     | Valor                                                                |
-| -------- | -------------------------- | -------------------------------------------------------------------- |
-| Variable | `SUPABASE_URL`             | Project URL (pública)                                                |
-| Variable | `SUPABASE_PUBLISHABLE_KEY` | Publishable key (pública)                                            |
-| Variable | `BACKUPS_ENABLED`          | `true`                                                               |
-| Secret   | `SUPABASE_DB_URL`          | Connect → **Session pooler** (incluye la contraseña de la base)      |
-| Secret   | `BACKUP_PASSPHRASE`        | Frase larga inventada; guardarla también en el gestor de contraseñas |
+| Tipo     | Nombre                     | Valor                                                                 |
+| -------- | -------------------------- | --------------------------------------------------------------------- |
+| Variable | `SITIO_URL`                | Dirección publicada del sitio (`https://…`), para el control de salud |
+| Variable | `SUPABASE_URL`             | Project URL (pública)                                                 |
+| Variable | `SUPABASE_PUBLISHABLE_KEY` | Publishable key (pública)                                             |
+| Variable | `BACKUPS_ENABLED`          | `true`                                                                |
+| Secret   | `SUPABASE_DB_URL`          | Connect → **Session pooler** (incluye la contraseña de la base)       |
+| Secret   | `BACKUP_PASSPHRASE`        | Frase larga inventada; guardarla también en el gestor de contraseñas  |
 
 - **Keepalive** (`supabase-keepalive.yml`): cada 3 días hace una lectura para que el proyecto gratis no se pause.
+- **Control de salud** (`control-de-salud.yml`): una vez por mes mira sitio, base, backup y paquetes; si algo
+  falla abre un aviso en Issues y GitHub manda el mail. Qué hacer: `docs/SI-LLEGA-UN-AVISO.md`.
 - **Backup** (`backup.yml`): cada domingo guarda en la rama `backups` los datos **encriptados**
   (`db/`, últimas 12 semanas) y las **fotos** (`fotos/`, sin encriptar porque ya son públicas; una foto
   borrada en el panel queda guardada ahí). No guarda los usuarios, la lista de administradores ni el

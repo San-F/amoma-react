@@ -64,6 +64,13 @@ caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
   GitHub. Casos malos: backup viejo, sin control de "base con datos", backup sin consultas → los tres
   fallan. **Falta (Francisco):** cargar variables y secretos en GitHub y hacer el ensayo de restauración
   (`supabase/README.md`, "Backup y restauración"); nada de esto corrió todavía contra la base real.
+- ✅ **2. Control de salud mensual** (en la rama): `control-de-salud.yml` + `scripts/control-de-salud.sh`,
+  `comprobar-sitio.sh`, `comprobar-base.sh` (ahora en este repo) y `avisar.sh`; qué hacer con cada
+  aviso: `docs/SI-LLEGA-UN-AVISO.md`. Pruebas en `tests/scripts.test.js` contra servidores de mentira
+  (incluye backup viejo, backup apagado, paquetes, falla simulada). Casos malos: regla de los 10 días,
+  registro abierto, panel sin `noindex` → fallan. Contra el sitio real (solo lectura) ya marcó que
+  `sitemap.xml` apunta a Vercel (punto 5). **Falta (Francisco):** variable `SITIO_URL` en GitHub,
+  seguir el repo y probar el aviso con "forzar_falla" (recién después de publicar).
 
 ## Auditoría del 13/11/2026
 
