@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { SITIO_URL } from "../data/direccion.js";
 
 const SITIO = "Amoma · Tortas caseras en Villa Pueyrredón, CABA";
 const DESCRIPCION =
@@ -13,7 +14,10 @@ function meta(selector, crear, valor) {
   el.setAttribute(el.tagName === "LINK" ? "href" : "content", valor);
 }
 
-// Título, descripción y dirección oficial (canonical) propios de cada página
+// Título, descripción y dirección oficial (canonical) propios de cada página.
+// La canónica usa SIEMPRE la dirección publicada (src/data/direccion.js), no
+// la dirección desde donde se abrió: si la misma página está en otro hosting
+// (o en una copia vieja), Google tiene que saber cuál es la oficial.
 export function useTitulo(titulo, descripcion = DESCRIPCION) {
   useEffect(() => {
     document.title = titulo ? `${titulo} · Amoma` : SITIO;
@@ -26,7 +30,7 @@ export function useTitulo(titulo, descripcion = DESCRIPCION) {
     meta(
       'link[rel="canonical"]',
       () => Object.assign(document.createElement("link"), { rel: "canonical" }),
-      window.location.origin + window.location.pathname,
+      SITIO_URL + window.location.pathname,
     );
   }, [titulo, descripcion]);
 }

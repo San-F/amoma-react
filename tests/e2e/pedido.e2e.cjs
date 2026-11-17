@@ -62,6 +62,11 @@ async function correr(nombreDisp, opciones) {
   page.on("console", (m) => m.type() === "error" && errores.push(m.text()));
   page.on("pageerror", (e) => errores.push(String(e)));
   await page.goto(URL);
+  const canonica = await page.getAttribute('link[rel="canonical"]', "href");
+  ok(
+    /^https:\/\/(?!localhost)[^/]+\/$/.test(canonica),
+    `la dirección oficial es la publicada, no desde donde se abrió (${canonica})`,
+  );
   await page.evaluate(() =>
     document.querySelector("#catalogo")?.scrollIntoView(),
   );

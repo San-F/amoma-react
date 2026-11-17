@@ -4,10 +4,10 @@
 
 ## Páginas
 
-- [Inicio](https://amoma-react.vercel.app/): catálogo con tamaños y precios, tortas personalizadas y cómo pedir.
-- [Galería](https://amoma-react.vercel.app/galeria): trabajos realizados.
-- [Contacto](https://amoma-react.vercel.app/contacto): WhatsApp, Instagram y formulario de consulta.
-- [Privacidad](https://amoma-react.vercel.app/privacidad)
+- [Inicio](%SITIO_URL%/): catálogo con tamaños y precios, tortas personalizadas y cómo pedir.
+- [Galería](%SITIO_URL%/galeria): trabajos realizados.
+- [Contacto](%SITIO_URL%/contacto): WhatsApp, Instagram y formulario de consulta.
+- [Privacidad](%SITIO_URL%/privacidad)
 
 ## Cómo pedir
 

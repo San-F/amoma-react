@@ -79,6 +79,14 @@ caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
   dentro de `npm run check`. Caso malo: una clave secreta falsa metida en el código → el armado la frena;
   y si el control deja de buscarla, la prueba falla. **No se pudo correr gitleaks acá** (no se permitió
   bajarlo): se revisó a mano el historial con los mismos patrones (limpio) y se mira el resultado en GitHub.
+- ✅ **5. Dirección del sitio en un solo lugar** (en la rama): `src/data/direccion.js`
+  (`https://amoma-1gq.pages.dev`). El armado (`scripts/vite-direccion.js`) la completa en `index.html`,
+  `robots.txt`, `sitemap.xml` y `llms.txt` (estos tres ahora viven en `publico-con-direccion/`). Si la
+  dirección no es https o queda un marcador, el armado falla. `tests/direccion.test.js` + prueba de que
+  no esté escrita a mano en otro archivo. Casos malos: dirección vieja en el sitemap, canónica a mano,
+  armado sin completar → fallan. Al publicar, el control de salud deja de marcar el sitemap. Además se encontró y arregló
+  que la página armaba la canónica con la dirección desde donde se abría (la copia de Vercel se
+  declaraba oficial a sí misma): ahora usa la misma dirección única, con prueba de navegador y caso malo.
 
 ## Auditoría del 13/11/2026
 

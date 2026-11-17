@@ -4,7 +4,7 @@ Esta guía es para la dueña de Amoma. Explica cómo cargar y cambiar todo lo qu
 **sin tocar código**. Se puede usar desde el celular o la compu.
 
 > La dirección del panel es la de la página + `/admin`
-> (por ejemplo `amoma-react.vercel.app/admin`).
+> (hoy `amoma-1gq.pages.dev/admin`).
 
 ---
 

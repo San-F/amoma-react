@@ -33,7 +33,7 @@ Necesita un Postgres local (variables `PGHOST`, `PGPORT`, `PGUSER`). En GitHub c
 3. **Authentication → Sign In / Providers → Email**: desactivar **"Allow new users to sign up"**
    y poner **mínimo de contraseña 15**.
 4. **Authentication → URL Configuration**: _Site URL_ = dirección de la página
-   (hoy `https://amoma-react.vercel.app`). En _Redirect URLs_ solo esa dirección.
+   (la misma de `src/data/direccion.js`; hoy `https://amoma-1gq.pages.dev`). En _Redirect URLs_ solo esa dirección.
 5. **Authentication → Emails → Templates**:
    - _Invite user_: cambiar el link por
      `{{ .SiteURL }}/admin/acceso?token_hash={{ .TokenHash }}&type=invite`
