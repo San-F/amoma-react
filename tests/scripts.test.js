@@ -30,6 +30,28 @@ async function conServidor(atender, usar) {
   }
 }
 
+// ───────── lo que recibe el navegador no trae claves ─────────
+test("armado: limpio pasa; con una clave secreta falla y dice dónde", async () => {
+  const dir = mkdtempSync(join(tmpdir(), "armado-"));
+  writeFileSync(
+    join(dir, "app.js"),
+    'const k = "sb_publishable_abcdefgh12345678";',
+  );
+  assert.equal((await correr("scripts/comprobar-armado.sh", [dir])).codigo, 0);
+  // armada en partes para que el detector de claves del repo no la tome por real
+  for (const clave of [
+    "sb_" + "secret_" + "abcdefgh12345678",
+    "postgresql://postgres.abc:" +
+      "unaClave123@aws-0.pooler.supabase.com:5432/postgres",
+    "APP_USR-" + "1234567890123456-010203-" + "a".repeat(32),
+  ]) {
+    writeFileSync(join(dir, "chunk.js"), `x="${clave}"`);
+    const r = await correr("scripts/comprobar-armado.sh", [dir]);
+    assert.equal(r.codigo, 1, clave.slice(0, 12));
+    assert.match(r.salida, /chunk\.js/);
+  }
+});
+
 // ───────── sitio publicado ─────────
 function cabecerasPublicadas() {
   const bloques = {};

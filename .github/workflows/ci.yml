@@ -11,6 +11,21 @@ permissions:
   contents: read
 
 jobs:
+  claves:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+        with:
+          fetch-depth: 0 # todo el historial: una clave borrada sigue estando en los cambios viejos
+      - name: Detector de claves (archivos)
+        run: docker run --rm -v "$PWD:/repo" ghcr.io/gitleaks/gitleaks:v8.30.1 dir --no-banner --redact /repo
+      # --log-opts=HEAD: el historial de ESTA rama. Cada rama se revisa cuando se sube.
+      - name: Detector de claves (historial)
+        run: |
+          docker run --rm -v "$PWD:/repo" -e GIT_CONFIG_COUNT=1 \
+            -e GIT_CONFIG_KEY_0=safe.directory -e GIT_CONFIG_VALUE_0=/repo \
+            ghcr.io/gitleaks/gitleaks:v8.30.1 git --no-banner --redact --log-opts=HEAD /repo
+
   check:
     runs-on: ubuntu-latest
     steps:
@@ -24,6 +39,8 @@ jobs:
       - run: npm run format:check
       - run: npm run test:unit
       - run: npm run build
+      - name: Ninguna clave secreta en lo que recibe el navegador
+        run: bash scripts/comprobar-armado.sh dist
       - name: Audit dependencies (high and critical)
         run: npm audit --audit-level=high
 

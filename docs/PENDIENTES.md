@@ -74,6 +74,11 @@ caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
 - ✅ **3. Piezas de GitHub fijadas** (en la rama): `checkout`, `setup-node` y `upload-artifact` por
   identificador completo (comprobados contra GitHub el 17/11). `tests/blindaje.test.js` lo exige, con
   permisos declarados y sin `write-all`. Casos malos: volver a `@v4` y `write-all` → falla.
+- ✅ **4. Detector de claves** (en la rama): trabajo `claves` en la verificación de GitHub (gitleaks
+  8.30.1, archivos + historial) y `scripts/comprobar-armado.sh` sobre lo que recibe el navegador, también
+  dentro de `npm run check`. Caso malo: una clave secreta falsa metida en el código → el armado la frena;
+  y si el control deja de buscarla, la prueba falla. **No se pudo correr gitleaks acá** (no se permitió
+  bajarlo): se revisó a mano el historial con los mismos patrones (limpio) y se mira el resultado en GitHub.
 
 ## Auditoría del 13/11/2026
 
