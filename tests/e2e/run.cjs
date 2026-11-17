@@ -70,6 +70,8 @@ function esperar(puerto, intentos = 60) {
     const pruebas = fs
       .readdirSync(__dirname)
       .filter((f) => f.endsWith(".e2e.cjs"))
+      // E2E_SOLO=panel-duena npm run test:e2e → corre solo las que coinciden
+      .filter((f) => !process.env.E2E_SOLO || f.includes(process.env.E2E_SOLO))
       .sort();
     for (const f of pruebas) {
       console.log(`\n──────── ${f} ────────`);

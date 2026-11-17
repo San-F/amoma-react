@@ -1,0 +1,17 @@
+{
+  "migraciones": {
+    "20261105000100_catalog_schema.sql": "f657565d539645f7d15de06f36ffce76265d1d7e72aec8c71492cb4d0d2907d2",
+    "20261105000200_rls_and_grants.sql": "c28c7aa77eaa4b7e50aa6544d821d5edf0a50090e0199c0ada8094403468f00b",
+    "20261105000300_storage.sql": "5d9f314bc684c21d3c12b9d6b35d98e2bfc05e8e109924cbe077a8c36c31395f",
+    "20261105000400_admin_mfa.sql": "91f0b628dc48d26caa44dc99d643dd6295544181c2fefcde7b36e6e982a86c4d",
+    "20261105000500_import_catalog.sql": "7c1f3a133d712ec70ab6409238fc840b3c52896c2c81c6280caf6115e6572cdf",
+    "20261105000600_submit_inquiry.sql": "95376f1726cf8206c5244def313f95ec46bc592f6947a0d25c49c4d03cca0137",
+    "20261106000700_product_badge.sql": "8da9665f31e42626511025fb01c4e86d8dfd16f9647d0ebc009baf4eb84d5ae9",
+    "20261106000800_image_focus.sql": "f5018b99f9a8dc50ec7e9b2985c3d484f504d982c7c9c1c47aa9ceadfbdcb768",
+    "20261112000900_categorias_fijas.sql": "9aa4b770edf7d8cbf15a08a46d2d9ce1a66169e6827c516dccd5e68531dcf153",
+    "20261113001000_guardar_e_importar.sql": "a2f3479b231662028f99c5ed6d87c85660638a7556c7dacf3ed0cee36090cc36",
+    "20261113001100_nombre_categorias.sql": "2bfbbdef8ae56a84f6ad4f1f6f76ebf056f99f7e254ac28964625866eae2ab54",
+    "20261113001200_codigo_productos.sql": "749d686a3e5768b2589563ee6e1021bf58b60d46d17118af3215f8f6ae72d48b"
+  },
+  "_": "Huellas de las migraciones. Lo escribe scripts/sellar-migraciones.mjs (npm run base:sellar). No se edita a mano."
+}

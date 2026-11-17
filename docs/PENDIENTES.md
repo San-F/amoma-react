@@ -103,6 +103,14 @@ caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
   y que la vista previa tenga una sola fila. Caso malo: los ejemplos dejan de ignorarse → falla.
 - ✅ **Paquetes con versión exacta** (en la rama): los 8 con `^` quedaron fijados en la versión que ya
   estaba instalada (no cambió nada de lo que corre). `tests/blindaje.test.js` lo exige; caso malo: un `^` → falla.
+- ✅ **Las pruebas, puestas a prueba** (en la rama): `npm run casos-malos` (`scripts/casos-malos.mjs` +
+  `tests/casos-malos.json`, 34 roturas: 30 rápidas y 4 de navegador con `-- --lentas`) rompe a propósito
+  cada regla y exige que su prueba falle; corre también en GitHub. `tests/blindaje.test.js` ahora además
+  frena: pruebas salteadas, verificación que tapa fallas, que baje la cantidad de pruebas
+  (`tests/minimos.json`), **migraciones ya usadas editadas** (`npm run base:sellar` sella las nuevas),
+  HTML sin limpiar, nombres de claves en el código, variables `VITE_` nuevas, "Salir" en todos lados,
+  servicios de terceros nuevos y `console.log`. **Encontró un agujero real:** nada probaba que la plata
+  quedara en centavos enteros → prueba nueva en `tests/money.test.js`.
 
 ## Auditoría del 13/11/2026
 

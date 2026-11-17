@@ -13,7 +13,9 @@
     "check": "npm run lint && npm run format:check && npm run test:unit && npm run build && bash scripts/comprobar-armado.sh dist",
     "test:db": "bash supabase/tests/run-local.sh && bash supabase/tests/backup-ida-y-vuelta.sh",
     "test:unit": "node --test tests/*.test.js",
-    "test:e2e": "node tests/e2e/run.cjs"
+    "test:e2e": "node tests/e2e/run.cjs",
+    "casos-malos": "node scripts/casos-malos.mjs",
+    "base:sellar": "node scripts/sellar-migraciones.mjs"
   },
   "dependencies": {
     "@fontsource-variable/fraunces": "5.3.0",

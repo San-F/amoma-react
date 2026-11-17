@@ -1,0 +1,9 @@
+{
+  "_": "Cantidad mínima de comprobaciones. tests/blindaje.test.js falla si hay menos: las pruebas se suman, no se sacan. Al agregar pruebas, subir el número. BAJARLO necesita el OK explícito de Francisco.",
+  "minimos": {
+    "permisos de la base (supabase/tests/rls.test.sql)": 129,
+    "pruebas unitarias (tests/*.test.js)": 87,
+    "comprobaciones de navegador (tests/e2e)": 80,
+    "casos malos (tests/casos-malos.json)": 34
+  }
+}

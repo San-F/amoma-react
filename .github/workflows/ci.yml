@@ -86,3 +86,31 @@ jobs:
         run: bash supabase/tests/run-local.sh
       - name: Backup de ida y vuelta (guardar, restaurar en otra base, comparar)
         run: bash supabase/tests/backup-ida-y-vuelta.sh
+
+  # ¿Las pruebas sirven? Rompe a propósito cada regla de tests/casos-malos.json
+  # y exige que la prueba correspondiente falle. Si una rotura "sobrevive",
+  # hay una regla que se puede romper sin que nada avise.
+  casos-malos:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    env:
+      PGHOST: localhost
+      PGPORT: 5432
+      PGUSER: postgres
+      PGPASSWORD: postgres
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Casos malos (roturas a propósito)
+        run: npm run casos-malos

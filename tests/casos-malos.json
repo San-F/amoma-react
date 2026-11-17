@@ -1,0 +1,331 @@
+{
+  "_": "Roturas a propósito. Las aplica scripts/casos-malos.mjs (npm run casos-malos). Cada regla nueva del núcleo suma la suya. No se borra una rotura para llegar al verde: si 'no aplica', se actualiza; si 'sobrevive', falta una prueba.",
+  "casos": [
+    {
+      "id": "planilla-publicado-vacio",
+      "pregunta": "falta el dato",
+      "regla": "En la planilla, 'publicado' vacío deja el producto como estaba (no lo vuelve a publicar)",
+      "archivo": "src/admin/lib/importer.js",
+      "buscar": "else if (pub !== null) p.is_published = pub;",
+      "reemplazar": "else p.is_published = pub ?? true;",
+      "prueba": "node --test tests/planilla.test.js tests/importer.test.js"
+    },
+    {
+      "id": "planilla-ejemplos",
+      "pregunta": "falta el dato",
+      "regla": "Las filas de ejemplo de la planilla vacía se ignoran al subirla",
+      "archivo": "src/admin/lib/importer.js",
+      "buscar": "if (texto(r.codigo).toLowerCase().startsWith(MARCA_EJEMPLO)) return;",
+      "reemplazar": "if (false) return;",
+      "prueba": "node --test tests/planilla.test.js"
+    },
+    {
+      "id": "pedido-producto-borrado",
+      "pregunta": "está vacío",
+      "regla": "Un producto que ya no está en el catálogo se marca 'no disponible' en el pedido",
+      "archivo": "src/lib/pedido.js",
+      "buscar": "estado: definitivo ? \"no-disponible\" : \"ok\"",
+      "reemplazar": "estado: \"ok\"",
+      "prueba": "node --test tests/pedido.test.js"
+    },
+    {
+      "id": "pedido-precio-guardado",
+      "pregunta": "otro camino",
+      "regla": "El pedido toma el precio del catálogo actual, no el que quedó guardado en el navegador",
+      "archivo": "src/lib/pedido.js",
+      "buscar": "precio: opcion ? opcion.precio : null,",
+      "reemplazar": "precio: x.precio ?? (opcion ? opcion.precio : null),",
+      "prueba": "node --test tests/pedido.test.js"
+    },
+    {
+      "id": "pedido-tope",
+      "pregunta": "dato mal escrito",
+      "regla": "Tope de 99 unidades por producto en el pedido",
+      "archivo": "src/lib/pedido.js",
+      "buscar": "const MAX = 99;",
+      "reemplazar": "const MAX = 150;",
+      "prueba": "node --test tests/pedido.test.js"
+    },
+    {
+      "id": "base-publicar-sin-precio",
+      "pregunta": "otro camino",
+      "regla": "La base no deja publicar un producto sin precios, se llegue por donde se llegue",
+      "archivo": "supabase/migrations/20261113001000_guardar_e_importar.sql",
+      "buscar": "  if coalesce((payload ->> 'is_published')::boolean, false) and jsonb_array_length(variantes) = 0 then\n    raise exception 'Para publicarlo, cargá al menos un precio.' using errcode = '22023';",
+      "reemplazar": "  if false then\n    raise exception 'Para publicarlo, cargá al menos un precio.' using errcode = '22023';",
+      "prueba": "bash supabase/tests/run-local.sh",
+      "debeDecir": "FALLÓ \\["
+    },
+    {
+      "id": "base-categoria-slug",
+      "pregunta": "otro camino",
+      "regla": "De una categoría solo se puede cambiar el nombre",
+      "archivo": "supabase/migrations/20261113001100_nombre_categorias.sql",
+      "buscar": "grant update (name) on public.categories to authenticated;",
+      "reemplazar": "grant update (name, slug, is_published) on public.categories to authenticated;",
+      "prueba": "bash supabase/tests/run-local.sh",
+      "debeDecir": "FALLÓ \\["
+    },
+    {
+      "id": "base-admin-sin-doble-factor",
+      "pregunta": "quién lo hace",
+      "regla": "Administrar exige el doble factor, no solo estar en la lista",
+      "archivo": "supabase/migrations/20261105000400_admin_mfa.sql",
+      "buscar": "  select private.is_admin_member()\n     and coalesce((select auth.jwt()) ->> 'aal', '') = 'aal2';",
+      "reemplazar": "  select private.is_admin_member();",
+      "prueba": "bash supabase/tests/run-local.sh",
+      "debeDecir": "FALLÓ \\["
+    },
+    {
+      "id": "base-visitante-lee-consultas",
+      "pregunta": "quién lo hace",
+      "regla": "Un visitante no lee las consultas (datos personales)",
+      "archivo": "supabase/migrations/20261105000200_rls_and_grants.sql",
+      "agregar": "\ngrant select on public.inquiries to anon;\ncreate policy \"caso malo\" on public.inquiries for select to anon using (true);\n",
+      "prueba": "bash supabase/tests/run-local.sh",
+      "debeDecir": "FALLÓ \\["
+    },
+    {
+      "id": "base-cualquiera-sube-fotos",
+      "pregunta": "quién lo hace",
+      "regla": "Solo un administrador sube fotos",
+      "archivo": "supabase/migrations/20261105000300_storage.sql",
+      "buscar": "  on storage.objects for insert to authenticated\n  with check (bucket_id = 'public-images' and (select private.is_admin()));",
+      "reemplazar": "  on storage.objects for insert to authenticated\n  with check (bucket_id = 'public-images');",
+      "prueba": "bash supabase/tests/run-local.sh",
+      "debeDecir": "FALLÓ \\["
+    },
+    {
+      "id": "base-tope-de-consultas",
+      "pregunta": "dato mal escrito",
+      "regla": "El formulario frena el cuarto envío seguido del mismo origen",
+      "archivo": "supabase/migrations/20261105000600_submit_inquiry.sql",
+      "buscar": "a.at > now() - interval '10 minutes') >= 3",
+      "reemplazar": "a.at > now() - interval '10 minutes') >= 300",
+      "prueba": "bash supabase/tests/run-local.sh",
+      "debeDecir": "FALLÓ \\["
+    },
+    {
+      "id": "base-trampa-para-robots",
+      "pregunta": "dato mal escrito",
+      "regla": "Un envío con el campo trampa completo no se guarda",
+      "archivo": "supabase/migrations/20261105000600_submit_inquiry.sql",
+      "buscar": "  if coalesce(p_website, '') <> '' then",
+      "reemplazar": "  if false then",
+      "prueba": "bash supabase/tests/run-local.sh",
+      "debeDecir": "FALLÓ \\["
+    },
+    {
+      "id": "plata-en-centavos",
+      "pregunta": "dato mal escrito",
+      "regla": "Los pesos se pasan a centavos ENTEROS",
+      "archivo": "src/lib/money.js",
+      "buscar": "Math.round(valor * 100)",
+      "reemplazar": "valor * 100",
+      "prueba": "node --test tests/money.test.js"
+    },
+    {
+      "id": "cabecera-no-incrustar",
+      "pregunta": "quién lo hace",
+      "regla": "El sitio no se puede incrustar dentro de otro",
+      "archivo": "public/_headers",
+      "buscar": "frame-ancestors 'none'; ",
+      "reemplazar": "",
+      "prueba": "node --test tests/scripts.test.js"
+    },
+    {
+      "id": "detector-de-claves",
+      "pregunta": "quién lo hace",
+      "regla": "Una clave secreta de Supabase en lo publicado se detecta",
+      "archivo": "scripts/comprobar-armado.sh",
+      "buscar": "'sb_secret_[A-Za-z0-9_-]{8,}'",
+      "reemplazar": "'sb_NADA_[A-Za-z0-9_-]{8,}'",
+      "prueba": "node --test tests/scripts.test.js"
+    },
+    {
+      "id": "backup-olvida-precios",
+      "pregunta": "se corta en el medio",
+      "regla": "El backup guarda todas las tablas del cliente",
+      "archivo": "scripts/backup-datos.sh",
+      "buscar": "products product_variants product_images",
+      "reemplazar": "products product_images",
+      "prueba": "bash supabase/tests/backup-ida-y-vuelta.sh",
+      "debeDecir": "NO es igual"
+    },
+    {
+      "id": "restaurar-pisa-datos",
+      "pregunta": "otro camino",
+      "regla": "No se restaura encima de una base con datos",
+      "archivo": "scripts/restaurar-backup.sh",
+      "buscar": "if [ \"$hay\" != \"0\" ]; then",
+      "reemplazar": "if false; then",
+      "prueba": "bash supabase/tests/backup-ida-y-vuelta.sh",
+      "debeDecir": "dejó restaurar"
+    },
+    {
+      "id": "sitio-base-vacia",
+      "pregunta": "está vacío",
+      "regla": "Si la base responde vacía, la página NO muestra los productos de respaldo",
+      "archivo": "src/lib/sitio.js",
+      "buscar": "    if (!productos.error) {",
+      "reemplazar": "    if (!productos.error && conFoto.length) {",
+      "prueba": "E2E_SOLO=panel-duena npm run test:e2e",
+      "debeDecir": "✗ con todo oculto",
+      "lenta": true
+    },
+    {
+      "id": "salir-en-todos-lados",
+      "pregunta": "otro camino",
+      "regla": "'Salir' cierra la sesión solo en este dispositivo",
+      "archivo": "src/admin/auth.jsx",
+      "buscar": "supabase.auth.signOut({ scope: \"local\" })",
+      "reemplazar": "supabase.auth.signOut()",
+      "prueba": "E2E_SOLO=panel-duena npm run test:e2e",
+      "debeDecir": "✗ Salir cierra",
+      "lenta": true
+    },
+    {
+      "id": "blindaje-migracion-editada",
+      "pregunta": "otro camino",
+      "regla": "Una migración sellada no se edita",
+      "archivo": "supabase/migrations/20261105000100_catalog_schema.sql",
+      "agregar": "\n-- un cambio chico\n",
+      "prueba": "node --test tests/blindaje.test.js",
+      "debeDecir": "fue editada"
+    },
+    {
+      "id": "blindaje-html-sin-limpiar",
+      "pregunta": "dato mal escrito",
+      "regla": "No se inserta HTML sin limpiar en la página",
+      "archivo": "src/lib/slug.js",
+      "agregar": "\nexport const pintar = (el, texto) => (el.innerHTML = texto);\n",
+      "prueba": "node --test tests/blindaje.test.js",
+      "debeDecir": "innerHTML"
+    },
+    {
+      "id": "blindaje-paquete-sin-fijar",
+      "pregunta": "se mide",
+      "regla": "Los paquetes van con versión exacta",
+      "archivo": "package.json",
+      "buscar": "\"zod\": \"4.6.7\"",
+      "reemplazar": "\"zod\": \"^4.6.7\"",
+      "prueba": "node --test tests/blindaje.test.js",
+      "debeDecir": "zod"
+    },
+    {
+      "id": "blindaje-prueba-salteada",
+      "pregunta": "se mide",
+      "regla": "Ninguna prueba queda salteada",
+      "archivo": "tests/money.test.js",
+      "buscar": "test(\"slugify\", () => {",
+      "reemplazar": "test.skip(\"slugify\", () => {",
+      "prueba": "node --test tests/blindaje.test.js",
+      "debeDecir": "money.test.js"
+    },
+    {
+      "id": "blindaje-variable-publica-nueva",
+      "pregunta": "quién lo hace",
+      "regla": "No aparece una variable VITE_ nueva sin que se note (todas son públicas)",
+      "archivo": "src/lib/slug.js",
+      "agregar": "\nexport const clave = import.meta.env.VITE_CLAVE_DEL_SERVICIO;\n",
+      "prueba": "node --test tests/blindaje.test.js",
+      "debeDecir": "VITE_CLAVE_DEL_SERVICIO"
+    },
+    {
+      "id": "contraste-del-boton",
+      "pregunta": "se mide",
+      "regla": "El texto blanco del botón llega a contraste AA",
+      "archivo": "src/index.css",
+      "buscar": "--rosa-boton: #c4466f;",
+      "reemplazar": "--rosa-boton: #e76f92;",
+      "prueba": "node --test tests/colores.test.js"
+    },
+    {
+      "id": "rosa-sobre-claro",
+      "pregunta": "se mide",
+      "regla": "El rosa de marca solo se usa como texto sobre fondo cacao",
+      "archivo": "src/styles/Catalog.css",
+      "agregar": "\n.catalogo__precio {\n  color: var(--rosa);\n}\n",
+      "prueba": "node --test tests/colores.test.js",
+      "debeDecir": "--rosa como texto"
+    },
+    {
+      "id": "robots-panel",
+      "pregunta": "quién lo hace",
+      "regla": "robots.txt deja al panel fuera de los buscadores",
+      "archivo": "publico-con-direccion/robots.txt",
+      "buscar": "Disallow: /admin\n",
+      "reemplazar": "",
+      "prueba": "node --test tests/direccion.test.js"
+    },
+    {
+      "id": "direccion-sin-completar",
+      "pregunta": "quién lo hace",
+      "regla": "El armado completa la dirección del sitio en index.html, robots, sitemap y llms",
+      "archivo": "scripts/vite-direccion.js",
+      "buscar": "const listo = texto.replace(MARCA, url);",
+      "reemplazar": "const listo = texto;",
+      "prueba": "node --test tests/direccion.test.js"
+    },
+    {
+      "id": "direccion-a-mano",
+      "pregunta": "varios lugares",
+      "regla": "La dirección del sitio no se escribe a mano fuera de src/data/direccion.js",
+      "archivo": "publico-con-direccion/llms.txt",
+      "agregar": "\nhttps://amoma-react.vercel.app/\n",
+      "prueba": "node --test tests/direccion.test.js",
+      "debeDecir": "escrita a mano"
+    },
+    {
+      "id": "canonica-desde-donde-se-abre",
+      "pregunta": "otro camino",
+      "regla": "La dirección oficial (canonical) es la publicada, no desde donde se abrió la página",
+      "archivo": "src/lib/useTitulo.js",
+      "buscar": "SITIO_URL + window.location.pathname,",
+      "reemplazar": "window.location.origin + window.location.pathname,",
+      "prueba": "E2E_SOLO=pedido npm run test:e2e",
+      "debeDecir": "✗ la dirección oficial",
+      "lenta": true
+    },
+    {
+      "id": "backup-con-admins",
+      "pregunta": "otro camino",
+      "regla": "El backup no copia la lista de administradores (en una base nueva la restauración fallaría)",
+      "archivo": "scripts/backup-datos.sh",
+      "buscar": "TABLAS=(site_settings",
+      "reemplazar": "TABLAS=(admins site_settings",
+      "prueba": "bash supabase/tests/backup-ida-y-vuelta.sh",
+      "debeDecir": "no tiene que incluir"
+    },
+    {
+      "id": "salud-backup-viejo",
+      "pregunta": "se mide",
+      "regla": "El control de salud avisa si el último backup tiene más de 10 días",
+      "archivo": "scripts/control-de-salud.sh",
+      "buscar": "if [ \"$dias\" -le 10 ]",
+      "reemplazar": "if [ \"$dias\" -le 100 ]",
+      "prueba": "node --test tests/scripts.test.js"
+    },
+    {
+      "id": "vercel-distinto",
+      "pregunta": "varios lugares",
+      "regla": "Mientras exista vercel.json, sus cabeceras son las mismas que las de Cloudflare",
+      "archivo": "vercel.json",
+      "buscar": "font-src 'self'; connect-src",
+      "reemplazar": "font-src 'self' data:; connect-src",
+      "prueba": "node --test tests/blindaje.test.js",
+      "debeDecir": "cabeceras distintas"
+    },
+    {
+      "id": "planilla-vacia-navegador",
+      "pregunta": "falta el dato",
+      "regla": "En el panel, la planilla vacía completada importa solo lo nuevo (prueba de navegador)",
+      "archivo": "src/admin/lib/importer.js",
+      "buscar": "if (texto(r.codigo).toLowerCase().startsWith(MARCA_EJEMPLO)) return;",
+      "reemplazar": "if (false) return;",
+      "prueba": "E2E_SOLO=panel-duena npm run test:e2e",
+      "debeDecir": "✗ la planilla vacía completada",
+      "lenta": true
+    }
+  ]
+}
