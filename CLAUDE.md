@@ -45,8 +45,7 @@ Pendientes: [`docs/PENDIENTES.md`](docs/PENDIENTES.md) (mantenerlo actualizado).
 ## Este proyecto
 
 - **Amoma**: pastelería casera en Villa Pueyrredón (CABA). Pedidos por WhatsApp.
-- Stack: React 19 + Vite + React Router 7 · Supabase (Postgres, Auth, Storage) · Cloudflare Pages
-  (hoy también Vercel) · todo en planes **gratis sin tarjeta**.
+- Stack: React 19 + Vite + React Router 7 · Supabase (Postgres, Auth, Storage) · Cloudflare Pages · todo en planes **gratis sin tarjeta**.
 - Código: `src/sections` (home), `src/pages`, `src/components`, `src/lib` (sitio, supabase, plata,
   WhatsApp), `src/admin` (panel, carga diferida), `supabase/` (migraciones, seed, tests).
 - Datos públicos: `src/lib/sitio.js` lee Supabase y, si falla o está vacío, usa `src/data/catalog.js`.

@@ -307,16 +307,6 @@
       "prueba": "node --test tests/scripts.test.js"
     },
     {
-      "id": "vercel-distinto",
-      "pregunta": "varios lugares",
-      "regla": "Mientras exista vercel.json, sus cabeceras son las mismas que las de Cloudflare",
-      "archivo": "vercel.json",
-      "buscar": "font-src 'self'; connect-src",
-      "reemplazar": "font-src 'self' data:; connect-src",
-      "prueba": "node --test tests/blindaje.test.js",
-      "debeDecir": "cabeceras distintas"
-    },
-    {
       "id": "planilla-vacia-navegador",
       "pregunta": "falta el dato",
       "regla": "En el panel, la planilla vacía completada importa solo lo nuevo (prueba de navegador)",
@@ -326,6 +316,15 @@
       "prueba": "E2E_SOLO=panel-duena npm run test:e2e",
       "debeDecir": "✗ la planilla vacía completada",
       "lenta": true
+    },
+    {
+      "id": "panel-sin-noindex",
+      "pregunta": "varios lugares",
+      "regla": "El panel (/admin) no se ofrece a los buscadores: lo comprueba el control del sitio publicado",
+      "archivo": "public/_headers",
+      "buscar": "/admin\n  X-Robots-Tag: noindex, nofollow\n",
+      "reemplazar": "/admin\n",
+      "prueba": "node --test tests/scripts.test.js"
     }
   ]
 }

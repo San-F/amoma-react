@@ -53,7 +53,7 @@ contraseñas, doble factor empezando por el mail, FileVault). 🔲 pendiente de 
 **Plantilla (`San-F/web-plantilla`):** tanda 1 lista; la tanda 2 espera a que el panel de Amoma esté
 probado contra la base real. Ver su `PROGRESO.md`.
 
-## Mejoras traídas de la plantilla (17/11/2026, rama `claude/dreamy-dijkstra-gs2856`, sin publicar)
+## Mejoras traídas de la plantilla (17/11/2026, publicadas en `main` con OK de Francisco)
 
 Lista de origen: `San-F/web-plantilla` → `docs/para-amoma.md`. Un punto por vez, cada uno con prueba y
 caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
@@ -92,12 +92,9 @@ caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
   blanco sobre el botón; crema y rosas sobre cacao) y vigila que el rosa de marca (2,96 sobre blanco)
   solo se use como texto sobre cacao. Casos malos: botón más claro, rosa en una sección clara, cacao
   más claro → fallan. Hoy todo pasa (el más justo: rosa oscuro sobre rosa claro, 4,91).
-- ⏳ **7. Solo Cloudflare** (en la rama): guías (`supabase/README.md`, `README.md`) hablan solo de
-  Cloudflare Pages. **`vercel.json` queda a propósito** mientras el sitio siga también en Vercel: sin él,
-  esa copia quedaría sin cabeceras de seguridad. Mientras exista, `tests/blindaje.test.js` exige que
-  tenga las mismas cabeceras que `public/_headers` (casos malos: CSP distinta, panel sin `noindex` → fallan).
-  **Falta (Francisco):** bajar el proyecto de Vercel; recién después se borra `vercel.json` (y la línea
-  "hoy también Vercel" de `CLAUDE.md`).
+- ✅ **7. Solo Cloudflare**: Francisco bajó el proyecto de Vercel el 17/11 (comprobado: responde
+  `DEPLOYMENT_NOT_FOUND`). Se borró `vercel.json`; las guías y `CLAUDE.md` hablan solo de Cloudflare Pages.
+  `tests/blindaje.test.js` frena que vuelva la configuración de otro hosting (caso malo comprobado).
 - ✅ **Prueba que fallaba de a ratos** (`panel-duena.e2e.cjs`, planilla vacía): esperaba "Vista previa",
   que ya estaba en pantalla; ahora espera el botón "Importar 1 producto" y comprueba que no haya errores
   y que la vista previa tenga una sola fila. Caso malo: los ejemplos dejan de ignorarse → falla.

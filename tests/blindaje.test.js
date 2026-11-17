@@ -236,45 +236,19 @@ test("las piezas de GitHub están fijadas por identificador y con permisos míni
   }
 });
 
-// Mientras el sitio siga TAMBIÉN en Vercel, vercel.json tiene que dar las mismas
-// cabeceras de seguridad que Cloudflare (public/_headers). Cuando se baje el
-// proyecto de Vercel, se borra vercel.json y esta prueba deja de aplicar.
-test("si existe vercel.json, sus cabeceras son las mismas que las de Cloudflare", (t) => {
-  let vercel;
-  try {
-    vercel = JSON.parse(leer("vercel.json"));
-  } catch {
-    return t.skip("sin vercel.json");
-  }
-  const cloudflare = {};
-  let ruta = null;
-  for (const l of leer("public/_headers").split("\n")) {
-    if (!l.trim() || l.startsWith("#")) continue;
-    if (!l.startsWith(" ")) ruta = l.trim();
-    else {
-      const i = l.indexOf(":");
-      (cloudflare[ruta] ??= {})[l.slice(0, i).trim()] = l.slice(i + 1).trim();
-    }
-  }
-  const equivalente = {
-    "/(.*)": "/*",
-    "/admin(.*)": "/admin",
-    "/assets/(.*)": "/assets/*",
-  };
-  for (const bloque of vercel.headers) {
-    const cf = cloudflare[equivalente[bloque.source]];
-    assert.ok(
-      cf,
-      `vercel.json: ${bloque.source} no tiene par en public/_headers`,
-    );
-    const v = Object.fromEntries(bloque.headers.map((h) => [h.key, h.value]));
-    assert.deepEqual(v, cf, `cabeceras distintas en ${bloque.source}`);
-  }
-  assert.equal(
-    vercel.headers.length,
-    3,
-    "vercel.json tiene que cubrir todo, panel y assets",
+// El sitio se publica solo en Cloudflare Pages (Vercel se dio de baja el 17/11/2026).
+// Un archivo de configuración de otro hosting volvería a abrir una segunda copia
+// con otras cabeceras de seguridad.
+test("el sitio se publica solo en Cloudflare (sin configuración de otro hosting)", () => {
+  const otros = readdirSync(".").filter((f) =>
+    /^(vercel\.json|netlify\.toml|\.vercel|firebase\.json)$/.test(f),
   );
+  assert.deepEqual(
+    otros,
+    [],
+    "hosting único: Cloudflare Pages (public/_headers)",
+  );
+  assert.match(leer("public/_headers"), /Content-Security-Policy:/);
 });
 
 test("los paquetes están fijados a una versión exacta", () => {
