@@ -78,7 +78,7 @@ caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
   8.30.1, archivos + historial) y `scripts/comprobar-armado.sh` sobre lo que recibe el navegador, también
   dentro de `npm run check`. Caso malo: una clave secreta falsa metida en el código → el armado la frena;
   y si el control deja de buscarla, la prueba falla. **No se pudo correr gitleaks acá** (no se permitió
-  bajarlo): se revisó a mano el historial con los mismos patrones (limpio) y se mira el resultado en GitHub.
+  bajarlo): se revisó a mano el historial con los mismos patrones (limpio) y **en GitHub pasó en verde** (corrida 99, archivos + historial).
 - ✅ **5. Dirección del sitio en un solo lugar** (en la rama): `src/data/direccion.js`
   (`https://amoma-1gq.pages.dev`). El armado (`scripts/vite-direccion.js`) la completa en `index.html`,
   `robots.txt`, `sitemap.xml` y `llms.txt` (estos tres ahora viven en `publico-con-direccion/`). Si la
@@ -87,6 +87,11 @@ caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
   armado sin completar → fallan. Al publicar, el control de salud deja de marcar el sitemap. Además se encontró y arregló
   que la página armaba la canónica con la dirección desde donde se abría (la copia de Vercel se
   declaraba oficial a sí misma): ahora usa la misma dirección única, con prueba de navegador y caso malo.
+- ✅ **6. Contrastes medidos en cada cambio** (en la rama): `tests/colores.test.js` mide con la fórmula
+  de WCAG los pares que usa la página (cacao, cacao suave y rosa oscuro sobre los 4 fondos claros;
+  blanco sobre el botón; crema y rosas sobre cacao) y vigila que el rosa de marca (2,96 sobre blanco)
+  solo se use como texto sobre cacao. Casos malos: botón más claro, rosa en una sección clara, cacao
+  más claro → fallan. Hoy todo pasa (el más justo: rosa oscuro sobre rosa claro, 4,91).
 
 ## Auditoría del 13/11/2026
 
