@@ -1,7 +1,6 @@
 // Parte de las pruebas de navegador (npm run test:e2e). Las levanta
 // tests/e2e/run.cjs, que arma la página y le pasa las direcciones.
 const SITIO = process.env.E2E_SITIO || "http://localhost:4173";
-const PANEL = process.env.E2E_PANEL || "http://localhost:4175";
 const CAPTURAS =
   process.env.E2E_CAPTURAS ||
   require("path").join(__dirname, "../../.e2e/capturas");
@@ -24,9 +23,6 @@ const { chromium, devices } = require("playwright");
     const y0 = await p.evaluate(() => scrollY);
     await p.locator(".sabor__btn").first().click();
     await p.waitForTimeout(800);
-    const x0 = await p.evaluate(
-      () => document.querySelector(".sabor__btn").getBoundingClientRect().left,
-    );
     // intentar scrollear la página de atrás (rueda / dedo sobre el fondo)
     await p.mouse.move(5, 5);
     if (n === "compu") await p.mouse.wheel(0, 1500);

@@ -32,12 +32,13 @@ function SinConfigurar() {
     <main className="adm-auth">
       <div className="adm-auth__caja">
         <img className="adm-auth__logo" src="/logo.png" alt="Amoma" />
-        <h1>Falta conectar la base de datos</h1>
+        <h1>El panel todavía no está conectado</h1>
         <p>
-          Configurá <code>VITE_SUPABASE_URL</code> y{" "}
-          <code>VITE_SUPABASE_PUBLISHABLE_KEY</code> (ver{" "}
-          <code>supabase/README.md</code>).
+          Avisale a quien armó la página: falta conectar la base de datos. Tus
+          productos y fotos no se perdieron.
         </p>
+        {/* para quien lo arregla: faltan VITE_SUPABASE_URL y
+            VITE_SUPABASE_PUBLISHABLE_KEY en el hosting (supabase/README.md, punto 4) */}
       </div>
     </main>
   );

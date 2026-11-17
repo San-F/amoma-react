@@ -368,7 +368,7 @@ function atender(db) {
           JSON.stringify(L.session),
         );
       await ctx.addInitScript(() =>
-        sessionStorage.setItem("amoma-splash", "1"),
+        sessionStorage.setItem("amoma-bienvenida", "1"),
       );
       await ctx.route("https://fake.supabase.co/**", atender(db));
       const p = await ctx.newPage();
@@ -852,7 +852,7 @@ function atender(db) {
     // 9. si la base no responde, sí se usa el respaldo
     const caida = await b.newContext({ ...disp });
     await caida.addInitScript(() =>
-      sessionStorage.setItem("amoma-splash", "1"),
+      sessionStorage.setItem("amoma-bienvenida", "1"),
     );
     await caida.route("https://fake.supabase.co/**", (r) => r.abort());
     const pc = await caida.newPage();

@@ -1,6 +1,5 @@
 // Parte de las pruebas de navegador (npm run test:e2e). Las levanta
 // tests/e2e/run.cjs, que arma la página y le pasa las direcciones.
-const SITIO = process.env.E2E_SITIO || "http://localhost:4173";
 const PANEL = process.env.E2E_PANEL || "http://localhost:4175";
 const CAPTURAS =
   process.env.E2E_CAPTURAS ||
@@ -29,7 +28,6 @@ let imagenes = [
   },
 ];
 const parches = [];
-let subidas = 0;
 const producto = () => ({
   id: "p1",
   slug: "charlotte",
@@ -78,7 +76,6 @@ const ok = (c, m) => {
           headers: { "access-control-allow-origin": "*" },
         });
       if (u.pathname.startsWith("/storage/v1/object/")) {
-        subidas++;
         return L.json(r, { Key: u.pathname });
       }
       if (u.pathname === "/rest/v1/rpc/admin_status")

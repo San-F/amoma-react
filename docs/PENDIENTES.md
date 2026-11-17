@@ -111,6 +111,13 @@ caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
   HTML sin limpiar, nombres de claves en el código, variables `VITE_` nuevas, "Salir" en todos lados,
   servicios de terceros nuevos y `console.log`. **Encontró un agujero real:** nada probaba que la plata
   quedara en centavos enteros → prueba nueva en `tests/money.test.js`.
+- ✅ **Detalles menores** (en la rama): las pruebas del panel usan la clave real de la bienvenida
+  (`amoma-bienvenida`, antes `amoma-splash` no hacía nada); sin variables sin usar (lint limpio); la
+  pantalla "sin conectar" del panel ahora le habla a la dueña en simple (con prueba de navegador y caso
+  malo). **Queda a propósito:** el comentario que habla de "Edge Function" en la migración de consultas
+  (en realidad es `submit_inquiry`): esa migración ya está aplicada y sellada, no se edita.
+- **Pendiente de la lista de la plantilla, ya anotado antes:** letra chica incrustada que bloquea
+  `font-src 'self'`; "Cambiar mi contraseña"; link de los mails (SMTP).
 
 ## Auditoría del 13/11/2026
 

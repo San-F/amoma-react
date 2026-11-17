@@ -3,7 +3,7 @@
   "minimos": {
     "permisos de la base (supabase/tests/rls.test.sql)": 129,
     "pruebas unitarias (tests/*.test.js)": 87,
-    "comprobaciones de navegador (tests/e2e)": 80,
+    "comprobaciones de navegador (tests/e2e)": 81,
     "casos malos (tests/casos-malos.json)": 34
   }
 }

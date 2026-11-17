@@ -1,7 +1,6 @@
 // Parte de las pruebas de navegador (npm run test:e2e). Las levanta
 // tests/e2e/run.cjs, que arma la página y le pasa las direcciones.
 const SITIO = process.env.E2E_SITIO || "http://localhost:4173";
-const PANEL = process.env.E2E_PANEL || "http://localhost:4175";
 const CAPTURAS =
   process.env.E2E_CAPTURAS ||
   require("path").join(__dirname, "../../.e2e/capturas");
@@ -302,6 +301,17 @@ async function correr(nombreDisp, opciones) {
   );
 
   ok(errores.length === 0, `sin errores de consola ${errores.join(" | ")}`);
+
+  // sin base conectada, el panel le habla a la dueña (no le pide leer archivos del código)
+  await page.goto(SITIO + "/admin");
+  const aviso = page.getByRole("heading", {
+    name: "El panel todavía no está conectado",
+  });
+  await aviso.waitFor();
+  ok(
+    !(await page.locator("main").innerText()).match(/README|VITE_|supabase\//),
+    "panel sin base: aviso en simple, sin nombres de archivos ni variables",
+  );
   await browser.close();
 }
 

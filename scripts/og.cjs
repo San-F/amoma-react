@@ -9,7 +9,6 @@ const path = require("path");
 const sharp = require("sharp");
 
 const raiz = path.join(__dirname, "..");
-const b64 = (p) => fs.readFileSync(path.join(raiz, p)).toString("base64");
 
 (async () => {
   // porción de torta de chocolate (foto de la tarjeta "Tortas"), apaisada
