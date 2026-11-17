@@ -1,0 +1,62 @@
+# Copia de seguridad semanal: DATOS encriptados + FOTOS, en la rama "backups".
+#  - db/backup-AAAA-MM-DD.sql.gpg   datos de las tablas (últimas 12 semanas), ENCRIPTADOS
+#  - fotos/…                        las fotos del sitio (ya son públicas: van sin encriptar;
+#                                   una foto borrada en el panel queda acá guardada)
+# La estructura de la base no va: ya está en supabase/migrations.
+#
+# Hace falta (Settings → Secrets and variables → Actions):
+#   Variable  BACKUPS_ENABLED      true
+#   Variable  SUPABASE_URL         Project URL (pública)
+#   Secret    SUPABASE_DB_URL      Connect → "Session pooler" (lleva la contraseña de la base)
+#   Secret    BACKUP_PASSPHRASE    frase larga inventada; guardarla en el gestor de contraseñas
+#
+# Restaurar: bash scripts/restaurar-backup.sh  (supabase/README.md, "Backup y restauración")
+name: Backup
+
+on:
+  schedule:
+    - cron: "43 6 * * 0"
+  workflow_dispatch:
+
+permissions:
+  contents: write # solo para escribir en la rama "backups"
+
+concurrency: backup
+
+jobs:
+  backup:
+    runs-on: ubuntu-latest
+    if: ${{ vars.BACKUPS_ENABLED == 'true' }}
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4.4.0
+      - name: Datos de las tablas (encriptados) y lista de fotos
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          BACKUP_PASSPHRASE: ${{ secrets.BACKUP_PASSPHRASE }}
+        run: |
+          test -n "$DB_URL" || { echo "Falta el secreto SUPABASE_DB_URL"; exit 1; }
+          test "${#BACKUP_PASSPHRASE}" -ge 20 || { echo "BACKUP_PASSPHRASE tiene que tener 20 letras o más"; exit 1; }
+          docker run --rm -e DB_URL -v "$PWD/scripts:/s:ro" postgres:17 bash /s/backup-datos.sh "$DB_URL" > backup.sql
+          docker run --rm -e DB_URL postgres:17 psql "$DB_URL" -At -v ON_ERROR_STOP=1 \
+            -c "select name from storage.objects where bucket_id = 'public-images' order by name" > fotos.txt
+          gpg --batch --yes --pinentry-mode loopback --passphrase "$BACKUP_PASSPHRASE" \
+            --symmetric --cipher-algo AES256 -o backup.sql.gpg backup.sql
+          shred -u backup.sql
+          echo "Fotos en la base: $(wc -l < fotos.txt)"
+
+      - name: Guardar en la rama "backups" (datos + fotos nuevas)
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+        run: |
+          git init -q copia && cd copia
+          git remote add origin "https://x-access-token:${{ github.token }}@github.com/${{ github.repository }}.git"
+          git fetch -q --depth 1 origin backups && git checkout -q backups || git checkout -q --orphan backups
+          mkdir -p db fotos
+          mv ../backup.sql.gpg "db/backup-$(date -u +%Y-%m-%d).sql.gpg"
+          ls -1 db/*.gpg | sort -r | tail -n +13 | xargs -r git rm -q --ignore-unmatch   # últimas 12 semanas
+          bash ../scripts/backup-fotos.sh "$SUPABASE_URL" ../fotos.txt fotos
+          cp ../fotos.txt fotos-en-la-base.txt
+          git add -A
+          git -c user.name="backup" -c user.email="backup@users.noreply.github.com" \
+            commit -q -m "Backup $(date -u +%Y-%m-%d)"
+          git push -q origin backups

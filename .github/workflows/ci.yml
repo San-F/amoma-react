@@ -67,3 +67,5 @@ jobs:
       - uses: actions/checkout@v4
       - name: Migraciones + tests de permisos (RLS)
         run: bash supabase/tests/run-local.sh
+      - name: Backup de ida y vuelta (guardar, restaurar en otra base, comparar)
+        run: bash supabase/tests/backup-ida-y-vuelta.sh

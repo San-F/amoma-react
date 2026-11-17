@@ -39,10 +39,13 @@ un error típico (política `true`, RLS apagado) y ver que el test falle.
 ## Plan gratis: cuidados
 
 - El proyecto se **pausa tras 7 días sin uso** → workflow `supabase-keepalive.yml` (cada 3 días).
-- Sin backups automáticos → `supabase-backup.yml`: `pg_dump` semanal **encriptado** (gpg AES256) a una
-  rama `backups`. Encriptado porque los datos tienen información de clientes.
+- Sin backups automáticos → `backup.yml`: `pg_dump` semanal **encriptado** (gpg AES256) a una
+  rama `backups`, más las fotos. Encriptado porque los datos tienen información de clientes.
+- **No copiar `admins` ni `audit_log` en el backup:** dependen de `auth.users`, que no se copia, y en
+  una base nueva la restauración falla entera (pasó en Amoma: lo detectó la prueba de ida y vuelta).
+  Un backup que nunca se restauró no es un backup: `supabase/tests/backup-ida-y-vuelta.sh`.
 - La conexión directa es solo IPv6: para GitHub Actions usar el **Session pooler**.
-- Las fotos de Storage no entran en el dump: conservar originales.
+- Las fotos de Storage no entran en el `pg_dump`: el backup las baja aparte por su dirección pública.
 
 ## Claves
 

@@ -53,6 +53,18 @@ contraseñas, doble factor empezando por el mail, FileVault). 🔲 pendiente de 
 **Plantilla (`San-F/web-plantilla`):** tanda 1 lista; la tanda 2 espera a que el panel de Amoma esté
 probado contra la base real. Ver su `PROGRESO.md`.
 
+## Mejoras traídas de la plantilla (17/11/2026, rama `claude/dreamy-dijkstra-gs2856`, sin publicar)
+
+Lista de origen: `San-F/web-plantilla` → `docs/para-amoma.md`. Un punto por vez, cada uno con prueba y
+caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
+
+- ✅ **1. Backup que se puede restaurar** (en la rama): `backup.yml` guarda datos encriptados **y fotos**;
+  ya no copia `admins` ni `audit_log` (comprobado: con ellos la restauración en una base nueva fallaba
+  entera). `scripts/restaurar-backup.sh` + prueba de ida y vuelta dentro de `npm run test:db` y en
+  GitHub. Casos malos: backup viejo, sin control de "base con datos", backup sin consultas → los tres
+  fallan. **Falta (Francisco):** cargar variables y secretos en GitHub y hacer el ensayo de restauración
+  (`supabase/README.md`, "Backup y restauración"); nada de esto corrió todavía contra la base real.
+
 ## Auditoría del 13/11/2026
 
 Resultado completo y orden de arreglos: [`AUDITORIA-2026-11-13.md`](AUDITORIA-2026-11-13.md)

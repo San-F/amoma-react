@@ -75,5 +75,30 @@ Después de cargarlas, volver a publicar (redeploy).
 | Secret   | `BACKUP_PASSPHRASE`        | Frase larga inventada; guardarla también en el gestor de contraseñas |
 
 - **Keepalive** (`supabase-keepalive.yml`): cada 3 días hace una lectura para que el proyecto gratis no se pause.
-- **Backup** (`supabase-backup.yml`): cada domingo guarda los datos **encriptados** en la rama `backups` (últimas 12 semanas).
-  Las fotos no van en el backup: conservar los originales.
+- **Backup** (`backup.yml`): cada domingo guarda en la rama `backups` los datos **encriptados**
+  (`db/`, últimas 12 semanas) y las **fotos** (`fotos/`, sin encriptar porque ya son públicas; una foto
+  borrada en el panel queda guardada ahí). No guarda los usuarios, la lista de administradores ni el
+  registro de cambios: en una base nueva el administrador se da de alta otra vez.
+
+## Backup y restauración
+
+Un backup que nunca se restauró no es un backup. La ida y vuelta de los **datos** se prueba sola en cada
+cambio (`supabase/tests/backup-ida-y-vuelta.sh`, dentro de `npm run test:db`). La restauración completa
+en Supabase, con fotos, hay que **ensayarla una vez** (y cada 6 meses):
+
+1. **Base nueva.** Crear un proyecto de Supabase de prueba. Generar solo la estructura, sin datos:
+   `bash supabase/armar-puesta-en-marcha.sh --sin-datos /tmp/estructura.sql`, y pegarla en el SQL Editor.
+2. **Bajar el backup.** En GitHub, rama `backups`: el `.sql.gpg` más nuevo y la carpeta `fotos/`.
+3. **Datos** (pide la frase del backup; si la base ya tiene datos, se niega):
+   ```bash
+   bash scripts/restaurar-backup.sh datos backup-AAAA-MM-DD.sql.gpg "<cadena de conexión de la base nueva>"
+   ```
+4. **Fotos** (la clave secreta de la base **nueva**, solo como variable de entorno, nunca en un archivo ni en el chat):
+   ```bash
+   SUPABASE_SECRET_KEY=… bash scripts/restaurar-backup.sh fotos fotos https://<nueva>.supabase.co
+   ```
+5. **Administrador y login:** puntos 2 y 3 de la puesta en marcha.
+6. **Comprobar** con `comprobar-base.sh` y abriendo el sitio apuntando a la base nueva (`.env.local`).
+
+**No se pudo probar desde acá:** la tarea corriendo en GitHub contra la base real, la bajada de fotos y
+su subida con la clave secreta. Por eso el ensayo es obligatorio.
