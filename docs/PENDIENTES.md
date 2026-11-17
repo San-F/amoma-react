@@ -71,6 +71,9 @@ caso malo. **Nada a `main` ni a la base real sin el "publicá" de Francisco.**
   registro abierto, panel sin `noindex` → fallan. Contra el sitio real (solo lectura) ya marcó que
   `sitemap.xml` apunta a Vercel (punto 5). **Falta (Francisco):** variable `SITIO_URL` en GitHub,
   seguir el repo y probar el aviso con "forzar_falla" (recién después de publicar).
+- ✅ **3. Piezas de GitHub fijadas** (en la rama): `checkout`, `setup-node` y `upload-artifact` por
+  identificador completo (comprobados contra GitHub el 17/11). `tests/blindaje.test.js` lo exige, con
+  permisos declarados y sin `write-all`. Casos malos: volver a `@v4` y `write-all` → falla.
 
 ## Auditoría del 13/11/2026
 
